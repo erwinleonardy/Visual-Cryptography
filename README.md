@@ -1,8 +1,6 @@
 # Visual-Cryptography (Group SS19/1C)
 Secure Remote Authentication using Visual Cryptography
 
-<b>PLEASE EXPLAIN WHAT YOU HAVE EDITED IN THE COMMIT STATEMENT WHEN YOU ARE ADDING OR EDITING A FILE.</b>
-
 The aim of this project is to develop a secure user authentication system based on
 visual cryptography. 
 
@@ -15,5 +13,7 @@ cryptographic technique to build a secure remote user authentication system. A
 web-based prototype will be built to validate the feasibility of the system.
 Basic knowledge on cryptographic algorithms and protocols such as encryption,
 cryptographic hash function, and TLS/SSL.
+
+<b>PLEASE EXPLAIN WHAT YOU HAVE EDITED IN THE COMMIT STATEMENT WHEN YOU ARE ADDING OR EDITING A FILE.</b>
 
 <b>Codes are written in Python and Flask.</b>
