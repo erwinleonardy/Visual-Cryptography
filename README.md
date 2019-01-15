@@ -13,3 +13,5 @@ cryptographic technique to build a secure remote user authentication system. A
 web-based prototype will be built to validate the feasibility of the system.
 Basic knowledge on cryptographic algorithms and protocols such as encryption,
 cryptographic hash function, and TLS/SSL.
+
+<b>Codes are written in Python and Flask.</b>
