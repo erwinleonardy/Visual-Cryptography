@@ -12,23 +12,28 @@ import PIL.ImageOps
 import random
 import sys
 
-# Try different inputs here
+"""
+Global Variables
+"""
+# Try different inputs here (jane.png / jane.jpg)
 path = "john.png"
-# path = "jane.jpg"
 
 # signature starting point
 signX = 1740
 signY = 750
-signWidth = 200 # 200 x 200 pixels 
+signWidth = 200                 # 200 x 200 pixels 
+doubSignSize = signWidth * 2
+reconDist = signWidth - 85
 
+"""
+Functions
+"""
 # Open an Image
 def open_image(filename, bw):
     path = './input/' + filename
     image = Image.open(path)
-
     if (bw == 1):
-        image = image.convert('1') # convert image to black and white
-
+        image = image.convert('1')  # convert image to black and white
     return image
 
 # Save Image
@@ -36,20 +41,10 @@ def save_image(image, filename):
     path = './output/' + filename + '.png'
     print ("{} has been successfully exported!".format(path))
     image.save(path, optimize=True, format="PNG")
-
-# Get the pixel from the given image
-def get_pixel(image, i, j):
-# Inside image bounds?
-    width, height = image.size
-    if i > width or j > height:
-        return None
-
-    # Get Pixel
-    pixel = image.getpixel((i, j))
-    return pixel
  
 # Generate 2 shares
 def gen_2shares (image):
+    # 1 -> 8bit B/W
     outfile1 = Image.new("1", [dimension * 2 for dimension in image.size])
     outfile2 = Image.new("1", [dimension * 2 for dimension in image.size])
 
@@ -207,9 +202,6 @@ def gen_2shares (image):
                     outfile2.putpixel((x * 2 + 1, y * 2 + 1), 0)
                 
     # export image shares
-    save_image (outfile1, "out1")
-    save_image (outfile2, "out2")
-
     image1 = open_image ("cheque.jpg", 0)
     image1.paste(outfile1, (signX, signY))       
     save_image (image1, "cheque/share1")   
@@ -222,41 +214,21 @@ def gen_2shares (image):
 
 # Reconstruct the image using two of the shares
 def merge_2shares ():
-    """     
-        file1 = ('./output/out1.png')
-        file2 = ('./output/out2.png')
-
-        infile1 = Image.open(file1)
-        infile2 = Image.open(file2)
-
-        outfile = Image.new('1', infile1.size)
-
-        for x in range(infile1.size[0]):
-            for y in range(infile1.size[1]):
-                outfile.putpixel((x,y), min(infile1.getpixel((x, y)), infile2.getpixel((x, y))))
-
-        save_image (outfile, "recon")    
-
-        # clean the reconstructed shares
-        clean_2shares (outfile) 
-        
-        print()
-    """
-
     # read both of the shares
     infile1 = Image.open('./output/cheque/share1.png')
     infile2 = Image.open('./output/cheque/share2.png')
 
-    # extract the shares only
-    sign1 = infile1.crop((signX, signY, signX+(signWidth*2), signY+(signWidth*2)))
-    sign1.thumbnail((signWidth*2, signWidth*2), Image.ANTIALIAS)
+    # extract the shares area
+    sign1 = infile1.crop((signX, signY, signX+(doubSignSize), signY+(doubSignSize)))
+    sign1.thumbnail((doubSignSize, doubSignSize), Image.ANTIALIAS)
     sign1 = sign1.convert('1')
-    save_image (sign1, "cheque/sign1")  
+    save_image (sign1, "signature1")  
 
-    sign2 = infile2.crop((signX, signY, signX+(signWidth*2), signY+(signWidth*2)))
-    sign2.thumbnail((signWidth*2, signWidth*2), Image.ANTIALIAS)
+    sign2 = infile2.crop((signX, signY, signX+(doubSignSize), signY+(doubSignSize)))
+    sign2.thumbnail((doubSignSize, doubSignSize), Image.ANTIALIAS)
     sign2 = sign2.convert('1')
-    save_image (sign2, "cheque/sign2")  
+    save_image (sign2, "signature2")  
+    print()
 
     # reconstruct the shares
     outfile = Image.new('1', sign1.size)
@@ -273,13 +245,12 @@ def merge_2shares ():
     # replace the area with white color
     result = Image.open('./output/cheque/share1.png')
 
-    for x in range(signX, signX+(signWidth*2)):
-        for y in range(signY, signY+(signWidth*2)):
+    for x in range(signX, signX+(doubSignSize)):
+        for y in range(signY, signY+(doubSignSize)):
             result.putpixel((x, y), (255,255,255,255))
 
     # place the clean shares to it
     overlay_pic(result)
-    
 
 # Resize the reconstructed image 
 # and clean the noise
@@ -320,7 +291,7 @@ def clean_2shares (inputImg):
                 result.putpixel((x, y + 1), 255)
                 result.putpixel((x + 1, y + 1), 255)
     
-    # create transparent layer to be pasted to cheque
+    # create transparent layer to be pasted on cheque
     image_trans = Image.new("RGBA", (result.size[0], result.size[1]), (255,255,255,0))
 
     for y in range (0,result.size[0]):
@@ -330,18 +301,15 @@ def clean_2shares (inputImg):
 
     save_image (image_trans, "clean2")
 
+# overlay the pic
 def overlay_pic (dest):
     source = Image.open("./output/clean2.png")
-
-    dest.paste(source, (signX+signWidth, signY+signWidth), mask=source)       
+    dest.paste(source, (signX+reconDist, signY+(reconDist*2)), mask=source)       
     save_image (dest, "cheque/final_img")       
 
 """
 Main function
 """
-
 img = open_image (path, 1)
 gen_2shares (img)
 merge_2shares()
-
-# overlay_pic ()
