@@ -14,8 +14,8 @@ import random
 import sys
 
 # Try different inputs here
+#  path = "john.png"
 path = "jane.jpg"
-#  path = "jane.jpg"
 
 # Open an Image
 def open_image(filename):
@@ -256,8 +256,8 @@ def clean_2shares (inputImg):
     # W B  =>  W W
     # B B      W W
     result = outfile
-    for y in range (0,result.size[0] - 2, 2):
-        for x in range (0, result.size[1] - 2, 2):
+    for y in range (0,result.size[0], 2):
+        for x in range (0, result.size[1], 2):
             if (outfile.getpixel((x,y)) == 255 and
                 outfile.getpixel((x + 1, y)) == 0 and
                 outfile.getpixel((x, y + 1)) == 0 and
@@ -271,12 +271,10 @@ def clean_2shares (inputImg):
 """
 Main function
 """
-# open the image
 img = open_image (path)
 
-# generate 2 shares
 gen_2shares (img)
 
-# generate the output file
 outfile = merge_2shares()
+
 
