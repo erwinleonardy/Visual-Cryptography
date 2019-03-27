@@ -230,8 +230,7 @@ def merge_2shares ():
 # and clean the noise
 def clean_2shares (inputImg):
     outfile = Image.new("1", [int(dimension / 2) for dimension in inputImg.size], 255)
-    length = inputImg.size[0]
-    width = inputImg.size[1]
+    length, width = inputImg.size
 
     # Cleaning (Phase 1)
     # only writes black iff
@@ -268,13 +267,17 @@ def clean_2shares (inputImg):
     
     save_image (outfile, "clean2")
 
+def overlay_pic (image1, image2):
+    
+
 """
 Main function
 """
-img = open_image (path)
+#  img = open_image (path)
+#
+#  gen_2shares (img)
+#
+#  outfile = merge_2shares()
 
-gen_2shares (img)
-
-outfile = merge_2shares()
-
-
+img1 = open_image ("cheque.jpg")
+img2 = open_image ("clean2.png")
