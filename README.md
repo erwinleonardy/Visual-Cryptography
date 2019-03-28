@@ -16,12 +16,12 @@ web-based prototype will be built to validate the feasibility of the system.
 Basic knowledge on cryptographic algorithms and protocols such as encryption,
 cryptographic hash function, and TLS/SSL.
 
-<b>This is the sample of our current program:</b>
-![john's signature](./screenshot/john_sample.png)
-
-To run the program:
+<b>To run the program:</b>
 1. Download Flask
-2. To run, type this on your terminal
+2. To run, type this on your terminal (without the $ sign)
 ```shell
 $ FLASK_APP=VSignIt.py FLASK_DEBUG=1 python -m flask run
 ```
+
+<b>This is the sample of our current program:</b>
+![john's signature](./screenshot/john_sample.png)
