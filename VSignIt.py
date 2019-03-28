@@ -16,7 +16,7 @@ import sys
 Global Variables
 """
 # Try different inputs here (jane.png / jane.jpg)
-path = "john.png"
+path = "jane.png"
 
 # signature starting point
 signX = 1740
@@ -31,11 +31,17 @@ Functions
 # Open an Image
 def open_image(filename, bw):
     path = './input/' + filename
-    image = Image.open(path)
-    if (bw == 1):
-        image = image.convert('1')  # convert image to black and white
-    return image
 
+    try:
+        image = Image.open(path)
+
+        if (bw == 1):
+            image = image.convert('1')  # convert image to black and white
+        return image
+
+    except IOError:
+        return None
+        
 # Save Image
 def save_image(image, filename):
     path = './output/' + filename + '.png'
@@ -311,5 +317,10 @@ def overlay_pic (dest):
 Main function
 """
 img = open_image (path, 1)
-gen_2shares (img)
-merge_2shares()
+
+if img != None:
+    gen_2shares (img)
+    merge_2shares()
+
+else:
+    print("{} not found!".format(path))
