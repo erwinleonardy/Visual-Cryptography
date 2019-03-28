@@ -18,3 +18,10 @@ cryptographic hash function, and TLS/SSL.
 
 <b>This is the sample of our current program:</b>
 ![john's signature](./screenshot/john_sample.png)
+
+To run the program:
+1. Download Flask
+2. To run, type this on your terminal
+```shell
+$ FLASK_APP=VSignIt.py FLASK_DEBUG=1 python -m flask run
+```
