@@ -353,7 +353,7 @@ def bank_reconstruct():
         return str(e)
 
 @app.route('/client')
-def hello_client():
+def client():
     try:
         return render_template('client.html')
     except Exception as e:
