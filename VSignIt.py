@@ -316,11 +316,34 @@ def overlay_pic (dest):
 """
 Main function
 """
-img = open_image (path, 1)
+# img = open_image (path, 1)
 
-if img != None:
-    gen_2shares (img)
-    merge_2shares()
+# if img != None:
+#     gen_2shares (img)
+#     merge_2shares()
 
-else:
-    print("{} not found!".format(path))
+# else:
+#     print("{} not found!".format(path))
+
+"""
+Flask Part
+"""
+from flask import Flask, render_template
+app = Flask(__name__, template_folder='./src')
+
+@app.route('/bank')
+def hello_bank():
+    try:
+        return render_template('admin.html')
+    except Exception as e:
+        return str(e)
+
+@app.route('/client')
+def hello_client():
+    try:
+        return render_template('client.html')
+    except Exception as e:
+        return str(e)
+
+if __name__ == '__main__':
+    app.run()
