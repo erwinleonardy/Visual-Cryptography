@@ -1,7 +1,10 @@
 <html>
-<link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='css/bootstrap.min.css') }}">
-<meta name="viewport" content = "width=device-width, initial-scale=1.0">
 <head>
+    <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+    <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/popper.js') }}"></script>
+    <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <meta name="viewport" content = "width=device-width, initial-scale=1.0">    
 </head>
 
 <body class = "body">
@@ -13,28 +16,40 @@
   
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Bank <span class="sr-only">(current)</span></a>
+        <li class="nav-item dropdown active">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Bank
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/bank-generate">Share Generation</a>
+            <a class="dropdown-item active" href="/bank-reconstruct">Share Reconstruction</a>
+          </div>
         </li>
+
         <li class="nav-item">
           <a class="nav-link" href="/client">Client</a>
         </li>
 
+        <!--
         <li class="nav-item">
           <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
         </li>
+        -->
       </ul>
+      <!--
       <form class="form-inline my-2 my-lg-0">
         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
       </form>
+      -->
     </div>
   </nav>
-
+  
   <div class="jumbotron">
-      <h1 class="display-4">Admin Page</h1>
+      <h1 class="display-4">Admin Page (Share Reconstruction)</h1>
       <p class="lead">Use this panel to upload the cheque and your share to reconstruct!</p>
       <hr class="my-4">
+
       <form>
           <div class="input-group mb-2" style="width:40%">
               <div class="custom-file">
@@ -53,3 +68,11 @@
       </form>
     </div>
 </body>
+
+<script>
+    // Add the following code if you want the name of the file appear on select
+    $(".custom-file-input").on("change", function() {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+</script>

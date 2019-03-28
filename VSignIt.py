@@ -331,10 +331,24 @@ Flask Part
 from flask import Flask, render_template
 app = Flask(__name__, template_folder='./src')
 
-@app.route('/bank')
-def hello_bank():
+@app.route('/')
+def default_client():
     try:
-        return render_template('admin.html')
+        return render_template('client.html')
+    except Exception as e:
+        return str(e)
+
+@app.route('/bank-generate')
+def bank_generate():
+    try:
+        return render_template('admin-generation.html')
+    except Exception as e:
+        return str(e)
+
+@app.route('/bank-reconstruct')
+def bank_reconstruct():
+    try:
+        return render_template('admin-reconstruct.html')
     except Exception as e:
         return str(e)
 

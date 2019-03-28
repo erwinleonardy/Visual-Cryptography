@@ -1,11 +1,10 @@
 <html>
-
 <head>
     <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
     <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/popper.js') }}"></script>
     <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-    <meta name="viewport" content = "width=device-width, initial-scale=1.0">
+    <meta name="viewport" content = "width=device-width, initial-scale=1.0">    
 </head>
 
 <body class = "body">
@@ -17,18 +16,18 @@
   
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Bank
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="/bank-generate">Share Generation</a>
-                <a class="dropdown-item" href="/bank-reconstruct">Share Reconstruction</a>
-            </div>
+        <li class="nav-item dropdown active">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Bank
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item active" href="/bank-generate">Share Generation</a>
+            <a class="dropdown-item" href="/bank-reconstruct">Share Reconstruction</a>
+          </div>
         </li>
 
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Client<span class="sr-only">(current)</span></a>
+        <li class="nav-item">
+          <a class="nav-link" href="/client">Client</a>
         </li>
 
         <!--
@@ -45,30 +44,24 @@
       -->
     </div>
   </nav>
-
+  
   <div class="jumbotron">
-    <h1 class="display-4">Client Page</h1>
-    <p class="lead">Use this panel to upload the cheque you wanted to sign!</p>
-    <hr class="my-4">
-    <form>
-        <div class="input-group mb-2" style="width:40%">
-            <div class="custom-file">
-                <input type="file" class="custom-file-input" id="inputGroupFile02">
-                <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose Cheque</label>
-            </div>
-        </div>
-        <div class="input-group mb-2" style="width:40%">
-            <div class="custom-file">
-                <input type="file" class="custom-file-input" id="inputGroupFile02">
-                <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose Client Share</label>
-            </div>
-        </div>
+      <h1 class="display-4">Admin Page (Share Generation)</h1>
+      <p class="lead">Use this panel to create 2 shares of a signature!</p>
+      <hr class="my-4">
 
-        <a href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Process</a>
-    </form>
-  </div>
+      <form>
+          <div class="input-group mb-2" style="width:40%">
+              <div class="custom-file">
+                  <input type="file" class="custom-file-input" id="inputGroupFile02">
+                  <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose Signature</label>
+              </div>
+          </div>
+  
+          <a href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Process</a>
+      </form>
+    </div>
 </body>
-
 
 <script>
     // Add the following code if you want the name of the file appear on select
@@ -77,4 +70,3 @@
         $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
     });
 </script>
-
