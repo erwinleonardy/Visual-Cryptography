@@ -9,8 +9,8 @@ from __future__ import print_function
 from PIL import Image
 import PIL.ImageOps
 
-import random
-import sys
+import re, time, base64
+import random, sys, os
 
 """
 Global Variables
@@ -24,6 +24,9 @@ signY = 750
 signWidth = 200                 # 200 x 200 pixels 
 doubSignSize = signWidth * 2
 reconDist = signWidth - 85
+
+UPLOAD_FOLDER = './input'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 """
 Functions
@@ -208,13 +211,15 @@ def gen_2shares (image):
                     outfile2.putpixel((x * 2 + 1, y * 2 + 1), 0)
                 
     # export image shares
-    image1 = open_image ("cheque.jpg", 0)
-    image1.paste(outfile1, (signX, signY))       
-    save_image (image1, "cheque/share1")   
+    outfile2.save("./input/share/share1.png", optimize=True, format="PNG")
+    outfile2.save("./input/share/share2.png", optimize=True, format="PNG")
+    # image1 = open_image ("cheque.jpg", 0)
+    # image1.paste(outfile1, (signX, signY))       
+    # save_image (image1, "cheque/share1")   
 
-    image1 = open_image ("cheque.jpg", 0)
-    image1.paste(outfile2, (signX, signY))       
-    save_image (image1, "cheque/share2")  
+    # image1 = open_image ("cheque.jpg", 0)
+    # image1.paste(outfile2, (signX, signY))       
+    # save_image (image1, "cheque/share2")  
 
     print()
 
@@ -329,7 +334,9 @@ Main function
 Flask Part
 """
 from flask import Flask, render_template, request
+from werkzeug import secure_filename
 app = Flask(__name__, template_folder='./src')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
 def default_client():
@@ -346,8 +353,23 @@ def bank_generate():
         except Exception as e:
             return str(e)
     
-    elif request.method == 'POST':
-        print("Hello")
+    elif request.method == 'POST':        
+        # print(request.form['file'], file=sys.stderr)
+
+        base64_data = re.sub('^data:image/.+;base64,', '', request.form['file'])
+        byte_data = base64.b64decode(base64_data)
+
+        with open("./input/imageToSave.png", "wb") as fh:
+            fh.write(byte_data)
+
+        image = open_image ("imageToSave.png", 1)
+        # image.show()
+
+        gen_2shares(image)
+
+        os.remove("./input/imageToSave.png")
+
+        return "test"
 
 @app.route('/bank-reconstruct')
 def bank_reconstruct():

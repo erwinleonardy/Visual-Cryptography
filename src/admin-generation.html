@@ -65,6 +65,8 @@
               </div>
           </div>
 
+          <div id="imgTest" style="margin-bottom: 10px"></div>
+
           <div class="input-group mb-3" style="width:40%">
             <div class="input-group-prepend">
               <span class="input-group-text" id="basic-addon1">Client's Email</span>
@@ -93,48 +95,17 @@
         $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
     });
 
-    $(reconstruct).submit(function(e) {
+    $(reconstruct).submit(function(e) 
+    {
       e.preventDefault(); // avoid to execute the actual submit of the form.
-
-      var email = $(email_input).val()
-      var fd = new FormData();
-      var files = $('#signature-upload')[0].files[0];
       
       // checks if a picture is uploaded and 
       // the email is in the correct format
       if (validate())
       {
-        fd.append('email', email)
-        fd.append('file',files);
-
-        $('#response-msg').removeClass('alert-danger');
-        $('#response-msg').addClass('alert-success');
-        $("#response-msg").text("Your share has been downloaded! The other share has been sent to \'" + email + "\'");
-        $('#response-msg').show();
-        $('#signature-upload').addClass('is-valid');
-
-        var formData = new FormData(document.getElementsByName('reconstruct')[0]);
-        $.ajax({
-          type: 'post',
-          url: '/bank-generate',
-          data: fd,
-          contentType: false,
-          processData: false,
-          success: function(response){
-            
-              if(response != 0){
-
-              }else{
-                  alert('file not uploaded');
-              }
-          },
-
-          error: function(jqXHR, textStatus, errorThrown) 
-          {
-                // Oops! Some Error
-          }
-        });
-      }
+        console.log("before")
+        encodeImageFileAsURL()
+      } 
     });
 
     function validateEmail(email) {
@@ -155,5 +126,67 @@
       $('#email_input').addClass('is-invalid');
       $('#response-msg').toggle();
       return false;
+    }
+
+    function encodeImageFileAsURL()
+    {
+      var filesSelected = document.getElementById("signature-upload").files;
+
+      if (filesSelected.length > 0) {
+        var fileToLoad = filesSelected[0];
+
+        var fileReader = new FileReader();
+
+        fileReader.onload = function(fileLoadedEvent) {
+          srcData = fileLoadedEvent.target.result; // <--- data: base64
+
+          var newImage = document.createElement('img');
+          newImage.src = srcData;
+
+          document.getElementById("imgTest").innerHTML = newImage.outerHTML;
+          // alert("Converted Base64 version is " + srcData);
+          // console.log("Converted Base64 version is " + document.getElementById("imgTest").innerHTML);
+          
+          var email = $(email_input).val()
+          var fd = new FormData();
+
+          $('#response-msg').removeClass('alert-danger');
+          $('#response-msg').addClass('alert-success');
+          $("#response-msg").text("Your share has been downloaded! The other share has been sent to \'" + email + "\'");
+          $('#response-msg').show();
+          $('#signature-upload').addClass('is-valid');
+
+          var imgsrc = document.getElementById("imgTest").src;
+          // console.log(srcData)
+
+          fd.append('email', email)
+          fd.append('file',srcData)
+
+          var formData = new FormData(document.getElementById("reconstruct"));
+          $.ajax({
+            type: 'post',
+            url: '/bank-generate',
+            data: fd,
+            mimeType:"multipart/form-data",
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(response){
+              
+                if(response != 0){
+
+                }else{
+                    alert('file not uploaded');
+                }
+            },
+
+            error: function(jqXHR, textStatus, errorThrown) 
+            {
+                  // Oops! Some Error
+            }
+          });
+        }
+        fileReader.readAsDataURL(fileToLoad);
+      }
     }
 </script>
