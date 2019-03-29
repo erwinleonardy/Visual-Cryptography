@@ -328,7 +328,7 @@ Main function
 """
 Flask Part
 """
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 app = Flask(__name__, template_folder='./src')
 
 @app.route('/')
@@ -338,12 +338,16 @@ def default_client():
     except Exception as e:
         return str(e)
 
-@app.route('/bank-generate')
+@app.route('/bank-generate', methods=['GET', 'POST'])
 def bank_generate():
-    try:
-        return render_template('admin-generation.html')
-    except Exception as e:
-        return str(e)
+    if request.method == 'GET':
+        try:
+            return render_template('admin-generation.html')
+        except Exception as e:
+            return str(e)
+    
+    elif request.method == 'POST':
+        print("Hello")
 
 @app.route('/bank-reconstruct')
 def bank_reconstruct():

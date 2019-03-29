@@ -5,6 +5,11 @@
     <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/popper.js') }}"></script>
     <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <meta name="viewport" content = "width=device-width, initial-scale=1.0">    
+<style>
+  .preview img{
+    display: none;
+  }
+</style>
 </head>
 
 <body class = "body">
@@ -52,27 +57,36 @@
       <p class="lead">Use this panel to create 2 shares of a signature!</p>
       <hr class="my-4">
 
-      <form name="reconstruct" method="post">
+      <form name="reconstruct" method="post" enctype="multipart/form-data">
           <div class="input-group mb-2" style="width:40%">
               <div class="custom-file">
-                  <input type="file" class="custom-file-input" id="inputGroupFile02">
+                  <input type="file" class="custom-file-input" id="signature-upload" required>
                   <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose Signature</label>
               </div>
           </div>
 
           <div class="input-group mb-3" style="width:40%">
             <div class="input-group-prepend">
-              <span class="input-group-text" id="basic-addon1">Email</span>
+              <span class="input-group-text" id="basic-addon1">Client's Email</span>
             </div>
-            <input type="text" class="form-control" placeholder="johndoe@vsignit.com" aria-label="Username" aria-describedby="basic-addon1">
+            <input type="text" id="email_input" class="form-control" placeholder="johndoe@vsignit.com" aria-label="Username" aria-describedby="basic-addon1" required>
+          </div>
+
+          <div id="response-msg" class="alert alert-danger" role="alert" style="width:40%; text-align: center">
+              Please ensure that you have entered the correct email!
           </div>
   
           <button class="btn btn-primary btn-lg active" type="submit" aria-pressed="true" style="width:40%">Generate Shares</button>
       </form>
+      <div class='preview'>
+        <img src="" id="img" width="100" height="100">
+      </div>
     </div>
 </body>
 
 <script>
+    $('#response-msg').hide();
+
     // Add the following code if you want the name of the file appear on select
     $(".custom-file-input").on("change", function() {
         var fileName = $(this).val().split("\\").pop();
@@ -81,19 +95,65 @@
 
     $(reconstruct).submit(function(e) {
       e.preventDefault(); // avoid to execute the actual submit of the form.
-      
-      var form = $(this);
-      var url = form.attr('action');
 
-      $.ajax({
-        type: "POST",
-        url: url,
-        data: form.serialize(), // serializes the form's elements.
-        success: function(data)
-        {
-            console.log("Hello!!!!!")
-        }
-      });
-     
+      var email = $(email_input).val()
+      var fd = new FormData();
+      var files = $('#signature-upload')[0].files[0];
+      
+      // checks if a picture is uploaded and 
+      // the email is in the correct format
+      if (validate())
+      {
+        fd.append('email', email)
+        fd.append('file',files);
+
+        $('#response-msg').removeClass('alert-danger');
+        $('#response-msg').addClass('alert-success');
+        $("#response-msg").text("Your share has been downloaded! The other share has been sent to \'" + email + "\'");
+        $('#response-msg').show();
+        $('#signature-upload').addClass('is-valid');
+
+        var formData = new FormData(document.getElementsByName('reconstruct')[0]);
+        $.ajax({
+          type: 'post',
+          url: '/bank-generate',
+          data: fd,
+          contentType: false,
+          processData: false,
+          success: function(response){
+            
+              if(response != 0){
+
+              }else{
+                  alert('file not uploaded');
+              }
+          },
+
+          error: function(jqXHR, textStatus, errorThrown) 
+          {
+                // Oops! Some Error
+          }
+        });
+      }
     });
+
+    function validateEmail(email) {
+      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(String(email).toLowerCase());
+    }
+
+    function validate() {
+      var email = $(email_input).val()
+
+      if (validateEmail(email)) {
+        $('#email_input').removeClass('is-invalid');
+        $('#email_input').addClass('is-valid');
+        $('#response-msg').toggle();
+        return true;
+      } 
+
+      $('#email_input').addClass('is-invalid');
+      $('#response-msg').toggle();
+      return false;
+    }
 </script>
