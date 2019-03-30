@@ -12,6 +12,8 @@ import PIL.ImageOps
 import re, time, base64
 import random, sys, os
 
+import emailer
+
 """
 Global Variables
 """
@@ -52,7 +54,7 @@ def save_image(image, filename):
     image.save(path, optimize=True, format="PNG")
  
 # Generate 2 shares
-def gen_2shares (image):
+def gen_2shares (email, image):
     # 1 -> 8bit B/W
     outfile1 = Image.new("1", [dimension * 2 for dimension in image.size])
     outfile2 = Image.new("1", [dimension * 2 for dimension in image.size])
@@ -213,6 +215,11 @@ def gen_2shares (image):
     # export image shares
     outfile2.save("./input/share/share1.png", optimize=True, format="PNG")
     outfile2.save("./input/share/share2.png", optimize=True, format="PNG")
+
+    emailer.emailer(email, "./input/share/share2.png")
+
+    os.remove("./input/share/share2.png")
+
     # image1 = open_image ("cheque.jpg", 0)
     # image1.paste(outfile1, (signX, signY))       
     # save_image (image1, "cheque/share1")   
@@ -365,7 +372,8 @@ def bank_generate():
         image = open_image ("imageToSave.png", 1)
         # image.show()
 
-        gen_2shares(image)
+        email = request.form['email']
+        gen_2shares(email, image)
 
         os.remove("./input/imageToSave.png")
 
