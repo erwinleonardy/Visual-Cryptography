@@ -126,15 +126,6 @@
           </div>
 
           <div class="row">
-            <div class="col-3">
-                <div id="preview1" style="margin-bottom: 10px; max-height: 200px; max-width: 200px"></div>
-            </div>
-            <div class="col-3">
-              <div id="preview2" style="margin-bottom: 10px; max-height: 200px; max-width: 200px"></div>
-            </div>
-          </div>
-
-          <div class="row">
             <div class="col-6 input-group mb-2">
               <div class="custom-file">
                   <input type="file" class="custom-file-input" id="share-upload" required>
@@ -151,7 +142,7 @@
 
           <div class="row">
             <div class="col-3">
-                <a id="downloadLink" target="_blank" value="client_share" download><div id="preview3" style="margin-bottom: 10px; max-height: 250px; max-width: 250px"></div></a>
+                <a id="downloadLink" target="_blank" value="client_share" download><div id="preview" style="margin-bottom: 10px; max-height: 250px; max-width: 250px"></div></a>
             </div>
           </div>
 
@@ -174,7 +165,7 @@
 
 <script>
     $('#response-msg').hide();
-    $('#preview3Info').hide();
+    $('#previewInfo').hide();
     $('#preview1').hide();
     $('#preview2').hide();
 
@@ -213,29 +204,13 @@
         filereader1.onload = function(fileLoadedEvent) 
         {
           srcData1 = fileLoadedEvent.target.result; // <--- data: base64
-          srcData2 = fileLoadedEvent.target.result; // <--- data: base64
 
           filereader2.onload = function(fileLoadedEvent) 
           {
             srcData2 = fileLoadedEvent.target.result; // <--- data: base64
-
-            // update the image tag src
-            var newImage = document.createElement('img');
-            newImage.src = srcData1;
-            newImage.height = 150;
-            newImage.width = 200;
-            document.getElementById("preview1").innerHTML = newImage.outerHTML;
-
-            var newImage2 = document.createElement('img');
-            newImage2.src = srcData2;
-            newImage2.height = 150;
-            newImage2.width = 200;
-            document.getElementById("preview2").innerHTML = newImage2.outerHTML;
             
             // store image (base64)
             var fd = new FormData();
-            var imgsrc1 = document.getElementById("preview1").src;
-            var imgsrc2 = document.getElementById("preview2").src;
 
             // updates UI
             document.getElementById("loader").style.display = "none";
@@ -268,14 +243,13 @@
                     newImage.src = png_download;
                     newImage.height = 150;
                     newImage.width = 200;
-                    document.getElementById("preview3").innerHTML = newImage.outerHTML;
+                    document.getElementById("preview").innerHTML = newImage.outerHTML;
 
                     var a = document.getElementById('downloadLink'); //or grab it by tagname etc
                     a.href = png_download
                     a.download = "client_cheque"
-                    $("#downloadLink").click();
                     
-                    $('#preview3Info').show();
+                    $('#previewInfo').show();
 
                     // alert(png_download)
                     // console.log(response)
