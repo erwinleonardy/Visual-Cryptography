@@ -53,7 +53,7 @@
       <p class="lead">Use this panel to upload the cheque and your share to reconstruct!</p>
       <hr class="my-4">
 
-      <form>
+      <form name="reconstruct" method="post" enctype="multipart/form-data">
           <div class="input-group mb-2" style="width:40%">
               <div class="custom-file">
                   <input type="file" class="custom-file-input" id="inputGroupFile02">
@@ -73,9 +73,19 @@
 </body>
 
 <script>
-    // Add the following code if you want the name of the file appear on select
     $(".custom-file-input").on("change", function() {
         var fileName = $(this).val().split("\\").pop();
         $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
     });
+
+    $(reconstruct).submit(function(e) 
+    {
+      e.preventDefault(); // avoid to execute the actual submit of the form.
+      
+      // checks if a picture is uploaded and 
+      // the email is in the correct format
+      if (validate())
+        encodeImageFileAsURL()
+    });
+
 </script>

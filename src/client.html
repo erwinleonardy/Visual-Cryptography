@@ -50,39 +50,193 @@
   </nav>
 
   <div class="jumbotron">
-    <h1 class="display-4">Client Page</h1>
-    <p class="lead">Use this panel to upload the cheque you wanted to sign!</p>
-    <hr class="my-4">
-    <form>
-        <div class="input-group mb-2" style="width:40%">
-            <div class="custom-file">
-                <input type="file" class="custom-file-input" id="inputGroupFile02">
-                <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose Cheque</label>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h1 class="display-4">Client Page</h1>
+        </div>
+      </div>
+
+        <div class="row">
+          <div class="col">
+            <p class="lead">Use this panel to upload the cheque you wanted to sign!</p>
+            <hr class="my-4">
+          </div>
+        </div>
+      </div>
+    
+      <form name="clientForm" method="post" enctype="multipart/form-data">
+        <div class="container">
+          <div class="row">
+            <div class="col-6 input-group mb-2">
+              <div class="custom-file">
+                  <input type="file" class="custom-file-input" id="cheque-upload" required>
+                  <label class="custom-file-label" for="cheque-upload" aria-describedby="inputGroupFileAddon02">Choose Cheque</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-3">
+                <div id="preview1" style="margin-bottom: 10px; max-height: 200px; max-width: 200px"></div>
+            </div>
+            <div class="col-3">
+              <div id="preview2" style="margin-bottom: 10px; max-height: 200px; max-width: 200px"></div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-6 input-group mb-2">
+              <div class="custom-file">
+                  <input type="file" class="custom-file-input" id="share-upload" required>
+                  <label class="custom-file-label" for="share-upload" aria-describedby="inputGroupFileAddon02">Choose Client Share</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-3">
+                <a id="downloadLink" target="_blank" value="client_share" download><div id="preview3" style="margin-bottom: 10px; max-height: 250px; max-width: 250px"></div></a>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <div id="response-msg" class="alert alert-danger" role="alert" style="width:49%; text-align: center">
+                  Please ensure that you have entered the correct email!
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+              <div class="col-12">
+                  <button class="btn btn-primary btn-lg active" type="submit" aria-pressed="true" style="width:49%">Sign Cheque</button>
+              </div>
             </div>
         </div>
-        <div class="input-group mb-2" style="width:40%">
-            <div class="custom-file">
-                <input type="file" class="custom-file-input" id="inputGroupFile02">
-                <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose Client Share</label>
-            </div>
-        </div>
-
-        <div class="custom-control custom-switch" style="margin-top:10px; margin-bottom:10px">
-            <input type="checkbox" class="custom-control-input" id="switch1">
-            <label class="custom-control-label" for="switch1">Download a Copy</label>
-        </div>
-
-        <a href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true" style="width:40%">Sign</a>
     </form>
   </div>
 </body>
 
 
 <script>
-    // Add the following code if you want the name of the file appear on select
+    $('#response-msg').hide();
+    $('#preview3Info').hide();
+    $('#preview1').hide();
+    $('#preview2').hide();
+
+    $(document).ready(function(){
+        $('.zoom').hover(function() {
+            $(this).addClass('transition');
+        }, function() {
+            $(this).removeClass('transition');
+        });
+    });
+
     $(".custom-file-input").on("change", function() {
         var fileName = $(this).val().split("\\").pop();
         $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
     });
+
+    $(clientForm).submit(function(e) 
+    {
+      e.preventDefault(); // avoid to execute the actual submit of the form.
+      encodeImageFileAsURL()
+    });
+
+    function encodeImageFileAsURL()
+    {
+      var cheque = document.getElementById("cheque-upload").files;
+      var share = document.getElementById("share-upload").files;
+
+      if (cheque.length > 0 && share.length > 0) 
+      {
+        var fileToLoad1 = cheque[0];
+        var filereader1 = new FileReader();
+        var fileToLoad2 = share[0];
+        var filereader2 = new FileReader();
+
+        filereader1.onload = function(fileLoadedEvent) 
+        {
+          srcData1 = fileLoadedEvent.target.result; // <--- data: base64
+          srcData2 = fileLoadedEvent.target.result; // <--- data: base64
+
+          filereader2.onload = function(fileLoadedEvent) 
+          {
+            srcData2 = fileLoadedEvent.target.result; // <--- data: base64
+
+            // update the image tag src
+            var newImage = document.createElement('img');
+            newImage.src = srcData1;
+            newImage.height = 150;
+            newImage.width = 200;
+            document.getElementById("preview1").innerHTML = newImage.outerHTML;
+
+            var newImage2 = document.createElement('img');
+            newImage2.src = srcData2;
+            newImage2.height = 150;
+            newImage2.width = 200;
+            document.getElementById("preview2").innerHTML = newImage2.outerHTML;
+            
+            // store image (base64)
+            var fd = new FormData();
+            var imgsrc1 = document.getElementById("preview1").src;
+            var imgsrc2 = document.getElementById("preview2").src;
+
+            // updates UI
+            $('#response-msg').removeClass('alert-danger');
+            $('#response-msg').addClass('alert-success');
+            $("#response-msg").text("Your share has been created! Click on the image to download.");
+            $('#response-msg').show();
+            $('#cheque-upload').addClass('is-valid');
+            $('#share-upload').addClass('is-valid');
+
+            // send to server via AJAX
+            fd.append('file1',srcData1)
+            fd.append('file2',srcData2)
+
+            var formData = new FormData(document.getElementById("clientForm"));
+            $.ajax({
+              type: 'post',
+              url: '/client',
+              data: fd,
+              mimeType:"multipart/form-data",
+              contentType: false,
+              cache: false,
+              processData: false,
+              success: function(response){
+                  if(response != 0){
+                    var png_download = "data:image/png;base64,"
+                    png_download += response
+
+                    var newImage = document.createElement('img');
+                    newImage.src = png_download;
+                    newImage.height = 150;
+                    newImage.width = 200;
+                    document.getElementById("preview3").innerHTML = newImage.outerHTML;
+
+                    var a = document.getElementById('downloadLink'); //or grab it by tagname etc
+                    a.href = png_download
+                    a.download = "client_share"
+                    $("#downloadLink").click();
+                    
+                    $('#preview3Info').show();
+
+                    // alert(png_download)
+                    // console.log(response)
+                  } else{
+                    alert('file not uploaded');
+                  }
+              },
+
+              error: function(jqXHR, textStatus, errorThrown) 
+              {}
+            });
+          }
+        }
+        filereader1.readAsDataURL(fileToLoad1);   
+        filereader2.readAsDataURL(fileToLoad2);          
+      }
+    }
 </script>
 

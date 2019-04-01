@@ -268,7 +268,7 @@ def merge_2shares ():
             result.putpixel((x, y), (255,255,255,255))
 
     # place the clean shares to it
-    overlay_pic(result)
+    overlay_pic("./output/clean2.png", result)
 
 # Resize the reconstructed image 
 # and clean the noise
@@ -319,11 +319,25 @@ def clean_2shares (inputImg):
 
     save_image (image_trans, "clean2")
 
+# paste the source pic on top of the destination pic
+def paste_on_top (source, dest):
+    dest.paste (source,(signX, signY))   
+
+    # export the image to base64 format
+    save_image (dest, "cheque/final_img")      
+
+    with open("./output/cheque/final_img.png", "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+
+    os.remove("./output/cheque/final_img.png")
+
+    return encoded_string
+
 # overlay the pic
-def overlay_pic (dest):
-    source = Image.open("./output/clean2.png")
-    dest.paste(source, (signX+reconDist, signY+(reconDist*2)), mask=source)       
-    save_image (dest, "cheque/final_img")       
+# def overlay_pic (dest):
+#     source = Image.open("./output/clean2.png")
+#     dest.paste(source, (signX+reconDist, signY+(reconDist*2)), mask=source)       
+#     save_image (dest, "cheque/final_img")   
 
 """
 Main function
@@ -341,7 +355,6 @@ Main function
 Flask Part
 """
 from flask import Flask, render_template, request
-from werkzeug import secure_filename
 app = Flask(__name__, template_folder='./src')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -363,21 +376,22 @@ def bank_generate():
     elif request.method == 'POST':        
         # print(request.form['file'], file=sys.stderr)
 
+        # convert the base64 image to an image
         base64_data = re.sub('^data:image/.+;base64,', '', request.form['file'])
         byte_data = base64.b64decode(base64_data)
 
         with open("./input/imageToSave.png", "wb") as fh:
             fh.write(byte_data)
 
+        # generate two shares and send one of the shares to the server
         image = open_image ("imageToSave.png", 1)
-        # image.show()
-
         email = request.form['email']
+
         gen_2shares(email, image)
 
         os.remove("./input/imageToSave.png")
 
-        return "test"
+        return "Success"
 
 @app.route('/bank-reconstruct')
 def bank_reconstruct():
@@ -386,12 +400,41 @@ def bank_reconstruct():
     except Exception as e:
         return str(e)
 
-@app.route('/client')
+@app.route('/client', methods=['GET', 'POST'])
 def client():
-    try:
-        return render_template('client.html')
-    except Exception as e:
-        return str(e)
+    if request.method == 'GET':
+        try:
+            return render_template('client.html')
+        except Exception as e:
+            return str(e)
+
+    elif request.method == 'POST':        
+        # print(request.form['file1'], file=sys.stderr)
+
+        # convert the base64 image to an image
+        base64_data1 = re.sub('^data:image/.+;base64,', '', request.form['file1'])
+        byte_data1 = base64.b64decode(base64_data1)
+
+        base64_data2 = re.sub('^data:image/.+;base64,', '', request.form['file2'])
+        byte_data2 = base64.b64decode(base64_data2)
+
+        with open("./input/clientCheque.png", "wb") as fh:
+            fh.write(byte_data1)
+
+        with open("./input/clientShare.png", "wb") as fh:
+            fh.write(byte_data2)
+
+        # generate two shares and send one of the shares to the server
+        clientCheque = open_image ("clientCheque.png", 1)
+        clientShare = open_image ("clientShare.png", 1)
+
+        resultStr = paste_on_top (clientShare, clientCheque)
+
+        os.remove("./input/clientCheque.png")
+        os.remove("./input/clientShare.png")
+
+        return resultStr
+
 
 if __name__ == '__main__':
     app.run()
