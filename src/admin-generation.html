@@ -110,8 +110,6 @@
             <hr class="my-4">
           </div>
         </div>
-        
-       
       </div>
 
       <form name="generation" method="post" enctype="multipart/form-data">
@@ -126,7 +124,7 @@
           </div>
 
           <div class="row">
-            <div class="col-6 input-group mb-3">
+            <div class="col-6 input-group mb-2">
               <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon1">Client's Email</span>
               </div>
@@ -190,14 +188,19 @@
     }
 
     function validate() {
+      $('#signature-upload').addClass('is-valid');
       var email = $(email_input).val()
 
       if (validateEmail(email)) {
+        $('#email_input').removeClass('is-invalid');
+        $('#email_input').addClass('is-valid');
+        $('#response-msg').hide();
         return true;
       } 
 
       else
       {
+        document.getElementById("loader").style.display = "none";
         $('#email_input').addClass('is-invalid');
         $('#response-msg').toggle();
         return false;
@@ -253,14 +256,11 @@
 
                   // updates UI
                   document.getElementById("loader").style.display = "none";
-                  $('#email_input').removeClass('is-invalid');
-                  $('#email_input').addClass('is-valid');
 
                   $('#response-msg').removeClass('alert-danger');
                   $('#response-msg').addClass('alert-success');
                   $("#response-msg").text("Click on the image to download your share. The other share has been sent to \'" + email + "\'");
                   $('#response-msg').show();
-                  $('#signature-upload').addClass('is-valid');
 
                 } else{
                     alert('file not uploaded');
