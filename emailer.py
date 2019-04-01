@@ -12,7 +12,7 @@ def emailer (receiver_email, filename):
 
 	message = MIMEMultipart("alternative")
 
-	message["Subject"] = "image test 2"
+	message["Subject"] = "Your VSignIt Share"
 	message["From"] = sender_email
 	message["To"] = receiver_email
 

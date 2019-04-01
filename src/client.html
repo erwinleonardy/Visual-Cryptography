@@ -6,6 +6,55 @@
     <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/popper.js') }}"></script>
     <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <meta name="viewport" content = "width=device-width, initial-scale=1.0">
+    <style>
+        /* Center the loader */
+        #loader {
+          position: absolute;
+          left: 60%;
+          top: 50%;
+          z-index: 1;
+          width: 150px;
+          height: 150px;
+          margin: -75px 0 0 -75px;
+          border: 16px solid #f3f3f3;
+          border-radius: 50%;
+          border-top: 16px solid #3498db;
+          width: 120px;
+          height: 120px;
+          -webkit-animation: spin 1s linear infinite;
+          animation: spin 1s linear infinite;
+          display:none;
+        }
+    
+        @-webkit-keyframes spin {
+          0% { -webkit-transform: rotate(0deg); }
+          100% { -webkit-transform: rotate(360deg); }
+        }
+    
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+    
+        /* Add animation to "page content" */
+        .animate-bottom {
+          position: relative;
+          -webkit-animation-name: animatebottom;
+          -webkit-animation-duration: 1s;
+          animation-name: animatebottom;
+          animation-duration: 1s
+        }
+    
+        @-webkit-keyframes animatebottom {
+          from { bottom:-100px; opacity:0 } 
+          to { bottom:0px; opacity:1 }
+        }
+    
+        @keyframes animatebottom { 
+          from{ bottom:-100px; opacity:0 } 
+          to{ bottom:0; opacity:1 }
+        }
+        </style>
 </head>
 
 <body class = "body">
@@ -95,6 +144,12 @@
           </div>
 
           <div class="row">
+              <div class="col-5">
+                <div id="loader"></div>
+              </div>
+          </div>
+
+          <div class="row">
             <div class="col-3">
                 <a id="downloadLink" target="_blank" value="client_share" download><div id="preview3" style="margin-bottom: 10px; max-height: 250px; max-width: 250px"></div></a>
             </div>
@@ -141,6 +196,7 @@
     $(clientForm).submit(function(e) 
     {
       e.preventDefault(); // avoid to execute the actual submit of the form.
+      document.getElementById("loader").style.display = "block";
       encodeImageFileAsURL()
     });
 
@@ -184,6 +240,7 @@
             var imgsrc2 = document.getElementById("preview2").src;
 
             // updates UI
+            document.getElementById("loader").style.display = "none";
             $('#response-msg').removeClass('alert-danger');
             $('#response-msg').addClass('alert-success');
             $("#response-msg").text("Your share has been created! Click on the image to download.");
@@ -217,7 +274,7 @@
 
                     var a = document.getElementById('downloadLink'); //or grab it by tagname etc
                     a.href = png_download
-                    a.download = "client_share"
+                    a.download = "client_cheque"
                     $("#downloadLink").click();
                     
                     $('#preview3Info').show();

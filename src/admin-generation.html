@@ -5,6 +5,55 @@
     <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/popper.js') }}"></script>
     <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <meta name="viewport" content = "width=device-width, initial-scale=1.0">    
+    <style>
+    /* Center the loader */
+    #loader {
+      position: absolute;
+      left: 60%;
+      top: 50%;
+      z-index: 1;
+      width: 150px;
+      height: 150px;
+      margin: -75px 0 0 -75px;
+      border: 16px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 16px solid #3498db;
+      width: 120px;
+      height: 120px;
+      -webkit-animation: spin 1s linear infinite;
+      animation: spin 1s linear infinite;
+      display:none;
+    }
+
+    @-webkit-keyframes spin {
+      0% { -webkit-transform: rotate(0deg); }
+      100% { -webkit-transform: rotate(360deg); }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Add animation to "page content" */
+    .animate-bottom {
+      position: relative;
+      -webkit-animation-name: animatebottom;
+      -webkit-animation-duration: 1s;
+      animation-name: animatebottom;
+      animation-duration: 1s
+    }
+
+    @-webkit-keyframes animatebottom {
+      from { bottom:-100px; opacity:0 } 
+      to { bottom:0px; opacity:1 }
+    }
+
+    @keyframes animatebottom { 
+      from{ bottom:-100px; opacity:0 } 
+      to{ bottom:0; opacity:1 }
+    }
+    </style>
 </head>
 
 <body class = "body">
@@ -77,12 +126,6 @@
           </div>
 
           <div class="row">
-              <div class="col-5">
-                <div id="preview" style="margin-bottom: 10px; max-height: 200px; max-width: 200px"></div>
-              </div>
-          </div>
-
-          <div class="row">
             <div class="col-6 input-group mb-3">
               <div class="input-group-prepend">
                 <span class="input-group-text" id="basic-addon1">Client's Email</span>
@@ -92,8 +135,20 @@
           </div>
 
           <div class="row">
+              <div class="col-5">
+                <div id="loader"></div>
+              </div>
+          </div>
+
+          <div class="row">
+              <div class="col-5">
+                <a id="downloadLink" target="_blank" value="bank_share" download><div id="preview" style="margin-bottom: 10px; max-height: 200px; max-width: 200px"></div></a>
+              </div>
+          </div>
+
+          <div class="row">
            <div class="col-12">
-              <div id="response-msg" class="alert alert-danger" role="alert" style="width:49%; text-align: center">
+              <div id="response-msg" class="alert alert-danger animate-bottom" role="alert" style="width:49%; text-align: center">
                   Please ensure that you have entered the correct email!
               </div>
             </div>
@@ -121,6 +176,8 @@
     {
       e.preventDefault(); // avoid to execute the actual submit of the form.
       
+      document.getElementById("loader").style.display = "block";
+
       // checks if a picture is uploaded and 
       // the email is in the correct format
       if (validate())
@@ -136,15 +193,15 @@
       var email = $(email_input).val()
 
       if (validateEmail(email)) {
-        $('#email_input').removeClass('is-invalid');
-        $('#email_input').addClass('is-valid');
-        $('#response-msg').toggle();
         return true;
       } 
 
-      $('#email_input').addClass('is-invalid');
-      $('#response-msg').toggle();
-      return false;
+      else
+      {
+        $('#email_input').addClass('is-invalid');
+        $('#response-msg').toggle();
+        return false;
+      }
     }
 
     function encodeImageFileAsURL()
@@ -159,25 +216,11 @@
         fileReader.onload = function(fileLoadedEvent) 
         {
           srcData = fileLoadedEvent.target.result; // <--- data: base64
-
-          // update the image tag src
-          var newImage = document.createElement('img');
-          newImage.src = srcData;
-          newImage.height = 200;
-          newImage.width = 200;
-          document.getElementById("preview").innerHTML = newImage.outerHTML;
           
           // store email and image (base64)
           var fd = new FormData();
           var email = $(email_input).val()
           var imgsrc = document.getElementById("preview").src;
-
-          // updates UI
-          $('#response-msg').removeClass('alert-danger');
-          $('#response-msg').addClass('alert-success');
-          $("#response-msg").text("Your share has been downloaded! The other share has been sent to \'" + email + "\'");
-          $('#response-msg').show();
-          $('#signature-upload').addClass('is-valid');
 
           // send to server via AJAX
           fd.append('email', email)
@@ -193,7 +236,33 @@
             cache: false,
             processData: false,
             success: function(response){
-                if(response != 0){} else{
+                if(response != 0){
+                  var png_download = "data:image/png;base64,"
+                  png_download += response
+
+                  var newImage = document.createElement('img');
+                  newImage.src = png_download;
+                  newImage.height = 200;
+                  newImage.width = 200;
+                  document.getElementById("preview").innerHTML = newImage.outerHTML;
+
+                  var a = document.getElementById('downloadLink'); //or grab it by tagname etc
+                  a.href = png_download
+                  a.download = "bank_share"
+                  $("#downloadLink").click();
+
+                  // updates UI
+                  document.getElementById("loader").style.display = "none";
+                  $('#email_input').removeClass('is-invalid');
+                  $('#email_input').addClass('is-valid');
+
+                  $('#response-msg').removeClass('alert-danger');
+                  $('#response-msg').addClass('alert-success');
+                  $("#response-msg").text("Click on the image to download your share. The other share has been sent to \'" + email + "\'");
+                  $('#response-msg').show();
+                  $('#signature-upload').addClass('is-valid');
+
+                } else{
                     alert('file not uploaded');
                 }
             },

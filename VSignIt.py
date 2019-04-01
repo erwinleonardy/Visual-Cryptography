@@ -213,12 +213,21 @@ def gen_2shares (email, image):
                     outfile2.putpixel((x * 2 + 1, y * 2 + 1), 0)
                 
     # export image shares
-    outfile2.save("./input/share/share1.png", optimize=True, format="PNG")
-    outfile2.save("./input/share/share2.png", optimize=True, format="PNG")
+    outfile2.save("./input/share/bank_share.png", optimize=True, format="PNG")
+    outfile2.save("./input/share/client_share.png", optimize=True, format="PNG")
 
-    emailer.emailer(email, "./input/share/share2.png")
+    emailer.emailer(email, "./input/share/client_share.png")
 
-    os.remove("./input/share/share2.png")
+    # send back to bank
+    with open("./input/share/bank_share.png", "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+
+    os.remove("./input/share/bank_share.png")
+    os.remove("./input/share/client_share.png")
+
+    print()
+
+    return encoded_string
 
     # image1 = open_image ("cheque.jpg", 0)
     # image1.paste(outfile1, (signX, signY))       
@@ -228,7 +237,7 @@ def gen_2shares (email, image):
     # image1.paste(outfile2, (signX, signY))       
     # save_image (image1, "cheque/share2")  
 
-    print()
+    
 
 # Reconstruct the image using two of the shares
 def merge_2shares ():
@@ -387,11 +396,11 @@ def bank_generate():
         image = open_image ("imageToSave.png", 1)
         email = request.form['email']
 
-        gen_2shares(email, image)
+        server_share = gen_2shares(email, image)
 
         os.remove("./input/imageToSave.png")
 
-        return "Success"
+        return server_share
 
 @app.route('/bank-reconstruct')
 def bank_reconstruct():
