@@ -216,7 +216,7 @@ def gen_2shares (email, image):
     outfile1.save("./input/bank_share.png", optimize=True, format="PNG")
     outfile2.save("./input/client_share.png", optimize=True, format="PNG")
 
-    emailer.emailer(email, "./input/client_share.png")
+    # emailer.emailer(email, "./input/client_share.png")
 
     # send back to bank
     with open("./input/bank_share.png", "rb") as image_file:
@@ -340,6 +340,20 @@ def overlay_pic (sourcePath, dest):
     dest.paste(source, (signX+reconDist, signY+(reconDist*2)), mask=source)       
     save_image (dest, "final_cheque")   
 
+# checks image dimension is a square
+# if yes, return the resized image
+# otherwise, return None
+def validate_resize_image (image):
+    width, height = image.size
+    if (width != height):
+        return None
+    else:
+        try:
+            image.thumbnail((signWidth, signWidth), Image.ANTIALIAS)
+            return image
+        except IOError:
+            return None
+
 """
 Main function
 """
@@ -386,13 +400,16 @@ def bank_generate():
 
         # generate two shares and send one of the shares to the server
         image = open_image ("imageToSave.png", 1)
-        email = request.form['email']
 
-        server_share = gen_2shares(email, image)
+        if validate_resize_image(image) != None:
+            email = request.form['email']
+            bank_share = gen_2shares(email, image)
 
-        os.remove("./input/imageToSave.png")
+            os.remove("./input/imageToSave.png")
+            return bank_share
 
-        return server_share
+        else:
+            return ""
 
 @app.route('/bank-reconstruct', methods=['GET', 'POST'])
 def bank_reconstruct():

@@ -176,6 +176,7 @@
     {
       e.preventDefault(); // avoid to execute the actual submit of the form.
       $('#preview').hide();
+      $('#response-msg').hide();
       document.getElementById("loader").style.display = "block";
       encodeImageFileAsURL()
     });
@@ -240,7 +241,7 @@
                     $('#response-msg').removeClass('alert-danger');
                     $('#response-msg').addClass('alert-success');
                     $("#response-msg").text("Your share has been created! Click on the image to download.");
-                    $('#response-msg').show();
+                    $('#response-msg').toggle();
                   } else{
                     alert('file not uploaded');
                   }

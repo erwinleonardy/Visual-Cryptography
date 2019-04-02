@@ -177,10 +177,19 @@
       $('#preview').hide();
       document.getElementById("loader").style.display = "block";
 
-      // checks if a picture is uploaded and 
-      // the email is in the correct format
+      // checks if the email is in the correct format
       if (validate())
-        encodeImageFileAsURL()
+      {
+        // checks if the picture uploaded is of correct dimension 
+        if (encodeImageFileAsURL())
+        {
+
+        }
+        else
+        {
+          
+        }
+      }
     });
 
     function validateEmail(email) {
@@ -189,7 +198,6 @@
     }
 
     function validate() {
-      $('#signature-upload').addClass('is-valid');
       var email = $(email_input).val()
 
       if (validateEmail(email)) {
@@ -202,6 +210,7 @@
       else
       {
         document.getElementById("loader").style.display = "none";
+        $("#response-msg").text("Please ensure that you have entered the correct email!");
         $('#email_input').addClass('is-invalid');
         $('#response-msg').toggle();
         return false;
@@ -258,13 +267,18 @@
                   document.getElementById("loader").style.display = "none";
 
                   $('#preview').show();
+                  $('#signature-upload').removeClass('is-invalid');
+                  $('#signature-upload').addClass('is-valid');
                   $('#response-msg').removeClass('alert-danger');
                   $('#response-msg').addClass('alert-success');
                   $("#response-msg").text("Click on the image to download your share. The other share has been sent to \'" + email + "\'");
-                  $('#response-msg').show();
-
+                  $('#response-msg').toggle();
                 } else{
-                    alert('file not uploaded');
+                  document.getElementById("loader").style.display = "none";
+                  $('#signature-upload').addClass('is-invalid');
+                  $('#response-msg').addClass('alert-danger');
+                  $("#response-msg").text("The image should have the correct dimension (i.e. same width and height)");
+                  $('#response-msg').toggle();
                 }
             },
 
