@@ -165,6 +165,7 @@
 
 <script>
     $('#response-msg').hide();
+    $('#preview1').hide();
 
     $(".custom-file-input").on("change", function() {
         var fileName = $(this).val().split("\\").pop();
@@ -175,6 +176,8 @@
     {
       e.preventDefault(); // avoid to execute the actual submit of the form.
       document.getElementById("loader").style.display = "block";
+      $('#preview1').hide();
+      $('#response-msg').hide();
       encodeImageFileAsURL()
     });
 
@@ -235,6 +238,7 @@
                     a.download = "reconstructed_cheque"
 
                     document.getElementById("loader").style.display = "none";
+                    $('#preview1').show();
                     $('#response-msg').removeClass('alert-danger');
                     $('#response-msg').addClass('alert-success');
                     $("#response-msg").text("Click on the image to download the reconstructed cheque.");

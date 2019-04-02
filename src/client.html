@@ -165,8 +165,7 @@
 
 <script>
     $('#response-msg').hide();
-    $('#preview1').hide();
-    $('#preview2').hide();
+    $('#preview').hide();
 
     $(".custom-file-input").on("change", function() {
         var fileName = $(this).val().split("\\").pop();
@@ -176,6 +175,7 @@
     $(clientForm).submit(function(e) 
     {
       e.preventDefault(); // avoid to execute the actual submit of the form.
+      $('#preview').hide();
       document.getElementById("loader").style.display = "block";
       encodeImageFileAsURL()
     });
@@ -236,6 +236,7 @@
                     a.download = "client_cheque"
 
                     document.getElementById("loader").style.display = "none";
+                    $('#preview').show();
                     $('#response-msg').removeClass('alert-danger');
                     $('#response-msg').addClass('alert-success');
                     $("#response-msg").text("Your share has been created! Click on the image to download.");

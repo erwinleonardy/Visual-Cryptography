@@ -164,6 +164,7 @@
 
 <script>
     $('#response-msg').hide();
+    $('#preview').hide();
 
     $(".custom-file-input").on("change", function() {
         var fileName = $(this).val().split("\\").pop();
@@ -173,7 +174,7 @@
     $(generation).submit(function(e) 
     {
       e.preventDefault(); // avoid to execute the actual submit of the form.
-      
+      $('#preview').hide();
       document.getElementById("loader").style.display = "block";
 
       // checks if a picture is uploaded and 
@@ -256,6 +257,7 @@
                   // updates UI
                   document.getElementById("loader").style.display = "none";
 
+                  $('#preview').show();
                   $('#response-msg').removeClass('alert-danger');
                   $('#response-msg').addClass('alert-success');
                   $("#response-msg").text("Click on the image to download your share. The other share has been sent to \'" + email + "\'");
