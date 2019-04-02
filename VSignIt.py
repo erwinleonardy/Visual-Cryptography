@@ -58,7 +58,7 @@ def gen_2shares (email, image):
     # 1 -> 8bit B/W
     outfile1 = Image.new("1", [dimension * 2 for dimension in image.size])
     outfile2 = Image.new("1", [dimension * 2 for dimension in image.size])
-
+    
     # horizontal axis
     for x in range(0, image.size[0], 2):
         # vertical axis
@@ -213,19 +213,17 @@ def gen_2shares (email, image):
                     outfile2.putpixel((x * 2 + 1, y * 2 + 1), 0)
                 
     # export image shares
-    outfile2.save("./input/share/bank_share.png", optimize=True, format="PNG")
-    outfile2.save("./input/share/client_share.png", optimize=True, format="PNG")
+    outfile1.save("./input/bank_share.png", optimize=True, format="PNG")
+    outfile2.save("./input/client_share.png", optimize=True, format="PNG")
 
-    emailer.emailer(email, "./input/share/client_share.png")
+    emailer.emailer(email, "./input/client_share.png")
 
     # send back to bank
-    with open("./input/share/bank_share.png", "rb") as image_file:
+    with open("./input/bank_share.png", "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read())
 
-    os.remove("./input/share/bank_share.png")
-    os.remove("./input/share/client_share.png")
-
-    print()
+    os.remove("./input/bank_share.png")
+    os.remove("./input/client_share.png")
 
     return encoded_string
 
@@ -235,34 +233,21 @@ def gen_2shares (email, image):
 
     # image1 = open_image ("cheque.jpg", 0)
     # image1.paste(outfile2, (signX, signY))       
-    # save_image (image1, "cheque/share2")  
-
-    
+    # save_image (image1, "cheque/share2")      
 
 # Reconstruct the image using two of the shares
-def merge_2shares ():
-    # read both of the shares
-    infile1 = Image.open('./output/cheque/share1.png')
-    infile2 = Image.open('./output/cheque/share2.png')
-
+def merge_2shares (clientCheque, bankShare):
     # extract the shares area
-    sign1 = infile1.crop((signX, signY, signX+(doubSignSize), signY+(doubSignSize)))
-    sign1.thumbnail((doubSignSize, doubSignSize), Image.ANTIALIAS)
-    sign1 = sign1.convert('1')
-    save_image (sign1, "signature1")  
-
-    sign2 = infile2.crop((signX, signY, signX+(doubSignSize), signY+(doubSignSize)))
-    sign2.thumbnail((doubSignSize, doubSignSize), Image.ANTIALIAS)
-    sign2 = sign2.convert('1')
-    save_image (sign2, "signature2")  
-    print()
+    clientShare = clientCheque.crop((signX, signY, signX+(doubSignSize), signY+(doubSignSize)))
+    clientShare.thumbnail((doubSignSize, doubSignSize), Image.ANTIALIAS)
+    clientShare = clientShare.convert('1')
 
     # reconstruct the shares
-    outfile = Image.new('1', sign1.size)
+    outfile = Image.new('1', clientShare.size)
 
-    for x in range(sign1.size[0]):
-        for y in range(sign1.size[1]):
-            outfile.putpixel((x,y), min(sign1.getpixel((x, y)), sign2.getpixel((x, y))))
+    for x in range(clientShare.size[0]):
+        for y in range(clientShare.size[1]):
+            outfile.putpixel((x,y), min(clientShare.getpixel((x, y)), bankShare.getpixel((x, y))))
 
     save_image (outfile, "recon")    
 
@@ -270,14 +255,21 @@ def merge_2shares ():
     clean_2shares (outfile) 
 
     # replace the area with white color
-    result = Image.open('./output/cheque/share1.png')
+    # result = Image.open('./output/cheque/share1.png')
 
     for x in range(signX, signX+(doubSignSize)):
         for y in range(signY, signY+(doubSignSize)):
-            result.putpixel((x, y), (255,255,255,255))
+            clientCheque.putpixel((x, y), 255)
 
     # place the clean shares to it
-    overlay_pic("./output/clean2.png", result)
+    overlay_pic("./output/clean2.png", clientCheque)
+
+    with open("./output/final_cheque.png", "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+
+    os.remove("./output/final_cheque.png")
+
+    return encoded_string
 
 # Resize the reconstructed image 
 # and clean the noise
@@ -333,20 +325,20 @@ def paste_on_top (source, dest):
     dest.paste (source,(signX, signY))   
 
     # export the image to base64 format
-    save_image (dest, "cheque/final_img")      
+    save_image (dest, "final_img")      
 
-    with open("./output/cheque/final_img.png", "rb") as image_file:
+    with open("./output/final_img.png", "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read())
 
-    os.remove("./output/cheque/final_img.png")
+    os.remove("./output/final_img.png")
 
     return encoded_string
 
 # overlay the pic
-# def overlay_pic (dest):
-#     source = Image.open("./output/clean2.png")
-#     dest.paste(source, (signX+reconDist, signY+(reconDist*2)), mask=source)       
-#     save_image (dest, "cheque/final_img")   
+def overlay_pic (sourcePath, dest):
+    source = Image.open(sourcePath)
+    dest.paste(source, (signX+reconDist, signY+(reconDist*2)), mask=source)       
+    save_image (dest, "final_cheque")   
 
 """
 Main function
@@ -402,13 +394,42 @@ def bank_generate():
 
         return server_share
 
-@app.route('/bank-reconstruct')
+@app.route('/bank-reconstruct', methods=['GET', 'POST'])
 def bank_reconstruct():
-    try:
-        return render_template('admin-reconstruct.html')
-    except Exception as e:
-        return str(e)
+    if request.method == 'GET':
+        try:
+            return render_template('admin-reconstruct.html')
+        except Exception as e:
+            return str(e)
 
+    elif request.method == 'POST':        
+        # print(request.form['file1'], file=sys.stderr)
+
+        # convert the base64 image to an image
+        base64_data1 = re.sub('^data:image/.+;base64,', '', request.form['file1'])
+        byte_data1 = base64.b64decode(base64_data1)
+
+        base64_data2 = re.sub('^data:image/.+;base64,', '', request.form['file2'])
+        byte_data2 = base64.b64decode(base64_data2)
+
+        with open("./input/clientCheque.png", "wb") as fh:
+            fh.write(byte_data1)
+
+        with open("./input/bankShare.png", "wb") as fh:
+            fh.write(byte_data2)
+
+        # merge the client cheque and the bank share
+        # to reveal the reconstructed signature
+        clientCheque = open_image ("clientCheque.png", 1)
+        bankShare = open_image ("bankShare.png", 1)
+
+        final_result = merge_2shares (clientCheque, bankShare)
+
+        os.remove("./input/clientCheque.png")
+        os.remove("./input/bankShare.png")
+
+        return final_result
+        
 @app.route('/client', methods=['GET', 'POST'])
 def client():
     if request.method == 'GET':
