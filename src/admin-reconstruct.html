@@ -1,63 +1,20 @@
 <html>
+
 <head>
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon"/>
+  <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='css/common.css') }}">
   <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='css/bootstrap.min.css') }}">
   <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
   <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/popper.js') }}"></script>
   <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
   <meta name="viewport" content = "width=device-width, initial-scale=1.0">    
-  <style>
-    /* Center the loader */
-    #loader {
-      position: absolute;
-      left: 60%;
-      top: 50%;
-      z-index: 1;
-      width: 150px;
-      height: 150px;
-      margin: -75px 0 0 -75px;
-      border: 16px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 16px solid #3498db;
-      width: 120px;
-      height: 120px;
-      -webkit-animation: spin 1s linear infinite;
-      animation: spin 1s linear infinite;
-      display:none;
-    }
-
-    @-webkit-keyframes spin {
-      0% { -webkit-transform: rotate(0deg); }
-      100% { -webkit-transform: rotate(360deg); }
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Add animation to "page content" */
-    .animate-bottom {
-      position: relative;
-      -webkit-animation-name: animatebottom;
-      -webkit-animation-duration: 1s;
-      animation-name: animatebottom;
-      animation-duration: 1s
-    }
-
-    @-webkit-keyframes animatebottom {
-      from { bottom:-100px; opacity:0 } 
-      to { bottom:0px; opacity:1 }
-    }
-
-    @keyframes animatebottom { 
-      from{ bottom:-100px; opacity:0 } 
-      to{ bottom:0; opacity:1 }
-    }
-  </style>
 </head>
 
+<!-- Body -->
 <body class = "body">
+  <!-- Nav Bar -->
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
     <a class="navbar-brand" href="#">
       <img src="{{ url_for('static', filename='img/logo.png') }}" alt="">
     </a>
@@ -97,165 +54,193 @@
     </div>
   </nav>
   
+  <!-- Content -->
   <div class="jumbotron">
-      <div class="container">
-        <div class="row">
-          <div class="col">
-            <h1 class="display-4">Admin Page (Share Reconstruction)</h1>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col">
-            <p class="lead">Use this panel to upload the cheque and your share to reconstruct!</p>
-            <hr class="my-4">
-          </div>
+    <!-- Header -->
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h1 class="display-4">Admin Page (Share Reconstruction)</h1>
         </div>
       </div>
 
-      <form name="reconstruct" method="post" enctype="multipart/form-data">
-        <div class="container">
-            <div class="row">
-              <div class="col-6 input-group mb-2">
-                  <div class="custom-file">
-                      <input type="file" class="custom-file-input" id="cheque-upload">
-                      <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose Client Cheque</label>
-                  </div>
-              </div>
-            </div>
+      <div class="row">
+        <div class="col">
+          <p class="lead">Use this panel to upload the cheque and your share to reconstruct!</p>
+          <hr class="my-4">
+        </div>
+      </div>
+    </div>
 
-            <div class="row">
-              <div class="col-6 input-group mb-2">
-                <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="bankshare-upload">
-                    <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose Bank Share</label>
-                </div>
+    <!-- Form -->
+    <form name="reconstruct" method="post" enctype="multipart/form-data">
+      <div class="container">
+        <div class="row">
+          <div class="col-6 input-group mb-2">
+              <div class="custom-file">
+                  <input type="file" class="custom-file-input" id="cheque-upload">
+                  <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose Client Cheque</label>
               </div>
-            </div>
+          </div>
+        </div>
 
-            <div class="row">
-                <div class="col-5">
-                  <div id="loader"></div>
-                </div>
-            </div>
-
-            <div class="row">
-              <div class="row">
-                <div class="col-3">
-                    <a id="downloadLink" target="_blank" value="client_share" download><div id="preview1" style="margin-left: 20px; margin-bottom: 10px; max-height: 500px; max-width: 500px"></div></a>
-                </div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-12">
-                <div id="response-msg" class="alert alert-danger" role="alert" style="width:49%; text-align: center"></div>
-              </div>
-            </div>
-    
-            <div class="row">
-              <div class="col-12">
-                <button class="btn btn-primary btn-lg active" type="submit" aria-pressed="true" style="width:49%">Reconstruct Shares</button>
-              </div>
+        <div class="row">
+          <div class="col-6 input-group mb-2">
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" id="bankshare-upload">
+                <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Choose Bank Share</label>
             </div>
           </div>
-      </form>
-    </div>
+        </div>
+
+        <div class="row">
+            <div class="col-5">
+              <div id="loader"></div>
+            </div>
+        </div>
+
+        <div class="row">
+          <div class="row">
+            <div class="col-3">
+                <a id="downloadLink" target="_blank" value="client_share" download><div id="preview1" style="margin-left: 20px; margin-bottom: 10px; max-height: 500px; max-width: 500px"></div></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <div id="response-msg" class="alert alert-danger" role="alert" style="width:49%; text-align: center"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <button class="btn btn-primary btn-lg active" type="submit" aria-pressed="true" style="width:49%">Reconstruct Shares</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
 </body>
 
 <script>
-    $('#response-msg').hide();
+  $('#response-msg').hide();
+  $('#preview1').hide();
+
+  // change the name of the input file when a file is uploaded
+  $(".custom-file-input").on("change", function() {
+      var fileName = $(this).val().split("\\").pop();
+      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+  });
+
+  // execute this when the form is submitted
+  $(reconstruct).submit(function(e) 
+  {
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+
+    document.getElementById("loader").style.display = "block";
     $('#preview1').hide();
+    $('#response-msg').hide();
+    
+    encodeImageFileAsURL()
+  });
 
-    $(".custom-file-input").on("change", function() {
-        var fileName = $(this).val().split("\\").pop();
-        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-    });
+  // function to get the image file
+  function encodeImageFileAsURL()
+  {
+    var cheque = document.getElementById("cheque-upload").files;
+    var share = document.getElementById("bankshare-upload").files;
 
-    $(reconstruct).submit(function(e) 
+    // checks if both of the fields are filled
+    if (cheque.length > 0 && share.length > 0) 
     {
-      e.preventDefault(); // avoid to execute the actual submit of the form.
-      document.getElementById("loader").style.display = "block";
-      $('#preview1').hide();
-      $('#response-msg').hide();
-      encodeImageFileAsURL()
-    });
+      var fileToLoad1 = cheque[0];
+      var filereader1 = new FileReader();
+      var fileToLoad2 = share[0];
+      var filereader2 = new FileReader();
 
-    function encodeImageFileAsURL()
-    {
-      var cheque = document.getElementById("cheque-upload").files;
-      var share = document.getElementById("bankshare-upload").files;
-
-      if (cheque.length > 0 && share.length > 0) 
+      // only runs when the client's cheque is fully loaded
+      filereader1.onload = function(fileLoadedEvent) 
       {
-        var fileToLoad1 = cheque[0];
-        var filereader1 = new FileReader();
-        var fileToLoad2 = share[0];
-        var filereader2 = new FileReader();
+        // bade64 data of the client's cheque
+        srcData1 = fileLoadedEvent.target.result; 
 
-        filereader1.onload = function(fileLoadedEvent) 
+        // only runs when the bank share is fully loaded
+        filereader2.onload = function(fileLoadedEvent) 
         {
-          srcData1 = fileLoadedEvent.target.result; // <--- data: base64
-          srcData2 = fileLoadedEvent.target.result; // <--- data: base64
+          // base64 data of the server's share
+          srcData2 = fileLoadedEvent.target.result; 
 
-          filereader2.onload = function(fileLoadedEvent) 
-          {
-            srcData2 = fileLoadedEvent.target.result; // <--- data: base64
+          // store image (base64)
+          var fd = new FormData();
 
-            // store image (base64)
-            var fd = new FormData();
+          // updates UI
+          $('#cheque-upload').addClass('is-valid');
+          $('#bankshare-upload').addClass('is-valid');
 
-            // updates UI
-            $('#cheque-upload').addClass('is-valid');
-            $('#bankshare-upload').addClass('is-valid');
+          // send to server via AJAX
+          fd.append('file1',srcData1)
+          fd.append('file2',srcData2)
 
-            // send to server via AJAX
-            fd.append('file1',srcData1)
-            fd.append('file2',srcData2)
+          var formData = new FormData(document.getElementById("clientForm"));
+          $.ajax({
+            type: 'post',
+            url: '/bank-reconstruct',
+            data: fd,
+            mimeType:"multipart/form-data",
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(response){
+              if(response != 0)
+              {
+                // allows bank to download the reconstructed image 
+                var png_download = "data:image/png;base64,"
+                png_download += response
 
-            var formData = new FormData(document.getElementById("clientForm"));
-            $.ajax({
-              type: 'post',
-              url: '/bank-reconstruct',
-              data: fd,
-              mimeType:"multipart/form-data",
-              contentType: false,
-              cache: false,
-              processData: false,
-              success: function(response){
-                  if(response != 0){
-                    var png_download = "data:image/png;base64,"
-                    png_download += response
+                var newImage = document.createElement('img');
+                newImage.src = png_download;
+                newImage.height = 400;
+                newImage.width = 500;
+                document.getElementById("preview1").innerHTML = newImage.outerHTML;
 
-                    var newImage = document.createElement('img');
-                    newImage.src = png_download;
-                    newImage.height = 400;
-                    newImage.width = 500;
-                    document.getElementById("preview1").innerHTML = newImage.outerHTML;
+                // creates a downloadable link
+                var a = document.getElementById('downloadLink'); //or grab it by tagname etc
+                a.href = png_download
+                a.download = "reconstructed_cheque"
 
-                    var a = document.getElementById('downloadLink'); //or grab it by tagname etc
-                    a.href = png_download
-                    a.download = "reconstructed_cheque"
+                // updates UI
+                document.getElementById("loader").style.display = "none";
+                $('#preview1').show();
+                $('#cheque-upload').removeClass('is-invalid');
+                $('#bankshare-upload').removeClass('is-invalid');
+                $('#response-msg').removeClass('alert-danger');
+                $('#response-msg').addClass('alert-success');
+                $('#cheque-upload').addClass('is-valid');
+                $('#bankshare-upload').addClass('is-valid');
+                $("#response-msg").text("Click on the image to download the reconstructed cheque.");
+                $('#response-msg').toggle();
+              } 
+              
+              else
+              { 
+                document.getElementById("loader").style.display = "none";
+                $('#cheque-upload').addClass('is-invalid');
+                $('#bankshare-upload').addClass('is-invalid');
+                $('#response-msg').addClass('alert-danger');
+                $("#response-msg").text("Bank share and client share doesn't have the same dimension (i.e. same width and height)");
+                $('#response-msg').toggle();
+              }
+            },
 
-                    document.getElementById("loader").style.display = "none";
-                    $('#preview1').show();
-                    $('#response-msg').removeClass('alert-danger');
-                    $('#response-msg').addClass('alert-success');
-                    $("#response-msg").text("Click on the image to download the reconstructed cheque.");
-                    $('#response-msg').toggle();
-                  } else{
-                    alert('file not uploaded');
-                  }
-              },
-
-              error: function(jqXHR, textStatus, errorThrown) 
-              {}
-            });
-          }
+            error: function(jqXHR, textStatus, errorThrown) 
+            {}
+          });
         }
-        filereader1.readAsDataURL(fileToLoad1);   
-        filereader2.readAsDataURL(fileToLoad2);          
       }
+      
+      filereader1.readAsDataURL(fileToLoad1);   
+      filereader2.readAsDataURL(fileToLoad2);          
     }
-
+  }
 </script>
