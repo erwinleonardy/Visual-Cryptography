@@ -8,18 +8,12 @@ Developed by: Erwin Leonardy
 from __future__ import print_function
 from PIL import Image
 import PIL.ImageOps
-
-import re, time, base64
-import random, sys, os
-
+import re, time, base64, random, sys, os
 import emailer
 
 """
 Global Variables
 """
-# Try different inputs here (jane.png / jane.jpg)
-path = "jane.png"
-
 # signature starting point
 signX = 1740
 signY = 750
@@ -216,9 +210,10 @@ def gen_2shares (email, image):
     outfile1.save("./input/bank_share.png", optimize=True, format="PNG")
     outfile2.save("./input/client_share.png", optimize=True, format="PNG")
 
-    # emailer.emailer(email, "./input/client_share.png")
+    # email share to the client
+    emailer.emailer(email, "./input/client_share.png")
 
-    # send back to bank
+    # send back bank share to the bank using AJAX
     with open("./input/bank_share.png", "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read())
 
@@ -231,48 +226,58 @@ def gen_2shares (email, image):
     # image1.paste(outfile1, (signX, signY))       
     # save_image (image1, "cheque/share1")   
 
-    # image1 = open_image ("cheque.jpg", 0)
-    # image1.paste(outfile2, (signX, signY))       
-    # save_image (image1, "cheque/share2")      
-
 # Reconstruct the image using two of the shares
 def merge_2shares (clientCheque, bankShare):
+    bankWidth, bankHeight = bankShare.size
+    signWidth = int(bankWidth / 2)
+    doubSignSize = signWidth * 2
+
     # extract the shares area
     clientShare = clientCheque.crop((signX, signY, signX+(doubSignSize), signY+(doubSignSize)))
     clientShare.thumbnail((doubSignSize, doubSignSize), Image.ANTIALIAS)
     clientShare = clientShare.convert('1')
+    clientWidth, clientHeight = clientShare.size
 
-    # reconstruct the shares
-    outfile = Image.new('1', clientShare.size)
+    print("clientWidth: {}, clientHeight: {}".format(clientWidth, clientHeight))
+    print("bankWidth: {}, bankHeight: {}".format(bankWidth, bankHeight))
 
-    for x in range(clientShare.size[0]):
-        for y in range(clientShare.size[1]):
-            outfile.putpixel((x,y), min(clientShare.getpixel((x, y)), bankShare.getpixel((x, y))))
+    if (bankWidth == clientWidth and bankHeight == clientHeight): 
+        try:
+            # reconstruct the shares
+            outfile = Image.new('1', clientShare.size)
 
-    save_image (outfile, "recon")    
+            for x in range(clientShare.size[0]):
+                for y in range(clientShare.size[1]): 
+                    outfile.putpixel((x,y), min(clientShare.getpixel((x, y)), bankShare.getpixel((x, y))))
 
-    # clean the reconstructed shares
-    clean_2shares (outfile) 
+            save_image (outfile, "recon")    
 
-    # replace the area with white color
-    # result = Image.open('./output/cheque/share1.png')
+            # clean the reconstructed shares
+            clean_2shares (outfile) 
 
-    for x in range(signX, signX+(doubSignSize)):
-        for y in range(signY, signY+(doubSignSize)):
-            clientCheque.putpixel((x, y), 255)
+            # replace the area with white color
+            for x in range(signX, signX+(doubSignSize)):
+                for y in range(signY, signY+(doubSignSize)):
+                    clientCheque.putpixel((x, y), 255)
 
-    # place the clean shares to it
-    overlay_pic("./output/clean2.png", clientCheque)
+            # place the clean shares to it
+            overlay_pic("./output/clean2.png", clientCheque)
 
-    with open("./output/final_cheque.png", "rb") as image_file:
-        encoded_string = base64.b64encode(image_file.read())
+            # send back the final cheque to the bank using AJAX
+            with open("./output/final_cheque.png", "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read())
 
-    os.remove("./output/final_cheque.png")
+            os.remove("./output/final_cheque.png")
 
-    return encoded_string
+            return encoded_string
+        
+        except IndexError as error:
+            return ""
 
-# Resize the reconstructed image 
-# and clean the noise
+    else:
+        return ""
+
+# Resize the reconstructed image and clean the noise
 def clean_2shares (inputImg):
     outfile = Image.new("1", [int(dimension / 2) for dimension in inputImg.size], 255)
     length, width = inputImg.size
@@ -347,27 +352,22 @@ def validate_resize_image (image):
     width, height = image.size
     if (width != height):
         return None
+   
     else:
         try:
-            image.thumbnail((signWidth, signWidth), Image.ANTIALIAS)
+            image.resize((signWidth, signWidth))
+            img_w, img_h = image.size
+            background = Image.new('1', (signWidth, signWidth), 255)
+            bg_w, bg_h = background.size
+            offset = ((bg_w - img_w) // 2, (bg_h - img_h) // 2)
+            background.paste(image, offset)
             return image
+
         except IOError:
             return None
 
 """
-Main function
-"""
-# img = open_image (path, 1)
-
-# if img != None:
-#     gen_2shares (img)
-#     merge_2shares()
-
-# else:
-#     print("{} not found!".format(path))
-
-"""
-Flask Part
+Flask 
 """
 from flask import Flask, render_template, request
 app = Flask(__name__, template_folder='./src')
@@ -481,7 +481,6 @@ def client():
         os.remove("./input/clientShare.png")
 
         return resultStr
-
 
 if __name__ == '__main__':
     app.run()
