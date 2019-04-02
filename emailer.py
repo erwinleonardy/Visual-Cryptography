@@ -25,19 +25,19 @@ def emailer (receiver_email, filename):
 	text += """!\
 	
 
-	Here is your share!
+	Here is your share! Please ensure that you keep this file safe :)
 	
-	Thank you for choosing VSingIt as your preferred encryption method.
+	Thank you for choosing VSignIt as your preferred encryption method.
 
 	(This is an auto-generated email. Please do not reply directly to this email.)
 
 	***** DISCLAIMER *****
-	This email and any attachments thereto are intended for the sole use of the recipient(s)  named above and 
-	may contain information that is confidential and/or proprietary to the VSingIt Group. Any use of the information 
-	contained herein (including, but not limited to, total or partial reproduction, communication, or dissemination 
-	in any form) by persons other than the intended recipient(s) is prohibited. If you have received this email in error, 
-	please notify the sender immediately and delete it."""
-
+	This email and any attachments thereto are intended for the sole use of the recipient(s) named above and 
+	may contain information that is confidential and/or proprietary to the VSingIt Group. If you have received 
+	this email in error, please notify the sender immediately and delete it.
+	
+	Best Regards,
+	VSignIt Admin Team"""
 
 	part1 = MIMEText(text, "plain")
 	#part2 = MIMEText(html, "html")
