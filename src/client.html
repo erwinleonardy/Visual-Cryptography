@@ -160,72 +160,91 @@
       // only runs when the empty cheque is fully loaded
       filereader1.onload = function(fileLoadedEvent) 
       {
-        // bade64 data of the cheque
+        // get filename
+        var fullPath = document.getElementById('share-upload').value;
+        if (fullPath) 
+        {
+          var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+          var filename = fullPath.substring(startIndex);
+          if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+              filename = filename.substring(1);
+          }
+        }
+        else {
+          filename="Unknown"
+        }
+
+        // base64 data of the cheque
         srcData1 = fileLoadedEvent.target.result; 
 
         // only runs when the client share is fully loaded
         filereader2.onload = function(fileLoadedEvent) 
         {
-            // bade64 data of the client's share
-            srcData2 = fileLoadedEvent.target.result; 
-        
-            // store image (base64)
-            var fd = new FormData();
+          // bade64 data of the client's share
+          srcData2 = fileLoadedEvent.target.result; 
+      
+          // store image (base64)
+          var fd = new FormData();
 
-            // updates UI
-            $('#cheque-upload').addClass('is-valid');
-            $('#share-upload').addClass('is-valid');
+          // updates UI
+          $('#cheque-upload').addClass('is-valid');
+          $('#share-upload').addClass('is-valid');
 
-            // send to server via AJAX
-            fd.append('file1',srcData1)
-            fd.append('file2',srcData2)
+          // send to server via AJAX
+          fd.append('file1',srcData1)
+          fd.append('file2',srcData2)
+          fd.append('filename', filename)
 
-            var formData = new FormData(document.getElementById("clientForm"));
-            $.ajax({
-                type: 'post',
-                url: '/client',
-                data: fd,
-                mimeType:"multipart/form-data",
-                contentType: false,
-                cache: false,
-                processData: false,
-                success: function(response){
-                  if(response != 0)
-                  {
-                      // allows client to download the overlayed image (empty cheque + client's share)
-                      var png_download = "data:image/png;base64,"
-                      png_download += response
+          var formData = new FormData(document.getElementById("clientForm"));
+          $.ajax({
+            type: 'post',
+            url: '/client',
+            data: fd,
+            mimeType:"multipart/form-data",
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(response){
+              if(response != 0)
+              {
+                var result = response.split(",");
+                picture = result[0]
+                filename = result[1]
 
-                      var newImage = document.createElement('img');
-                      newImage.src = png_download;
-                      newImage.height = 150;
-                      newImage.width = 200;
-                      document.getElementById("preview").innerHTML = newImage.outerHTML;
+                // allows client to download the overlayed image (empty cheque + client's share)
+                var png_download = "data:image/png;base64,"
+                png_download += picture
 
-                      // creates a downloadable link
-                      var a = document.getElementById('downloadLink');
-                      a.href = png_download
-                      a.download = "client_cheque"
+                var newImage = document.createElement('img');
+                newImage.src = png_download;
+                newImage.height = 150;
+                newImage.width = 200;
+                document.getElementById("preview").innerHTML = newImage.outerHTML;
 
-                      // updates UI
-                      document.getElementById("loader").style.display = "none";
-                      $('#preview').show();
-                      $('#response-msg').removeClass('alert-danger');
-                      $('#response-msg').addClass('alert-success');
-                      $("#response-msg").text("Your share has been created! Click on the image to download.");
-                      $('#response-msg').toggle();
-                  }
+                // creates a downloadable link
+                var a = document.getElementById('downloadLink');
+                a.href = png_download
+                a.download = filename + "_client_cheque"
 
-                  else { alert('file not uploaded'); }
-                },
-                error: function(jqXHR, textStatus, errorThrown) 
-                {}
-            });
-          }
+                // updates UI
+                document.getElementById("loader").style.display = "none";
+                $('#preview').show();
+                $('#response-msg').removeClass('alert-danger');
+                $('#response-msg').addClass('alert-success');
+                $("#response-msg").text("Your share has been created! Click on the image to download.");
+                $('#response-msg').toggle();
+              }
+
+              else { alert('file not uploaded'); }
+            },
+            error: function(jqXHR, textStatus, errorThrown) 
+            {}
+          });
         }
+      }
 
-        filereader1.readAsDataURL(fileToLoad1);   
-        filereader2.readAsDataURL(fileToLoad2);          
+      filereader1.readAsDataURL(fileToLoad1);   
+      filereader2.readAsDataURL(fileToLoad2);          
     }
   }
 </script>

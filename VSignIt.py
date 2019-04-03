@@ -48,7 +48,7 @@ def save_image(image, filename):
     image.save(path, optimize=True, format="PNG")
  
 # Generate 2 shares
-def gen_2shares (email, image):
+def gen_2shares (email, image, username):
     # 1 -> 8bit B/W
     outfile1 = Image.new("1", [dimension * 2 for dimension in image.size])
     outfile2 = Image.new("1", [dimension * 2 for dimension in image.size])
@@ -207,27 +207,29 @@ def gen_2shares (email, image):
                     outfile2.putpixel((x * 2 + 1, y * 2 + 1), 0)
                 
     # export image shares
-    outfile1.save("./input/bank_share.png", optimize=True, format="PNG")
-    outfile2.save("./input/client_share.png", optimize=True, format="PNG")
+    bank_sharename = "./input/" + username + "_bank_share.png"
+    client_sharename = "./input/" + username + "_client_share.png"
+    outfile1.save(bank_sharename, optimize=True, format="PNG")
+    outfile2.save(client_sharename, optimize=True, format="PNG")
 
     # email share to the client
-    emailer.emailer(email, "./input/client_share.png")
+    emailer.emailer(email, client_sharename)
 
     # send back bank share to the bank using AJAX
-    with open("./input/bank_share.png", "rb") as image_file:
+    with open(bank_sharename, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read())
 
-    os.remove("./input/bank_share.png")
-    os.remove("./input/client_share.png")
+    os.remove(bank_sharename)
+    os.remove(client_sharename)
 
-    return encoded_string
+    return (encoded_string.decode("utf-8")  + ',' + username)
 
     # image1 = open_image ("cheque.jpg", 0)
     # image1.paste(outfile1, (signX, signY))       
     # save_image (image1, "cheque/share1")   
 
 # Reconstruct the image using two of the shares
-def merge_2shares (clientCheque, bankShare):
+def merge_2shares (clientCheque, bankShare, username):
     bankWidth, bankHeight = bankShare.size
     signWidth = int(bankWidth / 2)
     doubSignSize = signWidth * 2
@@ -269,9 +271,9 @@ def merge_2shares (clientCheque, bankShare):
 
             os.remove("./output/final_cheque.png")
 
-            return encoded_string
+            return (encoded_string.decode("utf-8") + "," + username)
         
-        except IndexError as error:
+        except IndexError:
             return ""
 
     else:
@@ -326,7 +328,7 @@ def clean_2shares (inputImg):
     save_image (image_trans, "clean2")
 
 # paste the source pic on top of the destination pic
-def paste_on_top (source, dest):
+def paste_on_top (source, dest, username):
     dest.paste (source,(signX, signY))   
 
     # export the image to base64 format
@@ -337,7 +339,7 @@ def paste_on_top (source, dest):
 
     os.remove("./output/final_img.png")
 
-    return encoded_string
+    return (encoded_string.decode("utf-8") + "," + username)
 
 # overlay the pic
 def overlay_pic (sourcePath, dest):
@@ -402,8 +404,9 @@ def bank_generate():
         image = open_image ("imageToSave.png", 1)
 
         if validate_resize_image(image) != None:
+            username = request.form['filename'].split(".")[0]
             email = request.form['email']
-            bank_share = gen_2shares(email, image)
+            bank_share = gen_2shares(email, image, username)
 
             os.remove("./input/imageToSave.png")
             return bank_share
@@ -421,6 +424,8 @@ def bank_reconstruct():
 
     elif request.method == 'POST':        
         # print(request.form['file1'], file=sys.stderr)
+
+        username = request.form['filename'].split("_")[0]
 
         # convert the base64 image to an image
         base64_data1 = re.sub('^data:image/.+;base64,', '', request.form['file1'])
@@ -440,7 +445,7 @@ def bank_reconstruct():
         clientCheque = open_image ("clientCheque.png", 1)
         bankShare = open_image ("bankShare.png", 1)
 
-        final_result = merge_2shares (clientCheque, bankShare)
+        final_result = merge_2shares (clientCheque, bankShare, username)
 
         os.remove("./input/clientCheque.png")
         os.remove("./input/bankShare.png")
@@ -457,6 +462,8 @@ def client():
 
     elif request.method == 'POST':        
         # print(request.form['file1'], file=sys.stderr)
+
+        username = request.form['filename'].split("_")[0]
 
         # convert the base64 image to an image
         base64_data1 = re.sub('^data:image/.+;base64,', '', request.form['file1'])
@@ -475,7 +482,7 @@ def client():
         clientCheque = open_image ("clientCheque.png", 1)
         clientShare = open_image ("clientShare.png", 1)
 
-        resultStr = paste_on_top (clientShare, clientCheque)
+        resultStr = paste_on_top (clientShare, clientCheque, username)
 
         os.remove("./input/clientCheque.png")
         os.remove("./input/clientShare.png")

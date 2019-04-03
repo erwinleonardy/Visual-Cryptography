@@ -162,6 +162,20 @@
       // only runs when the client's cheque is fully loaded
       filereader1.onload = function(fileLoadedEvent) 
       {
+        // get filename
+        var fullPath = document.getElementById('bankshare-upload').value;
+        if (fullPath) 
+        {
+          var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+          var filename = fullPath.substring(startIndex);
+          if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+              filename = filename.substring(1);
+          }
+        }
+        else {
+          filename="Unknown"
+        }
+
         // bade64 data of the client's cheque
         srcData1 = fileLoadedEvent.target.result; 
 
@@ -181,6 +195,7 @@
           // send to server via AJAX
           fd.append('file1',srcData1)
           fd.append('file2',srcData2)
+          fd.append('filename', filename)
 
           var formData = new FormData(document.getElementById("clientForm"));
           $.ajax({
@@ -194,9 +209,13 @@
             success: function(response){
               if(response != 0)
               {
+                var result = response.split(",");
+                picture = result[0]
+                filename = result[1]
+
                 // allows bank to download the reconstructed image 
-                var png_download = "data:image/png;base64,"
-                png_download += response
+                var png_download = "data:image/png;base64,";
+                png_download += picture;
 
                 var newImage = document.createElement('img');
                 newImage.src = png_download;
@@ -206,8 +225,8 @@
 
                 // creates a downloadable link
                 var a = document.getElementById('downloadLink'); //or grab it by tagname etc
-                a.href = png_download
-                a.download = "reconstructed_cheque"
+                a.href = png_download;
+                a.download = filename + "_reconstructed_cheque";
 
                 // updates UI
                 document.getElementById("loader").style.display = "none";

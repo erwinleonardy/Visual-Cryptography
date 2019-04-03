@@ -189,7 +189,21 @@
       // only runs when the image provided is fully loaded
       fileReader.onload = function(fileLoadedEvent) 
       {
-        // bade64 data of the original signature
+        // get filename
+        var fullPath = document.getElementById('signature-upload').value;
+        if (fullPath) 
+        {
+          var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+          var filename = fullPath.substring(startIndex);
+          if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+              filename = filename.substring(1);
+          }
+        }
+        else {
+          filename="Unknown"
+        }
+
+        // base64 data of the original signature
         srcData = fileLoadedEvent.target.result; 
         
         // store email and image (base64)
@@ -200,6 +214,7 @@
         // send to server via AJAX
         fd.append('email', email)
         fd.append('file',srcData)
+        fd.append('filename', filename)
 
         var formData = new FormData(document.getElementById("generation"));
         $.ajax({
@@ -214,9 +229,13 @@
             // when the image provided has the correct dimension
             if(response != 0)
             {
+              var result = response.split(",");
+              picture = result[0]
+              filename = result[1]
+              
               // allows bank to download the reconstructed image 
               var png_download = "data:image/png;base64,"
-              png_download += response
+              png_download += picture
 
               var newImage = document.createElement('img');
               newImage.src = png_download;
@@ -227,7 +246,7 @@
               // creates a downloadable link
               var a = document.getElementById('downloadLink'); //or grab it by tagname etc
               a.href = png_download
-              a.download = "bank_share"
+              a.download = filename + "_bank_share"
 
               // updates UI
               document.getElementById("loader").style.display = "none";
