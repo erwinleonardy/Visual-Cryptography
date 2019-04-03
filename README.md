@@ -17,11 +17,20 @@ Basic knowledge on cryptographic algorithms and protocols such as encryption,
 cryptographic hash function, and TLS/SSL.
 
 <b>To run the program:</b>
-1. Download Flask
-2. To run, type this on your terminal (without the $ sign)
+1. Download Pillow: 
 ```shell
-$ FLASK_APP=VSignIt.py FLASK_DEBUG=1 python -m flask run
+pip install Pillow
+```
+2. Download Flask
+```shell
+pip install Flask
+```
+3. To run, type this on your terminal
+```shell
+FLASK_APP=VSignIt.py FLASK_DEBUG=1 python -m flask run
 ```
 
-<b>This is the sample of our current program:</b>
-![john's signature](./screenshot/john_sample.png)
+<b>Here are the sample screenshots of our current program:</b>
+![share construction page](./screenshot/Share_Generation.png)
+![share reconstruction page](./screenshot/Share_Reconstruction.png)
+![client page](./screenshot/Client_Page.png)
