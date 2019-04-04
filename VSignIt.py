@@ -49,6 +49,9 @@ def save_image(image, filename):
  
 # Generate 2 shares
 def gen_2shares (email, image, username):
+    # resize image
+    image = image.resize((200, 200))
+
     # 1 -> 8bit B/W
     outfile1 = Image.new("1", [dimension * 2 for dimension in image.size])
     outfile2 = Image.new("1", [dimension * 2 for dimension in image.size])
@@ -205,7 +208,7 @@ def gen_2shares (email, image, username):
                     outfile2.putpixel((x * 2 + 1, y * 2), 255)
                     outfile2.putpixel((x * 2, y * 2 + 1), 255)
                     outfile2.putpixel((x * 2 + 1, y * 2 + 1), 0)
-                
+
     # export image shares
     bank_sharename = "./input/" + username + "_bank_share.png"
     client_sharename = "./input/" + username + "_client_share.png"
@@ -378,7 +381,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 @app.route('/')
 def default_client():
     try:
-        return render_template('client.html')
+        return render_template('admin-generation.html')
     except Exception as e:
         return str(e)
 
