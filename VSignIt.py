@@ -468,6 +468,9 @@ def client():
 
         username = request.form['filename'].split("_")[0]
 
+        if ".png" in username or ".jpg" in username:
+            return ""
+
         # convert the base64 image to an image
         base64_data1 = re.sub('^data:image/.+;base64,', '', request.form['file1'])
         byte_data1 = base64.b64decode(base64_data1)

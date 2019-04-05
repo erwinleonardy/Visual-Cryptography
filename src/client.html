@@ -229,13 +229,22 @@
                 // updates UI
                 document.getElementById("loader").style.display = "none";
                 $('#preview').show();
+                $('#share-upload').removeClass('is-invalid');
                 $('#response-msg').removeClass('alert-danger');
                 $('#response-msg').addClass('alert-success');
+                $('#share-upload').addClass('is-valid');
                 $("#response-msg").text("Your share has been embeded to the cheque! Click on the image to download.");
                 $('#response-msg').toggle();
               }
 
-              else { alert('file not uploaded'); }
+              else 
+              { 
+                document.getElementById("loader").style.display = "none";
+                $('#share-upload').addClass('is-invalid');
+                $('#response-msg').addClass('alert-danger');
+                $("#response-msg").text("Please ensure that you have uploaded the correct client share!");
+                $('#response-msg').toggle();
+              }
             },
             error: function(jqXHR, textStatus, errorThrown) 
             {}
