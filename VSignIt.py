@@ -9,7 +9,7 @@ from __future__ import print_function
 from PIL import Image
 import PIL.ImageOps
 import re, time, base64, random, sys, os
-import emailer
+import emailerService
 
 """
 Global Variables
@@ -102,7 +102,8 @@ def gen_2shares (email, image, username):
     outfile2.save(client_sharename, optimize=True, format="PNG")
 
     # email share to the client
-    emailer.emailer(email, client_sharename)
+    emailer = emailerService.EmailerService()
+    emailer.sendShare(email, client_sharename)
 
     # send back bank share to the bank using AJAX
     with open(bank_sharename, "rb") as image_file:
