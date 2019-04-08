@@ -49,6 +49,8 @@ def save_image(image, filename):
  
 # Generate 2 shares
 def gen_2shares (email, image, username):
+    pattern = ((0,0,255,255), (255,255,0,0), (0,255,255,0), (255,0,0,255), (255,0,255,0), (0,255,0,255))
+
     # resize image
     image = image.resize((200, 200))
 
@@ -63,151 +65,35 @@ def gen_2shares (email, image, username):
             # checks if it is black / white
             sourcepixel = image.getpixel((x, y))
             assert sourcepixel in (0, 255)  # prints error if assert fails
-            coinflip = random.random()
+            pat = random.choice(pattern)
+
+            # always get one share
+            outfile1.putpixel((x * 2, y * 2), pat[0])
+            outfile1.putpixel((x * 2 + 1, y * 2), pat[1])
+            outfile1.putpixel((x * 2, y * 2 + 1), pat[2])
+            outfile1.putpixel((x * 2 + 1, y * 2 + 1), pat[3])
            
             # if it is black
+            # pick a complimentary pair
+            # i.e.
+            # X O   O X
+            # O X   X O
             if sourcepixel == 0:
-                # pick a complimentary pair
-                # i.e.
-                # X O   O X
-                # O X   X O
-                if coinflip < 1/6: 
-                    outfile1.putpixel((x * 2, y * 2), 0)
-                    outfile1.putpixel((x * 2 + 1, y * 2), 0)
-                    outfile1.putpixel((x * 2, y * 2 + 1), 255)
-                    outfile1.putpixel((x * 2 + 1, y * 2 + 1), 255)
-
-                    outfile2.putpixel((x * 2, y * 2), 255)
-                    outfile2.putpixel((x * 2 + 1, y * 2), 255)
-                    outfile2.putpixel((x * 2, y * 2 + 1), 0)
-                    outfile2.putpixel((x * 2 + 1, y * 2 + 1), 0)
-                
-                elif coinflip < 2/6: 
-                    outfile1.putpixel((x * 2, y * 2), 255)
-                    outfile1.putpixel((x * 2 + 1, y * 2), 255)
-                    outfile1.putpixel((x * 2, y * 2 + 1), 0)
-                    outfile1.putpixel((x * 2 + 1, y * 2 + 1), 0)
-
-                    outfile2.putpixel((x * 2, y * 2), 0)
-                    outfile2.putpixel((x * 2 + 1, y * 2), 0)
-                    outfile2.putpixel((x * 2, y * 2 + 1), 255)
-                    outfile2.putpixel((x * 2 + 1, y * 2 + 1), 255)
-
-                elif coinflip < 3/6:
-                    outfile1.putpixel((x * 2, y * 2), 0)
-                    outfile1.putpixel((x * 2 + 1, y * 2), 255)
-                    outfile1.putpixel((x * 2, y * 2 + 1), 255)
-                    outfile1.putpixel((x * 2 + 1, y * 2 + 1), 0)
-
-                    outfile2.putpixel((x * 2, y * 2), 255)
-                    outfile2.putpixel((x * 2 + 1, y * 2), 0)
-                    outfile2.putpixel((x * 2, y * 2 + 1), 0)
-                    outfile2.putpixel((x * 2 + 1, y * 2 + 1), 255)
-               
-                elif coinflip < 4/6:
-                    outfile1.putpixel((x * 2, y * 2), 255)
-                    outfile1.putpixel((x * 2 + 1, y * 2), 0)
-                    outfile1.putpixel((x * 2, y * 2 + 1), 0)
-                    outfile1.putpixel((x * 2 + 1, y * 2 + 1), 255)
-
-                    outfile2.putpixel((x * 2, y * 2), 0)
-                    outfile2.putpixel((x * 2 + 1, y * 2), 255)
-                    outfile2.putpixel((x * 2, y * 2 + 1), 255)
-                    outfile2.putpixel((x * 2 + 1, y * 2 + 1), 0)
-                    
-                elif coinflip < 5/6:
-                    outfile1.putpixel((x * 2, y * 2), 255)
-                    outfile1.putpixel((x * 2 + 1, y * 2), 0)
-                    outfile1.putpixel((x * 2, y * 2 + 1), 255)
-                    outfile1.putpixel((x * 2 + 1, y * 2 + 1), 0)
-
-                    outfile2.putpixel((x * 2, y * 2), 0)
-                    outfile2.putpixel((x * 2 + 1, y * 2), 255)
-                    outfile2.putpixel((x * 2, y * 2 + 1), 0)
-                    outfile2.putpixel((x * 2 + 1, y * 2 + 1), 255)
-
-                else:
-                    outfile1.putpixel((x * 2, y * 2), 0)
-                    outfile1.putpixel((x * 2 + 1, y * 2), 255)
-                    outfile1.putpixel((x * 2, y * 2 + 1), 255)
-                    outfile1.putpixel((x * 2 + 1, y * 2 + 1), 0)
-
-                    outfile2.putpixel((x * 2, y * 2), 255)
-                    outfile2.putpixel((x * 2 + 1, y * 2), 0)
-                    outfile2.putpixel((x * 2, y * 2 + 1), 0)
-                    outfile2.putpixel((x * 2 + 1, y * 2 + 1), 255)
+                outfile2.putpixel((x * 2, y * 2), 255 - pat[0])
+                outfile2.putpixel((x * 2 + 1, y * 2), 255 - pat[1])
+                outfile2.putpixel((x * 2, y * 2 + 1), 255 - pat[2])
+                outfile2.putpixel((x * 2 + 1, y * 2 + 1), 255 - pat[3])
             
             # if it is white
+            # pick the same pairs
+            # i.e.
+            # X O   X O
+            # O X   O X
             elif sourcepixel == 255:
-                # pick the same pairs
-                # i.e.
-                # X O   X O
-                # O X   O X
-                if coinflip < 1/6: 
-                    outfile1.putpixel((x * 2, y * 2), 0)
-                    outfile1.putpixel((x * 2 + 1, y * 2), 0)
-                    outfile1.putpixel((x * 2, y * 2 + 1), 255)
-                    outfile1.putpixel((x * 2 + 1, y * 2 + 1), 255)
-
-                    outfile2.putpixel((x * 2, y * 2), 0)
-                    outfile2.putpixel((x * 2 + 1, y * 2), 0)
-                    outfile2.putpixel((x * 2, y * 2 + 1), 255)
-                    outfile2.putpixel((x * 2 + 1, y * 2 + 1), 255)
-                
-                elif coinflip < 2/6: 
-                    outfile1.putpixel((x * 2, y * 2), 255)
-                    outfile1.putpixel((x * 2 + 1, y * 2), 255)
-                    outfile1.putpixel((x * 2, y * 2 + 1), 0)
-                    outfile1.putpixel((x * 2 + 1, y * 2 + 1), 0)
-
-                    outfile2.putpixel((x * 2, y * 2), 255)
-                    outfile2.putpixel((x * 2 + 1, y * 2), 255)
-                    outfile2.putpixel((x * 2, y * 2 + 1), 0)
-                    outfile2.putpixel((x * 2 + 1, y * 2 + 1), 0)
-
-                elif coinflip < 3/6:
-                    outfile1.putpixel((x * 2, y * 2), 0)
-                    outfile1.putpixel((x * 2 + 1, y * 2), 255)
-                    outfile1.putpixel((x * 2, y * 2 + 1), 255)
-                    outfile1.putpixel((x * 2 + 1, y * 2 + 1), 0)
-
-                    outfile2.putpixel((x * 2, y * 2), 0)
-                    outfile2.putpixel((x * 2 + 1, y * 2), 255)
-                    outfile2.putpixel((x * 2, y * 2 + 1), 255)
-                    outfile2.putpixel((x * 2 + 1, y * 2 + 1), 0)
-               
-                elif coinflip < 4/6:
-                    outfile1.putpixel((x * 2, y * 2), 255)
-                    outfile1.putpixel((x * 2 + 1, y * 2), 0)
-                    outfile1.putpixel((x * 2, y * 2 + 1), 0)
-                    outfile1.putpixel((x * 2 + 1, y * 2 + 1), 255)
-
-                    outfile2.putpixel((x * 2, y * 2), 255)
-                    outfile2.putpixel((x * 2 + 1, y * 2), 0)
-                    outfile2.putpixel((x * 2, y * 2 + 1), 0)
-                    outfile2.putpixel((x * 2 + 1, y * 2 + 1), 255)
-                    
-                elif coinflip < 5/6:
-                    outfile1.putpixel((x * 2, y * 2), 255)
-                    outfile1.putpixel((x * 2 + 1, y * 2), 0)
-                    outfile1.putpixel((x * 2, y * 2 + 1), 255)
-                    outfile1.putpixel((x * 2 + 1, y * 2 + 1), 0)
-
-                    outfile2.putpixel((x * 2, y * 2), 255)
-                    outfile2.putpixel((x * 2 + 1, y * 2), 0)
-                    outfile2.putpixel((x * 2, y * 2 + 1), 255)
-                    outfile2.putpixel((x * 2 + 1, y * 2 + 1), 0)
-
-                else:
-                    outfile1.putpixel((x * 2, y * 2), 0)
-                    outfile1.putpixel((x * 2 + 1, y * 2), 255)
-                    outfile1.putpixel((x * 2, y * 2 + 1), 255)
-                    outfile1.putpixel((x * 2 + 1, y * 2 + 1), 0)
-
-                    outfile2.putpixel((x * 2, y * 2), 0)
-                    outfile2.putpixel((x * 2 + 1, y * 2), 255)
-                    outfile2.putpixel((x * 2, y * 2 + 1), 255)
-                    outfile2.putpixel((x * 2 + 1, y * 2 + 1), 0)
+                outfile2.putpixel((x * 2, y * 2), pat[0])
+                outfile2.putpixel((x * 2 + 1, y * 2), pat[1])
+                outfile2.putpixel((x * 2, y * 2 + 1), pat[2])
+                outfile2.putpixel((x * 2 + 1, y * 2 + 1), pat[3])
 
     # export image shares
     bank_sharename = "./input/" + username + "_bank_share.png"
