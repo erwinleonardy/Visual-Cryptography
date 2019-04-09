@@ -17,7 +17,7 @@ Basic knowledge on cryptographic algorithms and protocols such as encryption,
 cryptographic hash function, and TLS/SSL.
 
 <b>To run the program:</b>
-1. Download Pillow: 
+1. Download Pillow
 ```shell
 pip install Pillow
 ```
@@ -28,6 +28,10 @@ pip install Flask
 3. To run, type this on your terminal
 ```shell
 FLASK_APP=VSignIt.py FLASK_DEBUG=1 python -m flask run
+```
+4. Open up your browser and type in the localhost address and the port number. The home page has been set to the share generation page. 
+```shell
+http://127.0.0.1:5000
 ```
 
 <b>Here are the sample screenshots of our current program:</b>
