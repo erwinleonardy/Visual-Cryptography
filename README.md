@@ -13,16 +13,12 @@ For our final product, VSignIT, our primary focus will be electronically authent
 Pre-Installation 
 ------
 1. You would have to install Apache, phpMyAdmin, and MySQL to get the database running.
-```
 ..* For Windows user:
 ...Please [click here to install WAMP Server](https://www.google.com) that would handle everything for you. There is a [detailed instruction here](https://www.wikihow.com/Install-phpMyAdmin-on-Your-Windows-PC) regarding the installation.
 ..* For MAC user:
 ...Apache came pre-installed. Do follow the instuctions [here](https://medium.com/@jangid.hitesh2112/install-apache-mysql-php-macos-mojave-10-14-b6b5c00b7de) to get things up and running.
-```
 2. When you managed to get phpMyAdmin running, run the sql script that can be found in the <b>./helper</b> folder.
-```
 [click here to view the file](https://github.com/erwinleonardy/Visual-Cryptography/blob/master/helper/vsignit.sql)
-```
 
 Installation 
 ------
