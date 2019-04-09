@@ -1,3 +1,11 @@
+"""
+    emailerService.py
+    by: Amit Singh
+
+    This file consist of the methods to 
+	send the shares to the recipients
+"""
+
 import email, smtplib, ssl, os
 
 from email.mime.image import MIMEImage
