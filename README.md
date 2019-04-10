@@ -24,7 +24,9 @@ Apache came pre-installed. Do follow the instuctions [here](https://medium.com/@
 2. When you managed to get phpMyAdmin running, run the sql script that can be found in the <b>./helper</b> folder.
 Click [here](https://github.com/erwinleonardy/Visual-Cryptography/blob/master/helper/vsignit.sql) to view the file.
 
-3. Go to <b>__init__.py</b> and change this following line of code to your username and password. In this case, just replace the password with your root password.
+3. Create a new database called 'vsignit' on phpMyAdmin.
+
+4. Go to <b>__init__.py</b> and change this following line of code to your username and password. In this case, just replace the password with your root password.
 ```shell
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:password@localhost/vsignit'  
 ```
