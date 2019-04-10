@@ -27,6 +27,11 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `user_table`
 --
+CREATE DATABASE IF NOT EXISTS vsignit
+
+--
+-- Table structure for table `user_table`
+--
 
 CREATE TABLE `user_table` (
   `user_id` int(11) NOT NULL,
