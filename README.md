@@ -37,9 +37,17 @@ pip install Flask
 
 Execution
 ------
-1. To run, type this on your terminal
+1. To run, type this on your terminal.
+note: FLASK_ENV would allow you to refresh the website without having to quit (ctrl+c) the application that you are currently running.
+* MAC:
 ```shell
 FLASK_APP=VSignIt.py FLASK_DEBUG=1 python -m flask run
+```
+* Windows (Doesn't work with PowerShell, you have to use cmd):
+```shell
+set FLASK_APP=VSignIT.py
+set FLASK_ENV=development
+flask run
 ```
 2. Open up your browser and type in the localhost address and the port number. The home page has been set to the share generation page. 
 ```shell
