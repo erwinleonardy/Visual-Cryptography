@@ -47,7 +47,9 @@ def bank_generate():
         if Driver.validate_resize_image(image) != None:
             username = request.form['filename'].split(".")[0]
             email = request.form['email']
-            bank_share = Driver.gen_2shares(email, image, username)
+
+            bank_share = Driver.share_splitter(email, image, username)
+            # bank_share = ShareSplitter.encrypt(email, image, username)
 
             os.remove("./vsignit/input/imageToSave.png")
             return bank_share

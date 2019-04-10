@@ -9,9 +9,9 @@
 from __future__ import print_function
 from PIL import Image
 import PIL.ImageOps
-import re, time, base64, random, sys, os
+import re, time, base64, sys, os
 
-from vsignit.emailerService import EmailerService
+from vsignit.shareSplitter import ShareSplitter
 
 """
 Global Variables
@@ -49,77 +49,21 @@ class Driver():
         print("{} has been successfully exported!".format(path))
         image.save(path, optimize=True, format="PNG")
 
-    # Generate 2 shares
+    """
+        Share Splitter Driver Function
+    """
     @staticmethod
-    def gen_2shares (email, image, username):
-        pattern = ((0,0,255,255), (255,255,0,0), (0,255,255,0), (255,0,0,255), (255,0,255,0), (0,255,0,255))
+    def share_splitter (email, image, username):
+        # resize the image
+        image = ShareSplitter.resize(image)
 
-        # resize image
-        image = image.resize((200, 200))
+        # split into two shares
+        outfile1, outfile2 = ShareSplitter.split_signature (image)
 
-        # 1 -> 8bit B/W
-        outfile1 = Image.new("1", [dimension * 2 for dimension in image.size])
-        outfile2 = Image.new("1", [dimension * 2 for dimension in image.size])
-        
-        # horizontal axis
-        for x in range(0, image.size[0], 2):
-            # vertical axis
-            for y in range(0, image.size[1], 2):
-                # checks if it is black / white
-                sourcepixel = image.getpixel((x, y))
-                assert sourcepixel in (0, 255)  # prints error if assert fails
-                pat = random.choice(pattern)
+        # send the shares to the 
+        encoded_str = ShareSplitter.send_shares (outfile1, outfile2, email, username)
 
-                # always get one share
-                outfile1.putpixel((x * 2, y * 2), pat[0])
-                outfile1.putpixel((x * 2 + 1, y * 2), pat[1])
-                outfile1.putpixel((x * 2, y * 2 + 1), pat[2])
-                outfile1.putpixel((x * 2 + 1, y * 2 + 1), pat[3])
-            
-                # if it is black
-                # pick a complimentary pair
-                # i.e.
-                # X O   O X
-                # O X   X O
-                if sourcepixel == 0:
-                    outfile2.putpixel((x * 2, y * 2), 255 - pat[0])
-                    outfile2.putpixel((x * 2 + 1, y * 2), 255 - pat[1])
-                    outfile2.putpixel((x * 2, y * 2 + 1), 255 - pat[2])
-                    outfile2.putpixel((x * 2 + 1, y * 2 + 1), 255 - pat[3])
-                
-                # if it is white
-                # pick the same pairs
-                # i.e.
-                # X O   X O
-                # O X   O X
-                elif sourcepixel == 255:
-                    outfile2.putpixel((x * 2, y * 2), pat[0])
-                    outfile2.putpixel((x * 2 + 1, y * 2), pat[1])
-                    outfile2.putpixel((x * 2, y * 2 + 1), pat[2])
-                    outfile2.putpixel((x * 2 + 1, y * 2 + 1), pat[3])
-
-        # export image shares
-        bank_sharename = "./vsignit/input/" + username + "_bank_share.png"
-        client_sharename = "./vsignit/input/" + username + "_client_share.png"
-        outfile1.save(bank_sharename, optimize=True, format="PNG")
-        outfile2.save(client_sharename, optimize=True, format="PNG")
-
-        # email share to the client
-        emailer = EmailerService()
-        emailer.sendShare(email, client_sharename)
-
-        # send back bank share to the bank using AJAX
-        with open(bank_sharename, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read())
-
-        os.remove(bank_sharename)
-        os.remove(client_sharename)
-
-        return (encoded_string.decode("utf-8")  + ',' + username)
-
-        # image1 = open_image ("cheque.jpg", 0)
-        # image1.paste(outfile1, (signX, signY))       
-        # save_image (image1, "cheque/share1")   
+        return encoded_str
 
     # Reconstruct the image using two of the shares
     @staticmethod
