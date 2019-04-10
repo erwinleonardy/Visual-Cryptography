@@ -1,3 +1,11 @@
+"""
+    shareSplitter.py
+    by: Erwin Leonardy
+
+    This file contains all of the necessary
+    functions to split the shares
+"""
+
 from PIL import Image
 import PIL.ImageOps
 import random, base64, os
@@ -68,7 +76,7 @@ class ShareSplitter():
     """
         This function sends the client share
         to the client's email provided and 
-        the server's share will be available
+        the bank's share will be available
         for download
     """
     @staticmethod

@@ -12,6 +12,7 @@ from flask import render_template, request
 from vsignit import app
 from vsignit.driver import Driver
 from vsignit.models import User
+from vsignit.common import Common
 
 @app.route('/')
 def default_client():
@@ -42,14 +43,14 @@ def bank_generate():
             fh.write(byte_data)
 
         # generate two shares and send one of the shares to the server
-        image = Driver.open_image ("imageToSave.png", 1)
+        image = Common.open_image ("imageToSave.png", 1)
 
-        if Driver.validate_resize_image(image) != None:
+        # checks if the image dimension is valid
+        if Common.validate_resize_image(image) != None:
             username = request.form['filename'].split(".")[0]
             email = request.form['email']
 
             bank_share = Driver.share_splitter(email, image, username)
-            # bank_share = ShareSplitter.encrypt(email, image, username)
 
             os.remove("./vsignit/input/imageToSave.png")
             return bank_share
@@ -85,10 +86,11 @@ def bank_reconstruct():
 
         # merge the client cheque and the bank share
         # to reveal the reconstructed signature
-        clientCheque = Driver.open_image ("clientCheque.png", 1)
-        bankShare = Driver.open_image ("bankShare.png", 1)
+        clientCheque = Common.open_image ("clientCheque.png", 1)
+        bankShare = Common.open_image ("bankShare.png", 1)
 
-        final_result = Driver.merge_2shares (clientCheque, bankShare, username)
+        final_result = Driver.share_reconstruction (clientCheque, bankShare, username)
+        # final_result = Driver.share_reconstruction (clientCheque, bankShare, username)
 
         os.remove("./vsignit/input/clientCheque.png")
         os.remove("./vsignit/input/bankShare.png")
@@ -125,10 +127,10 @@ def client():
             fh.write(byte_data2)
 
         # generate two shares and send one of the shares to the server
-        clientCheque = Driver.open_image ("clientCheque.png", 1)
-        clientShare = Driver.open_image ("clientShare.png", 1)
+        clientCheque = Common.open_image ("clientCheque.png", 1)
+        clientShare = Common.open_image ("clientShare.png", 1)
 
-        resultStr = Driver.paste_on_top (clientShare, clientCheque, username)
+        resultStr = Common.paste_on_top (clientShare, clientCheque, username)
 
         os.remove("./vsignit/input/clientCheque.png")
         os.remove("./vsignit/input/clientShare.png")

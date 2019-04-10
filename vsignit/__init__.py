@@ -1,5 +1,5 @@
 """
-    models.py
+    __init__.py
     by: Erwin Leonardy
 
     This file would be called automatically

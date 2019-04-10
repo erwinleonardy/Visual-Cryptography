@@ -1,5 +1,5 @@
 """
-Vsignit Driver Class
+Vsignit Main Class
 A secure Signing Method
 
 Developed by: Erwin Leonardy
