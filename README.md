@@ -45,7 +45,7 @@ pip install Flask
 ```shell
 pip install SQLAlchemy
 ```
-4.Download Python MySQL
+4. Download Python MySQL
 ```shell
 pip install PyMySQL
 ```
