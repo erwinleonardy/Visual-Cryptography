@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 09, 2019 at 03:05 PM
+-- Generation Time: Apr 11, 2019 at 07:03 AM
 -- Server version: 8.0.15
 -- PHP Version: 7.1.23
 
@@ -30,6 +30,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `user_table` (
   `user_id` int(11) NOT NULL,
+  `user_type` enum('admin','user') NOT NULL,
   `username` varchar(70) NOT NULL,
   `password` varchar(70) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -38,9 +39,9 @@ CREATE TABLE `user_table` (
 -- Dumping data for table `user_table`
 --
 
-INSERT INTO `user_table` (`user_id`, `username`, `password`) VALUES
-(1, 'John Doe', 'a51dda7c7ff50b61eaea0444371f4a6a9301e501'),
-(2, 'Jane Doe', '8a8deed44623d4c44268c26652d80945851c4f7f');
+INSERT INTO `user_table` (`user_id`, `user_type`, `username`, `password`) VALUES
+(1, 'admin', 'johndoe', 'a51dda7c7ff50b61eaea0444371f4a6a9301e501'),
+(2, 'user', 'janedoe', '8a8deed44623d4c44268c26652d80945851c4f7f');
 
 --
 -- Indexes for dumped tables
