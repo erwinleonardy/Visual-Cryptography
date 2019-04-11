@@ -10,19 +10,33 @@ import base64, re, os
 from flask import render_template, request
 
 from vsignit import app
+from vsignit.login import Login
 from vsignit.driver import Driver
-from vsignit.models import User
 from vsignit.common import Common
+from vsignit.models import UserType
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def default_client():
-    try:
-        user = User.query.all()
-        print(User.getData(user[0]))
+    if request.method == 'GET':
+        try:
+            return render_template('login.html')
+        except Exception as e:
+            return str(e)
 
-        return render_template('admin-generation.html')
-    except Exception as e:
-        return str(e)
+    elif request.method == 'POST':  
+        username = request.form['username']
+        password = request.form['password']
+
+        result = Login.login(username, password)  
+
+        if result != None:
+            if result.user_type == UserType.admin:
+                return "/bank-generate"
+            elif result.user_type == UserType.user:
+                return "/client"
+        else:
+            return ""
+
 
 @app.route('/bank-generate', methods=['GET', 'POST'])
 def bank_generate():

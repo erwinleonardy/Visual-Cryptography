@@ -15,7 +15,6 @@ from flask_sqlalchemy import SQLAlchemy
 UPLOAD_FOLDER = './input'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
-
 app = Flask(__name__, template_folder='./src')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 

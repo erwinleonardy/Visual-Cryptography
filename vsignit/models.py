@@ -8,28 +8,33 @@
 """
 
 from vsignit import db
+import enum
+
+class UserType(enum.Enum):
+    admin = "admin"
+    user = "user"
 
 class User(db.Model):
     __tablename__ = 'user_table'
     
-    id = db.Column('user_id', db.Integer, primary_key=True, unique=True)
-    username = db.Column('username', db.String(70))
-    password = db.Column('password', db.String(70))
+    id = db.Column('user_id', db.Integer, primary_key=True, unique=True, nullable=False)
+    user_type = db.Column(db.Enum(UserType))
+    username = db.Column('username', db.String(70), nullable=False)
+    password = db.Column('password', db.String(70), nullable=False)
 
-    @staticmethod
-    def getData(user):
-        return ("{}, {}, {}".format(user.id, user.username, user.password))
+    def __init__ (self, username, user_type, password):
+        self.user_type = UserType.admin
+        self.username = username
+        self.password = password
+
 
 # class User(db.Model):
 #     __tablename__ = 'user_table'
+    
 #     id = db.Column('user_id', db.Integer, primary_key=True, unique=True)
 #     username = db.Column('username', db.String(70))
 #     password = db.Column('password', db.String(70))
-  
-#     def getData(self):
-#         data = self.query.all()[0]
-#         print("Created!!")
-#         print("\n\n\n\n\n")
-#         print("Test!!")
-#         print("Called!!")
-#         print ("{}, {}, {}".format(data.id, data.username, data.password))
+
+#     @staticmethod
+#     def getData(user):
+#         return ("{}, {}, {}".format(user.id, user.username, user.password))
