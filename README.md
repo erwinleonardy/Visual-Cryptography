@@ -22,7 +22,7 @@ Please [click here to install WAMP Server](https://www.google.com) that would ha
 Apache came pre-installed. Do follow the instuctions [here](https://medium.com/@jangid.hitesh2112/install-apache-mysql-php-macos-mojave-10-14-b6b5c00b7de) to get things up and running.
 
 2. When you managed to get phpMyAdmin running, run the sql script that can be found in the <b>./helper</b> folder.
-Click [here](https://github.com/erwinleonardy/Visual-Cryptography/blob/master/helper/vsignit.sql) to view the file.
+Click [here](https://github.com/erwinleonardy/Visual-Cryptography/blob/master/helper/user_table.sql) to view the file.
 
 3. Create a new database called 'vsignit' on phpMyAdmin.
 
@@ -40,6 +40,18 @@ pip install Pillow
 2. Download Flask
 ```shell
 pip install Flask
+```
+3. Download SQLAlchemy
+```shell
+pip install SQLAlchemy
+```
+4. Download Python MySQL
+```shell
+pip install PyMySQL
+```
+5. Download Flask Login
+```shell
+pip install flask-login
 ```
 
 Execution
