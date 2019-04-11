@@ -6,15 +6,19 @@
     that is going to store the result of the
     data extracted from the database
 """
-
-from vsignit import db
+from flask_login import UserMixin
+from vsignit import db, login_manager
 import enum
+
+@login_manager.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 class UserType(enum.Enum):
     admin = "admin"
     user = "user"
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = 'user_table'
     
     id = db.Column('user_id', db.Integer, primary_key=True, unique=True, nullable=False)

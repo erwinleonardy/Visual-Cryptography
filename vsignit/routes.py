@@ -7,21 +7,42 @@
 """
 
 import base64, re, os
-from flask import render_template, request
+from flask import render_template, request, session, url_for, redirect
+from flask_login import current_user, login_user, logout_user
 
 from vsignit import app
 from vsignit.login import Login
 from vsignit.driver import Driver
 from vsignit.common import Common
-from vsignit.models import UserType
+from vsignit.models import UserType, User
 
 @app.route('/', methods=['GET', 'POST'])
-def default_client():
+def index():
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+
+    else:
+        # get user type
+        usertype = User.query.filter_by(id=current_user.get_id()).first().user_type
+
+        # redirect page based on user type
+        if usertype == UserType.admin:
+            return url_for('bank_generate')
+        elif usertype == UserType.user:
+            return url_for('client')
+        else:
+            return url_for('login')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
     if request.method == 'GET':
-        try:
-            return render_template('login.html')
-        except Exception as e:
-            return str(e)
+        if not current_user.is_authenticated:
+            try:
+                return render_template('login.html')
+            except Exception as e:
+                return str(e)
+        else:
+            return redirect(url_for('index'))
 
     elif request.method == 'POST':  
         username = request.form['username']
@@ -30,19 +51,29 @@ def default_client():
         result = Login.login(username, password)  
 
         if result != None:
-            if result.user_type == UserType.admin:
-                return "/bank-generate"
-            elif result.user_type == UserType.user:
-                return "/client"
+            login_user(result)
+            return redirect(url_for('index'))
+            
         else:
             return ""
 
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 @app.route('/bank-generate', methods=['GET', 'POST'])
 def bank_generate():
     if request.method == 'GET':
         try:
-            return render_template('admin-generation.html')
+            result = User.query.filter_by(id=current_user.get_id()).first()
+
+            if not current_user.is_authenticated or result == None or result.user_type != UserType.admin:
+                logout_user()
+                return redirect(url_for('login'))
+
+            else:
+                return render_template('admin-generation.html')
         except Exception as e:
             return str(e)
 
@@ -76,7 +107,14 @@ def bank_generate():
 def bank_reconstruct():
     if request.method == 'GET':
         try:
-            return render_template('admin-reconstruct.html')
+            result = User.query.filter_by(id=current_user.get_id()).first()
+
+            if not current_user.is_authenticated or result == None or result.user_type != UserType.admin:
+                logout_user()
+                return redirect(url_for('login'))
+            
+            else:
+                return render_template('admin-reconstruct.html')
         except Exception as e:
             return str(e)
 
@@ -115,7 +153,14 @@ def bank_reconstruct():
 def client():
     if request.method == 'GET':
         try:
-            return render_template('client.html')
+            result = User.query.filter_by(id=current_user.get_id()).first()
+
+            if not current_user.is_authenticated or result == None or result.user_type != UserType.user:
+                logout_user()
+                return redirect(url_for('login'))
+
+            else:
+                return render_template('client.html')
         except Exception as e:
             return str(e)
 

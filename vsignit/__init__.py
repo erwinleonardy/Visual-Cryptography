@@ -10,18 +10,25 @@
 """
 
 from flask import Flask
+from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
 UPLOAD_FOLDER = './input'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
+login_manager = LoginManager()
+
 app = Flask(__name__, template_folder='./src')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Set the secret key to some random bytes. Keep this really secret!
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 # this code is to connect to your database
 # Format: mysql://username:password@localhost/databaseName
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:erwin123@localhost/vsignit'  
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False    # to silent the warning message
 db = SQLAlchemy(app)
+login_manager.init_app(app)
 
 from vsignit import routes
