@@ -22,7 +22,7 @@ app = Flask(__name__, template_folder='./src')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Set the secret key to some random bytes. Keep this really secret!
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+app.secret_key = b'\xdfe\x05\x86\xd1\xdc\xf6\x81\xbb\xf8\xf7_,\xba\x938'
 
 # this code is to connect to your database
 # Format: mysql://username:password@localhost/databaseName
