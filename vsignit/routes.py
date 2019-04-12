@@ -16,7 +16,7 @@ from vsignit.driver import Driver
 from vsignit.common import Common
 from vsignit.models import UserType, User
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def index():
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
@@ -27,11 +27,11 @@ def index():
 
         # redirect page based on user type
         if usertype == UserType.admin:
-            return url_for('bank_generate')
+            return redirect(url_for('bank_generate'))
         elif usertype == UserType.user:
-            return url_for('client')
+            return redirect(url_for('client'))
         else:
-            return url_for('login')
+            return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -52,7 +52,7 @@ def login():
 
         if result != None:
             login_user(result)
-            return redirect(url_for('index'))
+            return url_for('index')
             
         else:
             return ""
