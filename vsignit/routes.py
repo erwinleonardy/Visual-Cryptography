@@ -62,18 +62,25 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
+@app.route('/forbidden')
+def forbidden():
+    return render_template('forbidden.html')
+
 @app.route('/bank-generate', methods=['GET', 'POST'])
 def bank_generate():
     if request.method == 'GET':
         try:
             result = User.query.filter_by(id=current_user.get_id()).first()
 
-            if not current_user.is_authenticated or result == None or result.user_type != UserType.admin:
+            if not current_user.is_authenticated or result == None:
                 logout_user()
                 return redirect(url_for('login'))
 
             else:
+                if result.user_type != UserType.admin:
+                    return redirect(url_for('forbidden'))
                 return render_template('admin-generation.html')
+
         except Exception as e:
             return str(e)
 
@@ -109,11 +116,13 @@ def bank_reconstruct():
         try:
             result = User.query.filter_by(id=current_user.get_id()).first()
 
-            if not current_user.is_authenticated or result == None or result.user_type != UserType.admin:
+            if not current_user.is_authenticated or result == None:
                 logout_user()
                 return redirect(url_for('login'))
             
             else:
+                if result.user_type != UserType.admin:
+                    return redirect(url_for('forbidden'))
                 return render_template('admin-reconstruct.html')
         except Exception as e:
             return str(e)
@@ -155,11 +164,13 @@ def client():
         try:
             result = User.query.filter_by(id=current_user.get_id()).first()
 
-            if not current_user.is_authenticated or result == None or result.user_type != UserType.user:
+            if not current_user.is_authenticated or result == None:
                 logout_user()
                 return redirect(url_for('login'))
 
             else:
+                if result.user_type != UserType.user:
+                    return redirect(url_for('forbidden'))
                 return render_template('client.html')
         except Exception as e:
             return str(e)

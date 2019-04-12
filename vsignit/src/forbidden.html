@@ -1,0 +1,53 @@
+<html>
+
+<head>
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon"/>
+  <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='css/common.css') }}">
+  <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+  <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/popper.js') }}"></script>
+  <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  <meta name="viewport" content = "width=device-width, initial-scale=1.0">
+</head>
+
+<!-- Body -->
+<body class = "body">
+  <!-- Nav Bar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+    <a class="navbar-brand" href="#">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="">
+    </a>
+    
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  </nav>
+
+  <!-- Content -->
+  <div class="jumbotron">
+    <!-- Header -->
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1 class="display-4">Error 403 - Forbidden</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <p class="lead">Oops.. Your user account does not have the permission to access this page.</p>
+                <hr class="my-4">
+            </div>
+        </div>
+
+        <div class="row">
+                <div class="col">
+                    <h3 class="lead">Click <a href="javascript:onclick=window.history.go(-1)">here</a> to get back to safety!</h3>
+                </div>
+            </div>
+    </div>
+
+</div>    
+    
+</body>

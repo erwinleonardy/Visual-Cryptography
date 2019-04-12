@@ -38,7 +38,7 @@
       </ul>
       
       <div class="form-inline my-2 my-lg-0">
-        <a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a>
+        <a class="dropdown-item" href="{{ url_for('logout') }}" style="padding-left:0px">Logout</a>
       </div>
 
       <!--
@@ -156,6 +156,8 @@
       // only runs when the empty cheque is fully loaded
       filereader1.onload = function(fileLoadedEvent) 
       {
+        console.log("File 1 loaded")
+
         // get filename
         var fullPath = document.getElementById('share-upload').value;
         if (fullPath) 
@@ -173,11 +175,16 @@
         // base64 data of the cheque
         srcData1 = fileLoadedEvent.target.result; 
 
+        console.log("Before the reading of file 2")
+
         // only runs when the client share is fully loaded
-        filereader2.onload = function(fileLoadedEvent) 
+        filereader2.onload = function(fileLoadedEvent2) 
         {
+          console.log("File 2 loaded")
+
           // bade64 data of the client's share
-          srcData2 = fileLoadedEvent.target.result; 
+          //srcData2 = document.getElementById('fileToLoad2');
+          srcData2 = fileLoadedEvent2.target.result; 
       
           // store image (base64)
           var fd = new FormData();
@@ -203,6 +210,8 @@
             success: function(response){
               if(response != 0)
               {
+                console.log("Success!!!!!\n\n\n\n");
+                
                 var result = response.split(",");
                 picture = result[0]
                 filename = result[1]
