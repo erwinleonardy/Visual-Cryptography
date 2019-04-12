@@ -21,15 +21,17 @@ Please [click here to install WAMP Server](https://www.google.com) that would ha
 
 Apache came pre-installed. Do follow the instuctions [here](https://medium.com/@jangid.hitesh2112/install-apache-mysql-php-macos-mojave-10-14-b6b5c00b7de) to get things up and running.
 
-2. When you managed to get phpMyAdmin running, run the sql script that can be found in the <b>./helper</b> folder.
-Click [here](https://github.com/erwinleonardy/Visual-Cryptography/blob/master/helper/user_table.sql) to view the file.
+2. Create a new database called 'vsignit' on phpMyAdmin.
 
-3. Create a new database called 'vsignit' on phpMyAdmin.
-
-4. Go to <b>__init__.py</b> and change this following line of code to your username and password. In this case, just replace the password with your root password.
+3. Go to <b>__init__.py</b> and change this following line of code to your username and password. In this case, just replace the password with your root password.
 ```shell
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:password@localhost/vsignit'  
 ```
+
+4. When you managed to get phpMyAdmin running, run the sql script that can be found in the <b>./helper</b> folder.
+Click [here](https://github.com/erwinleonardy/Visual-Cryptography/blob/master/helper/user_table.sql) to view the file.
+
+Note: If the sql script has been modified, you have to DROP or TRUNCATE the existing tables before re-running the sql script to get the latest database.
 
 Installation 
 ------
