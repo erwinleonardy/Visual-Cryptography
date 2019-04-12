@@ -43,13 +43,17 @@ pip install Pillow
 ```shell
 pip install Flask
 ```
-3. Download SQLAlchemy
+3. Download Flask-SQLAlchemy
 ```shell
-pip install SQLAlchemy
+pip install Flask-SQLAlchemy
 ```
-4. Download Python MySQL
+4. Download Python MySQL (Windwos)
 ```shell
 pip install PyMySQL
+```
+4. Download MySQLClient (Mac)
+```shell
+pip install MySQLClient
 ```
 5. Download Flask Login
 ```shell
