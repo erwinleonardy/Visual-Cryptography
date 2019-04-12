@@ -66,11 +66,11 @@ Execution
 note: FLASK_ENV would allow you to refresh the website without having to quit (ctrl+c) the application that you are currently running.
 * MAC:
 ```shell
-FLASK_APP=VSignIt.py FLASK_DEBUG=1 python -m flask run
+FLASK_APP=vsignit.py FLASK_DEBUG=1 python -m flask run
 ```
 * Windows (Doesn't work with PowerShell, you have to use cmd):
 ```shell
-set FLASK_APP=VSignIT.py
+set FLASK_APP=vsignit.py
 set FLASK_ENV=development
 flask run
 ```
