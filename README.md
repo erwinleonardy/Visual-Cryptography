@@ -21,14 +21,19 @@ Please [click here to install WAMP Server](https://www.google.com) that would ha
 
 Apache came pre-installed. Do follow the instuctions [here](https://medium.com/@jangid.hitesh2112/install-apache-mysql-php-macos-mojave-10-14-b6b5c00b7de) to get things up and running.
 
-2. Create a new database called 'vsignit' on phpMyAdmin.
+2. Open up phpMyAdmin
+```shell
+http://localhost/phpmyadmin/
+```
 
-3. Go to <b>__init__.py</b> and change this following line of code to your username and password. In this case, just replace the password with your root password.
+3. Create a new database called 'vsignit' on phpMyAdmin.
+
+4. Go to <b>__init__.py</b> and change this following line of code to your username and password. In this case, just replace the password with your root password.
 ```shell
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:password@localhost/vsignit'  
 ```
 
-4. When you managed to get phpMyAdmin running, run the sql script that can be found in the <b>./helper</b> folder.
+5. When you managed to get phpMyAdmin running, run the sql script that can be found in the <b>./helper</b> folder.
 Click [here](https://github.com/erwinleonardy/Visual-Cryptography/blob/master/helper/user_table.sql) to view the file.
 
 Note: If the sql script has been modified, you have to DROP or TRUNCATE the existing tables before re-running the sql script to get the latest database.
@@ -59,6 +64,18 @@ pip install MySQLClient
 ```shell
 pip install flask-login
 ```
+
+Database Modification
+------
+1. To <b>delete</b> user: 
+Use phpMyAdmin UI to delete the user you want.
+
+2. To <b>reset user_id</b> counter:
+```shell
+ALTER TABLE tablename AUTO_INCREMENT = (the latest id, i.e. after John Doe and Jane Doe, which is 2)
+```
+
+note: New user will only be given 'user' privilege.
 
 Execution
 ------
