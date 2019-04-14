@@ -28,6 +28,7 @@ app.secret_key = b'\xdfe\x05\x86\xd1\xdc\xf6\x81\xbb\xf8\xf7_,\xba\x938'
 # Format: mysql://username:password@localhost/databaseName
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:erwin123@localhost/vsignit'  
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False    # to silent the warning message
+
 db = SQLAlchemy(app)
 login_manager.init_app(app)
 

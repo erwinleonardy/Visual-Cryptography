@@ -209,9 +209,8 @@
             processData: false,
             success: function(response){
               if(response != 0)
-              {
-                console.log("Success!!!!!\n\n\n\n");
-                
+              {         
+                console.log(response)       
                 var result = response.split(",");
                 picture = result[0]
                 filename = result[1]

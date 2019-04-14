@@ -41,7 +41,7 @@
 
       <div class="row">
         <div class="col">
-          <p class="lead">Your journey to the perfectly secure signing application begins here!</p>
+          <p class="lead">We ensure that our signing application is secure at all time!</p>
           <hr class="my-4">
         </div>
       </div>
@@ -75,10 +75,16 @@
         </div>
 
         <div class="row">
-            <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
-                <button class="btn btn-primary btn-lg active" type="submit" aria-pressed="true" style="width:100%">Login</button>
+            <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 mb-3">
+              <button class="btn btn-primary btn-lg active" type="submit" aria-pressed="true" style="width:100%">Login</button>
             </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <p class="lead">Need an account? <a href="{{ url_for('register') }}">Sign Up</a></p>
           </div>
+        </div>        
       </div>
     </form>
   </div>
@@ -141,7 +147,6 @@
             document.getElementById("loader").style.display = "none";
             $('#username').addClass('is-invalid');
             $('#password').addClass('is-invalid');
-            $('#share-upload').addClass('is-invalid');
             $('#response-msg').addClass('alert-danger');
             $("#response-msg").text("Please ensure that you have entered the correct username and password!");
             $('#response-msg').toggle();
