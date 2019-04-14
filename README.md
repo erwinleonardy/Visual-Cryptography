@@ -74,7 +74,7 @@ http://localhost/phpmyadmin/
 
 2. To <b>reset user_id</b> counter:
 ```shell
-ALTER TABLE user_table AUTO_INCREMENT = (the latest id, i.e. after John Doe and Jane Doe, which is 2)
+ALTER TABLE user_table AUTO_INCREMENT = (the latest id, i.e. after John Doe and Jane Doe, which is 3)
 ```
 
 note: New user will only be given 'user' privilege.
