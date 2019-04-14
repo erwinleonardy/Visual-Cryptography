@@ -68,7 +68,10 @@ pip install flask-login
 Database Modification
 ------
 1. To <b>delete</b> user: 
-Use phpMyAdmin UI to delete the user you want.
+Go to this phpMyAdmin UI page and click on 'vsignit', then 'user_table' to access the records you want to delete.
+```shell
+http://localhost/phpmyadmin/
+```
 
 2. To <b>reset user_id</b> counter:
 ```shell
