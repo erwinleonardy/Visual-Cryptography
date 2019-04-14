@@ -3,7 +3,6 @@ vSignIt
 Visual-Cryptography (Group SS19/1C)
 Secure Remote Authentication using Visual Cryptography
 
-
 <b>PLEASE EXPLAIN WHAT YOU HAVE EDITED IN THE COMMIT STATEMENT WHEN YOU ARE ADDING OR EDITING A FILE.</b>
 
 The basis of our project is to define a secure authentication mechanisms for users to access remotely, through the use of visual cryptography. To achieve this, we have devised a system that operates on the basis of user signatures, where the signatures will be used to authenticate a legal document. Through an online platform, we allow users to provide an image of a signature, from which two shares that appear as random noise emerge. One of the shares is to be kept by the user, while the other is sent to a party that requires authentication. In order to provide the authentication, the party requiring authentication on the legal document sends in their complete document, inclusive of the share, while the recipient will in turn provide their share to complete the authentication.
@@ -75,7 +74,7 @@ http://localhost/phpmyadmin/
 
 2. To <b>reset user_id</b> counter:
 ```shell
-ALTER TABLE tablename AUTO_INCREMENT = (the latest id, i.e. after John Doe and Jane Doe, which is 2)
+ALTER TABLE user_table AUTO_INCREMENT = (the latest id, i.e. after John Doe and Jane Doe, which is 2)
 ```
 
 note: New user will only be given 'user' privilege.
@@ -104,3 +103,8 @@ Here are the sample screenshots of our current program
 ![share construction page](./screenshot/Share_Generation.png)
 ![share reconstruction page](./screenshot/Share_Reconstruction.png)
 ![client page](./screenshot/Client_Page.png)
+
+
+## Programmers
+- [Erwin Leonardy](https://github.com/erwinleonardy) : Main programmer
+- [Amit Singh Hundal](https://www.google.com) : Emailer.py
