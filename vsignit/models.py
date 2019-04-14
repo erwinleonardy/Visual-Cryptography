@@ -27,7 +27,7 @@ class User(UserMixin, db.Model):
     password = db.Column('password', db.String(70), nullable=False)
 
     def __init__ (self, username, user_type, password):
-        self.user_type = UserType.admin
+        self.user_type = UserType.user
         self.username = username
         self.password = password
 
