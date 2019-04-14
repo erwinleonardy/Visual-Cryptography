@@ -8,17 +8,51 @@
 
 from __future__ import print_function
 from PIL import Image
+from flask_login import login_user
+from flask import url_for
 import PIL.ImageOps
 import re, time, base64, sys, os
 
 from vsignit.shareSplitter import ShareSplitter
 from vsignit.shareReconstructor import ShareReconstuctor
 from vsignit.common import Common
+from vsignit.login import Login
+from vsignit.register import Register
 
 """
 Functions
 """
 class Driver():
+    """
+        Login to the system
+    """
+    @staticmethod
+    def login (username, password):
+        result = Login.login(username, password)  
+
+        if result != None:
+            login_user(result)
+            return url_for('index')
+            
+        else:
+            return ""
+
+    """
+        Register the user to the system
+    """
+    @staticmethod
+    def register (username, password, verification):
+        result = Register.register(username, password, verification)
+
+        if result == "OK":
+            return url_for('login')
+
+        elif result == "DuplicatedUser":
+            return "The username '{}' already exists!".format(username)
+            
+        elif result == "Mismatch":
+            return "Both of the password doesn't match!"
+
     """
         Share Splitter Driver Function
     """
