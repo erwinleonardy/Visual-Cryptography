@@ -1,54 +1,12 @@
-<html>
+{% include "header.html" %}
 
-<head>
-  <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon"/>
-  <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='css/common.css') }}">
-  <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='css/bootstrap.min.css') }}">
-  <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
-  <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/popper.js') }}"></script>
-  <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-  <meta name="viewport" content = "width=device-width, initial-scale=1.0">
-</head>
-
+{% if 'user' in usertype %}
 <!-- Body -->
 <body class = "body">
   <!-- Nav Bar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-
-    <a class="navbar-brand" href="#">
-      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="">
-    </a>
-    
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-  
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Client Page<span class="sr-only">(current)</span></a>
-        </li>
-
-        <!--
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-        </li>
-        -->
-      </ul>
-      
-      <div class="form-inline my-2 my-lg-0">
-        <a class="dropdown-item" href="{{ url_for('logout') }}" style="padding-left:0px">Logout</a>
-      </div>
-
-      <!--
-      <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-      </form>
-      -->
-    </div>
-  </nav>
+  {% with page_type="Client" %}
+    {% include "navbar.html" %}
+  {% endwith %}
 
   <!-- Content -->
   <div class="jumbotron">
@@ -261,3 +219,9 @@
     }
   }
 </script>
+
+{% else %}
+  {% include "forbidden.html" %}
+{% endif %}
+
+</html>

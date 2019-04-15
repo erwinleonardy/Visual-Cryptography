@@ -1,17 +1,8 @@
-<html>
+{% include "header.html" %}
 
-<head>
-  <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon"/>
-  <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='css/common.css') }}">
-  <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='css/bootstrap.min.css') }}">
-  <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
-  <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/popper.js') }}"></script>
-  <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <meta name="viewport" content = "width=device-width, initial-scale=1.0">
-</head>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <style>
 .ui-dialog-titlebar-close{
@@ -166,8 +157,8 @@
               $('#verification').addClass('is-valid');
 
               $(function() {
-                $("#dialog").text("Click OK to login.");
-                $("#dialog").dialog({title: "User \'" + username + "\' has been created",
+                $("#dialog").text("Account \'" + username + "\' has been created.\nClick OK to proceed.");
+                $("#dialog").dialog({title: "New User Creation",
                                      show: "toggle", 
                                      modal: true,
                                      buttons: {

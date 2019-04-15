@@ -78,10 +78,6 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route('/forbidden')
-def forbidden():
-    return render_template('forbidden.html')
-
 @app.route('/bank-generate', methods=['GET', 'POST'])
 def bank_generate():
     if request.method == 'GET':
@@ -93,16 +89,17 @@ def bank_generate():
                 return redirect(url_for('login'))
 
             else:
-                if result.user_type != UserType.admin:
-                    return redirect(url_for('forbidden'))
-                return render_template('admin-generation.html')
+                usertype = "user"
+                if result.user_type == UserType.admin:
+                    usertype = "admin"
+                return render_template('admin-generation.html', usertype=usertype)
 
         except Exception as e:
             return str(e)
 
-    elif request.method == 'POST':        
+    elif request.method == 'POST':      
         # print(request.form['file'], file=sys.stderr)
-
+  
         # convert the base64 image to an image
         base64_data = re.sub('^data:image/.+;base64,', '', request.form['file'])
         byte_data = base64.b64decode(base64_data)
@@ -137,9 +134,10 @@ def bank_reconstruct():
                 return redirect(url_for('login'))
             
             else:
-                if result.user_type != UserType.admin:
-                    return redirect(url_for('forbidden'))
-                return render_template('admin-reconstruct.html')
+                usertype = "user"
+                if result.user_type == UserType.admin:
+                    usertype = "admin"
+                return render_template('admin-reconstruct.html', usertype=usertype)
         except Exception as e:
             return str(e)
 
@@ -167,7 +165,6 @@ def bank_reconstruct():
         bankShare = Common.open_image ("bankShare.png", 1)
 
         final_result = Driver.share_reconstruction (clientCheque, bankShare, username)
-        # final_result = Driver.share_reconstruction (clientCheque, bankShare, username)
 
         os.remove("./vsignit/input/clientCheque.png")
         os.remove("./vsignit/input/bankShare.png")
@@ -185,9 +182,10 @@ def client():
                 return redirect(url_for('login'))
 
             else:
-                if result.user_type != UserType.user:
-                    return redirect(url_for('forbidden'))
-                return render_template('client.html')
+                usertype = "user"
+                if result.user_type == UserType.admin:
+                    usertype = "admin"
+                return render_template('client.html', usertype=usertype)
         except Exception as e:
             return str(e)
 
