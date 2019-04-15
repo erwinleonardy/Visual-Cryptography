@@ -9,6 +9,8 @@ The basis of our project is to define a secure authentication mechanisms for use
 
 For our final product, VSignIT, our primary focus will be electronically authenticating signatures on cheques. However, while the focus of the project is in the banking domain, the usage of the application can be generalized to serve as an authentication for any legal document requiring signatures within an organisation.
 
+Visit our [Frequently Asked Questions (FAQ)](https://github.com/erwinleonardy/Visual-Cryptography/wiki/Frequently-Asked-Questions-(FAQ)) Page for the solutions to errors that user might face when installing/running the vSignIt application.
+
 Pre-Installation 
 ------
 1. You would have to install Apache, phpMyAdmin, and MySQL to get the database running.
@@ -106,5 +108,5 @@ Here are the sample screenshots of our current program
 
 
 ## Programmers
-- [Erwin Leonardy](https://github.com/erwinleonardy) : Main programmer
+- [Erwin Leonardy](https://github.com/erwinleonardy) : Technical Lead, UX Designer, and Main programmer
 - [Amit Singh Hundal](https://www.google.com) : Emailer.py
