@@ -6,15 +6,20 @@
     handles the routing of our flask program.
 """
 
-import base64, re, os
-from flask import render_template, request, session, url_for, redirect
-from flask_login import current_user, login_user, logout_user
+import base64, re, os, time
+from flask import render_template, request, url_for, redirect, session, jsonify
+from flask_login import current_user, logout_user
 
+from datetime import timedelta
 from vsignit import app
-from vsignit.login import Login
 from vsignit.driver import Driver
 from vsignit.common import Common
 from vsignit.models import UserType, User
+
+# @app.before_request
+# def make_session_permanent():
+#     session.modified = True
+#     app.permanent_session_lifetime = timedelta(seconds=5)
 
 @app.route('/', methods=['GET'])
 def index():
@@ -48,14 +53,25 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        result = Login.login(username, password)  
+        return Driver.login(username, password)
 
-        if result != None:
-            login_user(result)
-            return url_for('index')
-            
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'GET':
+        if not current_user.is_authenticated:
+            try:
+                return render_template('register.html')
+            except Exception as e:
+                return str(e)
         else:
-            return ""
+            return redirect(url_for('index'))
+
+    elif request.method == 'POST':  
+        username = request.form['username']
+        password = request.form['password']
+        verification = request.form['verification']
+
+        return Driver.register (username, password, verification)
 
 @app.route('/logout')
 def logout():

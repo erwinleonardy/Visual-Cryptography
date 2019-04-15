@@ -1,0 +1,211 @@
+<html>
+
+<head>
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon"/>
+  <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='css/common.css') }}">
+  <link rel="stylesheet" media="screen" href = "{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+  <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/popper.js') }}"></script>
+  <script language="JavaScript" type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <meta name="viewport" content = "width=device-width, initial-scale=1.0">
+</head>
+
+<style>
+.ui-dialog-titlebar-close{
+    display: none;
+}
+</style>
+
+<!-- Body -->
+<body class = "body">
+  <!-- Nav Bar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+    <a class="navbar-brand" href="#">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="">
+    </a>
+    
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <div class="jumbotron">
+    <!-- Header -->
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h1 class="display-4">Sign Up</h1>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <p class="lead">Your journey to the perfectly secure signing application begins here!</p>
+          <hr class="my-4">
+        </div>
+      </div>
+    </div>
+    
+    <!-- Form -->
+    <form name="loginForm" method="post" enctype="multipart/form-data">
+      <div class="container">
+        <div class="row">
+            <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
+                <input type="text" id="username" class="form-control" placeholder="Enter your username here" aria-label="Username" aria-describedby="basic-addon1" required>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
+                <input type="password" id="password" class="form-control" placeholder="Enter your password here" aria-label="Username" aria-describedby="basic-addon1" required>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
+                <input type="password" id="verification" class="form-control" placeholder="Re-enter your password here" aria-label="Username" aria-describedby="basic-addon1" required>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
+              <div id="loader"></div>
+            </div>
+        </div> 
+
+        <div class="row">
+          <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
+            <div id="response-msg" class="alert alert-danger" role="alert" style="width:100%; text-align: center"></div>
+          </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 mb-3">
+              <button class="btn btn-primary btn-lg active" type="submit" aria-pressed="true" style="width:100%">Sign Up</button>
+            </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <p class="lead">Already have an account? <a href="{{ url_for('login') }}">Log In</a></p>
+          </div>
+        </div>   
+        
+        <div id="dialog" title="Basic dialog">
+          <p></p>
+        </div>
+      </div>
+    </form>
+  </div>
+</body>
+
+
+<script>
+  $("#response-msg").hide();
+
+  // execute this when the form is submitted
+  $(loginForm).submit(function(e) 
+  {
+      e.preventDefault(); // avoid to execute the actual submit of the form.
+
+      $('#response-msg').hide();
+      document.getElementById("loader").style.display = "block";
+
+      checkCredentials()
+  });
+
+  // function to check the username and password
+  function checkCredentials()
+  {
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+    var verification = document.getElementById("verification").value;
+
+    // checks if both of the fields are filled
+    if (username.length > 0 && password.length > 0 && verification.length > 0) 
+    {
+      // send to server via AJAX
+      var fd = new FormData();
+      fd.append('username',username)
+      fd.append('password',password)
+      fd.append('verification',verification)
+
+      var formData = new FormData(document.getElementById("clientForm"));
+      $.ajax({
+        type: 'post',
+        url: '/register',
+        data: fd,
+        mimeType:"multipart/form-data",
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(response){
+          if(response != 0)
+          {
+            document.getElementById("loader").style.display = "none";
+
+            if (response == "/login")
+            {
+              $('#username').removeClass('is-invalid');
+              $('#username').addClass('is-valid');
+              $('#password').removeClass('is-invalid');
+              $('#verification').removeClass('is-invalid');
+              $('#response-msg').removeClass('alert-danger');
+              $('#response-msg').addClass('alert-success');
+              $('#password').addClass('is-valid');
+              $('#verification').addClass('is-valid');
+
+              $(function() {
+                $("#dialog").text("Click OK to login.");
+                $("#dialog").dialog({title: "User \'" + username + "\' has been created",
+                                     show: "toggle", 
+                                     modal: true,
+                                     buttons: {
+                                        "OK": function () {
+                                            window.location.href = response
+                                            $(this).dialog("close");
+                                        },
+                                    }});
+              });
+            }
+
+            else
+            {
+                $('#username').removeClass('is-valid');
+                $('#username').addClass('is-invalid');
+
+                if (response == "Both of the password doesn't match!")
+                {
+                    $('#username').removeClass('is-invalid');
+                    $('#username').addClass('is-valid');
+
+                    $('#password').removeClass('is-valid');
+                    $('#verification').removeClass('is-valid');
+                    $('#password').addClass('is-invalid');
+                    $('#verification').addClass('is-invalid');
+                }
+
+                $('#response-msg').addClass('alert-danger');
+                $("#response-msg").text(response);
+                $('#response-msg').toggle();
+            }
+          }
+
+          else {}
+        },
+        error: function(jqXHR, textStatus, errorThrown) 
+        {}
+      });
+    }
+  }
+</script>
