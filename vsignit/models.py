@@ -14,15 +14,17 @@ import enum
 def load_user(id):
     return User.query.get(int(id))
 
+# defines an enum for user type
 class UserType(enum.Enum):
     admin = "admin"
     user = "user"
 
+# stores user's basic information
 class User(UserMixin, db.Model):
     __tablename__ = 'user_table'
     
     id = db.Column('user_id', db.Integer, primary_key=True, unique=True, nullable=False)
-    user_type = db.Column(db.Enum(UserType))
+    user_type = db.Column(db.Enum(UserType), nullable=False)
     username = db.Column('username', db.String(70), nullable=False)
     password = db.Column('password', db.String(70), nullable=False)
 
@@ -31,6 +33,43 @@ class User(UserMixin, db.Model):
         self.username = username
         self.password = password
 
+    def getUsername (self):
+        return self.username
+
+    def getID (self):
+        return self.id
+
+# stores bank's shares
+class Bank_Data(UserMixin, db.Model):
+    __tablename__ = 'bank_data'
+    
+    bank_userid = db.Column('bank_user_id', db.Integer, primary_key=True, unique=True, nullable=False)
+    client_userid = db.Column('client_user_id', db.Integer, primary_key=True, unique=True, nullable=False)
+    bank_share_path = db.Column('bank_share_path', db.String(100), nullable=False)
+
+    def __init__ (self, bank_userid, client_userid, bank_share_path):
+        self.bank_userid = bank_userid
+        self.client_userid = client_userid
+        self.bank_share_path = bank_share_path
+
+# stores client's shares
+class Client_Data(UserMixin, db.Model):
+    __tablename__ = 'client_data'
+    
+    client_userid = db.Column('client_user_id', db.Integer, primary_key=True, unique=True, nullable=False)
+    bank_userid = db.Column('bank_user_id', db.Integer, primary_key=True, unique=True, nullable=False)
+    client_share_path = db.Column('client_share_path', db.String(100), nullable=False)
+
+    def __init__ (self, client_userid, bank_userid, client_share_path):
+        self.client_userid = client_userid
+        self.bank_userid = bank_userid
+        self.client_share_path = client_share_path
+
+    def getBankUserId (self):
+        return self.bank_userid
+
+    def getClientSharePath (self):
+        return self.client_share_path
 
 # class User(db.Model):
 #     __tablename__ = 'user_table'

@@ -41,9 +41,9 @@
         <div class="row">
           <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
             <div class="input-group-prepend">
-              <span class="input-group-text" id="basic-addon1">Client's Email</span>
+              <span class="input-group-text" id="basic-addon1">Client's Username</span>
             </div>
-            <input type="text" id="email_input" class="form-control" placeholder="johndoe@vsignit.com" aria-label="Username" aria-describedby="basic-addon1" required>
+            <input type="text" id="client_username" class="form-control" placeholder="janedoe" aria-label="Username" aria-describedby="basic-addon1" required>
           </div>
         </div>
 
@@ -62,7 +62,7 @@
         <div class="row">
           <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
             <div id="response-msg" class="alert alert-danger animate-bottom" role="alert" style="width:100%; text-align: center">
-                Please ensure that you have entered the correct email!
+                Please ensure that you have entered a registered vSignIt user!
             </div>
           </div>
         </div>
@@ -96,46 +96,15 @@
     $('#response-msg').hide();
     document.getElementById("loader").style.display = "block";
 
-    // checks if the email is in the correct format
-    if (validate())
-      encodeImageFileAsURL()
+    encodeImageFileAsURL()
   });
-
-  // regex to check email
-  function validateEmail(email) 
-  {
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-  }
-
-  // show the response message based on user's input
-  function validate() 
-  {
-    var email = $(email_input).val()
-
-    if (validateEmail(email)) {
-      $('#email_input').removeClass('is-invalid');
-      $('#email_input').addClass('is-valid');
-      $('#response-msg').hide();
-      return true;
-    } 
-
-    else
-    {
-      document.getElementById("loader").style.display = "none";
-      $("#response-msg").text("Please ensure that you have entered the correct email!");
-      $('#email_input').addClass('is-invalid');
-      $('#response-msg').toggle();
-      return false;
-    }
-  }
 
   // function to get the image file
   function encodeImageFileAsURL()
   {
     var filesSelected = document.getElementById("signature-upload").files;
 
-    // checks if the image and email are provided
+    // checks if the image and username are provided
     if (filesSelected.length > 0) 
     {
       var fileToLoad = filesSelected[0];
@@ -144,32 +113,17 @@
       // only runs when the image provided is fully loaded
       fileReader.onload = function(fileLoadedEvent) 
       {
-        // get filename
-        var fullPath = document.getElementById('signature-upload').value;
-        if (fullPath) 
-        {
-          var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-          var filename = fullPath.substring(startIndex);
-          if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
-              filename = filename.substring(1);
-          }
-        }
-        else {
-          filename="Unknown"
-        }
-
         // base64 data of the original signature
         srcData = fileLoadedEvent.target.result; 
         
-        // store email and image (base64)
+        // store client's username and image (base64)
         var fd = new FormData();
-        var email = $(email_input).val()
+        var client_username = document.getElementById('client_username').value
         var imgsrc = document.getElementById("preview").src;
 
         // send to server via AJAX
-        fd.append('email', email)
+        fd.append('clientUsername', client_username)
         fd.append('file',srcData)
-        fd.append('filename', filename)
 
         var formData = new FormData(document.getElementById("generation"));
         $.ajax({
@@ -184,40 +138,53 @@
             // when the image provided has the correct dimension
             if(response != 0)
             {
-              var result = response.split(",");
-              picture = result[0]
-              filename = result[1]
+              if (response == "No User")       
+              {
+                document.getElementById("loader").style.display = "none";
+                $('#signature-upload').removeClass('is-invalid');
+                $('#signature-upload').addClass('is-valid');
+                $('#client_username').addClass('is-invalid');
+                $('#response-msg').addClass('alert-danger');
+                $("#response-msg").text("The client " + client_username + " doesn't exist!");
+                $('#response-msg').toggle();
+              }       
               
-              // allows bank to download the reconstructed image 
-              var png_download = "data:image/png;base64,"
-              png_download += picture
+              else
+              {
+                // allows bank to download the reconstructed image 
+                var png_download = "data:image/png;base64,"
+                png_download += response
 
-              var newImage = document.createElement('img');
-              newImage.src = png_download;
-              newImage.height = 200;
-              newImage.width = 200;
-              document.getElementById("preview").innerHTML = newImage.outerHTML;
+                var newImage = document.createElement('img');
+                newImage.src = png_download;
+                newImage.height = 200;
+                newImage.width = 200;
+                document.getElementById("preview").innerHTML = newImage.outerHTML;
 
-              // creates a downloadable link
-              var a = document.getElementById('downloadLink'); //or grab it by tagname etc
-              a.href = png_download
-              a.download = filename + "_bank_share"
-              
-              // updates UI
-              document.getElementById("loader").style.display = "none";
-              $('#preview').show();
-              $('#signature-upload').removeClass('is-invalid');
-              $('#signature-upload').addClass('is-valid');
-              $('#response-msg').removeClass('alert-danger');
-              $('#response-msg').addClass('alert-success');
-              $("#response-msg").text("Click on the image to download your share. The other share has been sent to \'" + email + "\'");
-              $('#response-msg').toggle();
+                // creates a downloadable link
+                var a = document.getElementById('downloadLink'); //or grab it by tagname etc
+                a.href = png_download
+                a.download = client_username + "_bank_share"
+                
+                // updates UI
+                document.getElementById("loader").style.display = "none";
+                $('#preview').show();
+                $('#signature-upload').removeClass('is-invalid');
+                $('#signature-upload').addClass('is-valid');
+                $('#client_username').removeClass('is-invalid');
+                $('#client_username').addClass('is-valid');
+                $('#response-msg').removeClass('alert-danger');
+                $('#response-msg').addClass('alert-success');
+                $("#response-msg").text("Bank share and user share have been created and stored! Click on the share to view your share!");
+                $('#response-msg').toggle();
+              }
             } 
             
             // when the image provided has incorrect dimension
             else
             {
               document.getElementById("loader").style.display = "none";
+              $('#client_username').removeClass('is-invalid');
               $('#signature-upload').addClass('is-invalid');
               $('#response-msg').addClass('alert-danger');
               $("#response-msg").text("The image should have the correct dimension (i.e. same width and height)!");

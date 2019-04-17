@@ -9,12 +9,13 @@
 import base64, re, os, time
 from flask import render_template, request, url_for, redirect, session, jsonify
 from flask_login import current_user, logout_user
+from PIL import Image
 
 from datetime import timedelta
 from vsignit import app
 from vsignit.driver import Driver
 from vsignit.common import Common
-from vsignit.models import UserType, User
+from vsignit.models import UserType, User, Client_Data
 
 # @app.before_request
 # def make_session_permanent():
@@ -98,26 +99,26 @@ def bank_generate():
             return str(e)
 
     elif request.method == 'POST':      
-        # print(request.form['file'], file=sys.stderr)
-  
         # convert the base64 image to an image
         base64_data = re.sub('^data:image/.+;base64,', '', request.form['file'])
         byte_data = base64.b64decode(base64_data)
 
-        with open("./vsignit/input/imageToSave.png", "wb") as fh:
+        username = request.form['clientUsername']
+        filepath = "./vsignit/output/tmp/" + username + "_imageToSave.png"
+
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        with open(filepath, "wb") as fh:
             fh.write(byte_data)
 
         # generate two shares and send one of the shares to the server
-        image = Common.open_image ("imageToSave.png", 1)
+        image = Common.open_image (filepath, 1)
 
         # checks if the image dimension is valid
         if Common.validate_resize_image(image) != None:
-            username = request.form['filename'].split(".")[0]
-            email = request.form['email']
 
-            bank_share = Driver.share_splitter(email, image, username)
+            bank_share = Driver.share_splitter(image, username)
 
-            os.remove("./vsignit/input/imageToSave.png")
+            os.remove("./vsignit/output/tmp/" + username + "_imageToSave.png")
             return bank_share
 
         else:
@@ -161,8 +162,8 @@ def bank_reconstruct():
 
         # merge the client cheque and the bank share
         # to reveal the reconstructed signature
-        clientCheque = Common.open_image ("clientCheque.png", 1)
-        bankShare = Common.open_image ("bankShare.png", 1)
+        clientCheque = Common.open_image ("./vsignit/input/clientCheque.png", 1)
+        bankShare = Common.open_image ("./vsignit/input/bankShare.png", 1)
 
         final_result = Driver.share_reconstruction (clientCheque, bankShare, username)
 
@@ -182,41 +183,40 @@ def client():
                 return redirect(url_for('login'))
 
             else:
+                usernames = Common.getBankUsernames(current_user.get_id())
+
                 usertype = "user"
                 if result.user_type == UserType.admin:
                     usertype = "admin"
-                return render_template('client.html', usertype=usertype)
+
+                return render_template('client.html', usertype=usertype, usernames=usernames, clientName=result.getUsername())
         except Exception as e:
             return str(e)
 
     elif request.method == 'POST':
-        # print(request.form['file1'], file=sys.stderr)
+        # retrieve the client's share from the databse
+        clientUsername = User.query.filter_by(id=current_user.get_id()).first().getUsername()
+        bankUsername = request.form['bankName']
 
-        username = request.form['filename'].split("_")[0]
-
-        if ".png" in username or ".jpg" in username:
-            return ""
+        clientID = current_user.get_id()
+        bankID = User.query.filter_by(username=bankUsername).first().getID()
+        clientSharePath = Client_Data.query.filter_by(client_userid=clientID, bank_userid=bankID).first().getClientSharePath()
 
         # convert the base64 image to an image
-        base64_data1 = re.sub('^data:image/.+;base64,', '', request.form['file1'])
+        base64_data1 = re.sub('^data:image/.+;base64,', '', request.form['cheque'])
         byte_data1 = base64.b64decode(base64_data1)
+        filepath = "./vsignit/output/tmp/" + clientUsername + "_clientCheque.png"
 
-        base64_data2 = re.sub('^data:image/.+;base64,', '', request.form['file2'])
-        byte_data2 = base64.b64decode(base64_data2)
-
-        with open("./vsignit/input/clientCheque.png", "wb") as fh:
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        with open(filepath, "wb") as fh:
             fh.write(byte_data1)
 
-        with open("./vsignit/input/clientShare.png", "wb") as fh:
-            fh.write(byte_data2)
-
         # generate two shares and send one of the shares to the server
-        clientCheque = Common.open_image ("clientCheque.png", 1)
-        clientShare = Common.open_image ("clientShare.png", 1)
+        clientCheque = Common.open_image (filepath, 1)
+        clientShare = Common.open_image (clientSharePath, 1)
 
-        resultStr = Common.paste_on_top (clientShare, clientCheque, username)
+        resultStr = Common.paste_on_top (clientShare, clientCheque, clientUsername)
 
-        os.remove("./vsignit/input/clientCheque.png")
-        os.remove("./vsignit/input/clientShare.png")
+        os.remove(filepath)
 
         return resultStr

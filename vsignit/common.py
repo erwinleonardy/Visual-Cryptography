@@ -9,7 +9,9 @@
 
 from PIL import Image
 import PIL.ImageOps
-import base64, os
+import base64, os, time, datetime
+
+from vsignit.models import User, Client_Data
 
 signX = 1740
 signY = 750
@@ -20,9 +22,7 @@ reconDist = signWidth - 85
 class Common():
     # Open an Image
     @staticmethod
-    def open_image(filename, bw):
-        path = './vsignit/input/' + filename
-
+    def open_image(path, bw):
         try:
             image = Image.open(path)
 
@@ -35,10 +35,12 @@ class Common():
 
     # Save Image
     @staticmethod
-    def save_image(image, filename):
-        path = './vsignit/output/' + filename + '.png'
-        print("{} has been successfully exported!".format(path))
-        image.save(path, optimize=True, format="PNG")
+    def save_image(image, filepath):
+        ts = time.time()
+        st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        print("({}) {} has been successfully exported!".format(st, filepath))
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        image.save(filepath, optimize=True, format="PNG")
 
     # checks image dimension is a square
     # if yes, return the resized image
@@ -67,13 +69,16 @@ class Common():
     def paste_on_top (source, dest, username):
         dest.paste (source,(signX, signY))   
 
-        # export the image to base64 format
-        Common.save_image (dest, "final_img")      
+        # save the file temporarily
+        filepath = "./vsignit/output/tmp/" + username + "_final_cheque.png"
+        Common.save_image (dest, filepath)      
 
-        with open("./vsignit/output/final_img.png", "rb") as image_file:
+        # export the image to base64 format
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        with open(filepath, "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read())
 
-        os.remove("./vsignit/output/final_img.png")
+        os.remove(filepath)
 
         return (encoded_string.decode("utf-8") + "," + username)
 
@@ -84,3 +89,32 @@ class Common():
         source = Image.open(sourcePath)
         dest.paste(source, (signX+reconDist, signY+(reconDist*2)), mask=source)       
         Common.save_image (dest, "final_cheque")   
+
+    # this function checks if the client's
+    # username given by the bank exists
+    @staticmethod
+    def userExists(username):
+        if User.query.filter_by(username=username).first() == None:
+            return None
+        else:
+            return "OK"
+
+    @staticmethod
+    def getBankUsernames (userid):
+        # get the banks this particular client subscribed
+        bank_subcribed = Client_Data.query.filter_by(client_userid=userid).all()
+
+        print(bank_subcribed)
+        print("\n\n\n\n")
+
+        usernames = []
+
+        for bank in bank_subcribed:
+            usernames.append(Common.getBankUsernameFromID(bank.getBankUserId()))
+
+        return usernames
+
+    @staticmethod
+    def getBankUsernameFromID (userid):
+        username = User.query.filter_by(id=userid).first().getUsername() 
+        return username

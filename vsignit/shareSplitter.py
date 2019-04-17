@@ -9,8 +9,13 @@
 from PIL import Image
 import PIL.ImageOps
 import random, base64, os
+from flask_login import current_user
+from sqlalchemy.exc import IntegrityError
 
+from vsignit import db
+from vsignit.models import User, UserType, Client_Data, Bank_Data
 from vsignit.emailerService import EmailerService
+from vsignit.common import Common
 
 class ShareSplitter():
     """
@@ -19,7 +24,7 @@ class ShareSplitter():
     """
     @staticmethod
     def resize (image):
-        return image.resize((200, 200)) 
+        return image.resize((200, 200))
 
     """
         This function takes in an image
@@ -80,27 +85,49 @@ class ShareSplitter():
         for download
     """
     @staticmethod
-    def send_shares (outfile1, outfile2, email, username):
+    def send_shares (outfile1, outfile2, username):
+        bank_userid = current_user.get_id()
+        client_userid = User.query.filter_by(username=username).first().id
+        bank_username = User.query.filter_by(id=bank_userid).first().username
+
         # export image shares
-        bank_sharename = "./vsignit/input/" + username + "_bank_share.png"
-        client_sharename = "./vsignit/input/" + username + "_client_share.png"
-        outfile1.save(bank_sharename, optimize=True, format="PNG")
-        outfile2.save(client_sharename, optimize=True, format="PNG")
+        bank_share_path = "./vsignit/output/bank/" + username + "_" + bank_username + "_bank_share.png"
+        client_share_path = "./vsignit/output/client/" + username + "_" + bank_username + "_client_share.png"
+        Common.save_image(outfile1, bank_share_path)
+        Common.save_image(outfile2, client_share_path)
+
+        # checks if data already exists
+        existingBank = Bank_Data.query.get([bank_userid, client_userid])
+        existingClient = Client_Data.query.get([client_userid, bank_userid])
+
+        # if yes, overwrites it
+        if existingBank != None and existingClient != None:
+            existingBank.bank_share_path = bank_share_path
+            existingClient.client_share_path = client_share_path      
+
+        # else, creates a new record
+        else:     
+            newBankData = Bank_Data(bank_userid, client_userid, bank_share_path)
+            newClientData = Client_Data(client_userid, bank_userid, client_share_path)
+            db.session.add(newBankData)
+            db.session.add(newClientData)
+        
+        db.session.commit()
 
         # email share to the client
-        emailer = EmailerService()
-        emailer.sendShare(email, client_sharename)
+        # emailer = EmailerService()
+        # emailer.sendShare(email, client_sharename)
 
         # convert the image into base64
-        with open(bank_sharename, "rb") as image_file:
+        with open(bank_share_path, "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read())
 
         # delete the temp files
-        os.remove(bank_sharename)
-        os.remove(client_sharename)
+        # os.remove(bank_sharename)
+        # os.remove(client_sharename)
 
         # send back bank share to the bank using AJAX
-        return (encoded_string.decode("utf-8")  + ',' + username)
+        return (encoded_string.decode("utf-8"))
 
         # image1 = open_image ("cheque.jpg", 0)
         # image1.paste(outfile1, (signX, signY))       

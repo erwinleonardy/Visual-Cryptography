@@ -30,22 +30,36 @@
     <form name="clientForm" method="post" enctype="multipart/form-data">
       <div class="container">
         <div class="row">
+          <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 mb-2 input-group">
+            <div class="input-group-prepend">
+              <label class="input-group-text" for="inputGroupSelect01">Bank Name</label>
+            </div>
+            <select class="custom-select" id="bankInput" onchange='checkInput(this.value);'>
+              <option selected>Choose your bank...</option>
+              {% for username in usernames %}
+                <option value={{ username }}>{{ username }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        
+        <div class="row">
           <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
-            <div class="custom-file">
-                <input type="file" class="custom-file-input" id="cheque-upload" required>
+            <div class="custom-file" id="chequeField" style="display:none">
+                <input type="file" class="custom-file-input" id="cheque-upload">
                 <label class="custom-file-label" for="cheque-upload" aria-describedby="inputGroupFileAddon02">Choose Cheque</label>
             </div>
           </div>
         </div>
 
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
             <div class="custom-file">
-                <input type="file" class="custom-file-input" id="share-upload" required>
-                <label class="custom-file-label" for="share-upload" aria-describedby="inputGroupFileAddon02">Choose Client Share</label>
+                <input type="file" class="custom-file-input" id="cheque-upload" required>
+                <label class="custom-file-label" for="cheque-upload" aria-describedby="inputGroupFileAddon02">Choose Client Share</label>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <div class="row">
             <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
@@ -61,7 +75,9 @@
 
         <div class="row">
           <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
-            <div id="response-msg" class="alert alert-danger" role="alert" style="width:100%; text-align: center"></div>
+            <div id="response-msg" class="alert alert-danger" role="alert" style="width:100%; text-align: center">
+              Oops! Your bank name field is empty. If you have registered with your bank and it doesn't show up here, please contact your bank.
+            </div>
           </div>
         </div>
 
@@ -85,6 +101,28 @@
       $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
   });
 
+  // dynamically checks input field when there is a new change
+  function checkInput(val)
+  {
+    var input = document.getElementById('bankInput').value;
+
+    if(input != 'Choose your bank...')
+    {
+      $('#response-msg').hide();
+      $('#bankInput').removeClass('is-invalid');
+      $('#bankInput').addClass('is-valid');
+      $("#chequeField").toggle();
+    }
+    else  
+    {
+      $('#response-msg').show();
+      $('#cheque-upload').removeClass('is-invalid');
+      $('#bankInput').removeClass('is-valid');
+      $('#bankInput').addClass('is-invalid');
+      $("#chequeField").hide();
+    }
+  }
+
   // execute this when the form is submitted
   $(clientForm).submit(function(e) 
   {
@@ -92,131 +130,122 @@
 
       $('#preview').hide();
       $('#response-msg').hide();
-      document.getElementById("loader").style.display = "block";
 
-      encodeImageFileAsURL()
+      if (isBankSelected())
+        encodeImageFileAsURL()
   });
 
   // function to get the image file
   function encodeImageFileAsURL()
   {
+    $('#response-msg').hide();
     var cheque = document.getElementById("cheque-upload").files;
-    var share = document.getElementById("share-upload").files;
 
     // checks if both of the fields are filled
-    if (cheque.length > 0 && share.length > 0) 
+    if (cheque.length > 0) 
     {
+      document.getElementById("loader").style.display = "block";
       var fileToLoad1 = cheque[0];
       var filereader1 = new FileReader();
-      var fileToLoad2 = share[0];
-      var filereader2 = new FileReader();
+      var bankName = document.getElementById('bankInput').value;
 
       // only runs when the empty cheque is fully loaded
       filereader1.onload = function(fileLoadedEvent) 
       {
-        console.log("File 1 loaded")
-
-        // get filename
-        var fullPath = document.getElementById('share-upload').value;
-        if (fullPath) 
-        {
-          var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-          var filename = fullPath.substring(startIndex);
-          if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
-              filename = filename.substring(1);
-          }
-        }
-        else {
-          filename="Unknown"
-        }
-
         // base64 data of the cheque
-        srcData1 = fileLoadedEvent.target.result; 
+        chequeData = fileLoadedEvent.target.result; 
 
-        console.log("Before the reading of file 2")
+        // store image (base64)
+        var fd = new FormData();
 
-        // only runs when the client share is fully loaded
-        filereader2.onload = function(fileLoadedEvent2) 
-        {
-          console.log("File 2 loaded")
+        // updates UI
+        $('#cheque-upload').addClass('is-valid');
 
-          // bade64 data of the client's share
-          //srcData2 = document.getElementById('fileToLoad2');
-          srcData2 = fileLoadedEvent2.target.result; 
-      
-          // store image (base64)
-          var fd = new FormData();
+        // send to server via AJAX
+        fd.append('bankName', bankName)
+        fd.append('cheque',chequeData)
 
-          // updates UI
-          $('#cheque-upload').addClass('is-valid');
-          $('#share-upload').addClass('is-valid');
+        var formData = new FormData(document.getElementById("clientForm"));
+        $.ajax({
+          type: 'post',
+          url: '/client',
+          data: fd,
+          mimeType:"multipart/form-data",
+          contentType: false,
+          cache: false,
+          processData: false,
+          success: function(response){
+            if(response != 0)
+            {         
+              console.log(response)       
+              var result = response.split(",");
+              picture = result[0]
 
-          // send to server via AJAX
-          fd.append('file1',srcData1)
-          fd.append('file2',srcData2)
-          fd.append('filename', filename)
+              // allows client to download the overlayed image (empty cheque + client's share)
+              var png_download = "data:image/png;base64,"
+              png_download += picture
 
-          var formData = new FormData(document.getElementById("clientForm"));
-          $.ajax({
-            type: 'post',
-            url: '/client',
-            data: fd,
-            mimeType:"multipart/form-data",
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: function(response){
-              if(response != 0)
-              {         
-                console.log(response)       
-                var result = response.split(",");
-                picture = result[0]
-                filename = result[1]
+              var newImage = document.createElement('img');
+              newImage.src = png_download;
+              newImage.height = 150;
+              newImage.width = 200;
+              document.getElementById("preview").innerHTML = newImage.outerHTML;
 
-                // allows client to download the overlayed image (empty cheque + client's share)
-                var png_download = "data:image/png;base64,"
-                png_download += picture
+              // creates a downloadable link
+              var a = document.getElementById('downloadLink');
+              a.href = png_download
+              a.download = "{{ clientName }}" + "_client_cheque"
 
-                var newImage = document.createElement('img');
-                newImage.src = png_download;
-                newImage.height = 150;
-                newImage.width = 200;
-                document.getElementById("preview").innerHTML = newImage.outerHTML;
+              // updates UI
+              document.getElementById("loader").style.display = "none";
+              $('#preview').show();
+              $('#response-msg').removeClass('alert-danger');
+              $('#cheque-upload').removeClass('alert-danger');
+              $('#response-msg').addClass('alert-success');
+              $('#cheque-msg').addClass('alert-success');
+              $("#response-msg").text("Your share has been embeded to the cheque! Click on the image to download.");
+              $('#response-msg').toggle();
+            }
 
-                // creates a downloadable link
-                var a = document.getElementById('downloadLink');
-                a.href = png_download
-                a.download = filename + "_client_cheque"
-
-                // updates UI
-                document.getElementById("loader").style.display = "none";
-                $('#preview').show();
-                $('#share-upload').removeClass('is-invalid');
-                $('#response-msg').removeClass('alert-danger');
-                $('#response-msg').addClass('alert-success');
-                $('#share-upload').addClass('is-valid');
-                $("#response-msg").text("Your share has been embeded to the cheque! Click on the image to download.");
-                $('#response-msg').toggle();
-              }
-
-              else 
-              { 
-                document.getElementById("loader").style.display = "none";
-                $('#share-upload').addClass('is-invalid');
-                $('#response-msg').addClass('alert-danger');
-                $("#response-msg").text("Please ensure that you have uploaded the correct client share!");
-                $('#response-msg').toggle();
-              }
-            },
-            error: function(jqXHR, textStatus, errorThrown) 
-            {}
-          });
-        }
+            else 
+            { 
+              document.getElementById("loader").style.display = "none";
+              $('#response-msg').addClass('alert-danger');
+              $("#response-msg").text("Please ensure that you have uploaded the correct client share!");
+              $('#response-msg').toggle();
+            }
+          },
+          error: function(jqXHR, textStatus, errorThrown) 
+          {}
+        });
       }
 
-      filereader1.readAsDataURL(fileToLoad1);   
-      filereader2.readAsDataURL(fileToLoad2);          
+      filereader1.readAsDataURL(fileToLoad1);      
     }
+
+    else
+    {
+      $('#cheque-upload').addClass('is-invalid');
+      $("#response-msg").text("Oops! You forgot to upload your cheque!");
+      $('#response-msg').toggle();
+    }
+  }
+
+  function isBankSelected()
+  {
+    var input = document.getElementById('bankInput').value;
+
+    if(input != 'Choose your bank...')
+      return true;
+
+    document.getElementById("loader").style.display = "none";
+    $('#cheque-upload').removeClass('is-invalid');
+    $('#bankInput').addClass('is-invalid');
+    $('#response-msg').addClass('alert-danger');
+    $("#response-msg").text("Oops! Your bank name field is empty. If you have registered with your bank and it doesn't show up here, please contact your bank.");
+    $('#response-msg').show();
+
+    return false;
   }
 </script>
 

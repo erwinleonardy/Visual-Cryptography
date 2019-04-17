@@ -10,6 +10,7 @@
 import hashlib
 from vsignit import db
 from vsignit.models import UserType, User
+from vsignit.common import Common
 
 class Register():
     @staticmethod
@@ -22,7 +23,7 @@ class Register():
         if pw1.hexdigest() != pw2.hexdigest():
             return "Mismatch"
 
-        elif (User.query.filter_by(username=username).first() == None):
+        elif (Common.userExists(username) == None):
             newUser = User(username, UserType.admin, pw1.hexdigest())
             db.session.add(newUser)
             db.session.commit()

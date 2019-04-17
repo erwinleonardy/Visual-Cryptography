@@ -57,7 +57,11 @@ class Driver():
         Share Splitter Driver Function
     """
     @staticmethod
-    def share_splitter (email, image, username):
+    def share_splitter (image, username):
+        # checks if the username exists
+        if Common.userExists(username) == None:
+            return "No User"
+
         # resize the image
         image = ShareSplitter.resize(image)
 
@@ -65,7 +69,7 @@ class Driver():
         outfile1, outfile2 = ShareSplitter.split_signature (image)
 
         # send the shares to the 
-        encoded_str = ShareSplitter.send_shares (outfile1, outfile2, email, username)
+        encoded_str = ShareSplitter.send_shares (outfile1, outfile2, username)
 
         return encoded_str
 
