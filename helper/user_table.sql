@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 11, 2019 at 07:03 AM
+-- Generation Time: Apr 17, 2019 at 03:57 PM
 -- Server version: 8.0.15
 -- PHP Version: 7.1.23
 
@@ -25,23 +25,31 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Drop existing table
+--
+DROP TABLE IF EXISTS `vsignit`.`user_table`;
+
+--
 -- Table structure for table `user_table`
 --
 
-CREATE TABLE `user_table` (
-  `user_id` int(11) NOT NULL,
-  `user_type` enum('admin','user') NOT NULL,
-  `username` varchar(70) NOT NULL,
-  `password` varchar(70) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE IF NOT EXISTS `user_table` (
+  `user_id` int(11) UNSIGNED NOT NULL,
+  `user_type` enum('admin','user') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `username` varchar(70) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `password` varchar(70) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 --
 -- Dumping data for table `user_table`
 --
 
 INSERT INTO `user_table` (`user_id`, `user_type`, `username`, `password`) VALUES
-(1, 'admin', 'johndoe', 'a51dda7c7ff50b61eaea0444371f4a6a9301e501'),
-(2, 'user', 'janedoe', '8a8deed44623d4c44268c26652d80945851c4f7f');
+(1, 'admin', 'DBS', '7026cf9936b5c5b974dc5db6422f542aed7b1f01'),
+(2, 'user', 'janedoe', '8a8deed44623d4c44268c26652d80945851c4f7f'),
+(3, 'user', 'johndoe', 'a51dda7c7ff50b61eaea0444371f4a6a9301e501'),
+(4, 'user', 'timapple', '5ee0edb9e2229c0838f1959779f1949031de0123'),
+(5, 'admin', 'HSBC', '616da28709f422331b28f7106673c5ad02b6d477');
 
 --
 -- Indexes for dumped tables
@@ -51,7 +59,8 @@ INSERT INTO `user_table` (`user_id`, `user_type`, `username`, `password`) VALUES
 -- Indexes for table `user_table`
 --
 ALTER TABLE `user_table`
-  ADD PRIMARY KEY (`user_id`);
+  ADD PRIMARY KEY (`user_id`),
+  ADD KEY `Index` (`user_id`,`username`) USING BTREE;
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -61,7 +70,7 @@ ALTER TABLE `user_table`
 -- AUTO_INCREMENT for table `user_table`
 --
 ALTER TABLE `user_table`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `user_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
