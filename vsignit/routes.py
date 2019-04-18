@@ -83,6 +83,7 @@ def logout():
 def bank_generate():
     if request.method == 'GET':
         try:
+             # checks if user is logged in
             result = User.query.filter_by(id=current_user.get_id()).first()
 
             if not current_user.is_authenticated or result == None:
@@ -128,6 +129,7 @@ def bank_generate():
 def bank_reconstruct():
     if request.method == 'GET':
         try:
+             # checks if user is logged in
             result = User.query.filter_by(id=current_user.get_id()).first()
 
             if not current_user.is_authenticated or result == None:
@@ -176,6 +178,7 @@ def bank_reconstruct():
 def client():
     if request.method == 'GET':
         try:
+            # checks if user is logged in
             result = User.query.filter_by(id=current_user.get_id()).first()
 
             if not current_user.is_authenticated or result == None:
@@ -183,6 +186,7 @@ def client():
                 return redirect(url_for('login'))
 
             else:
+                # extracts the bank the client subscribed to
                 usernames = Common.getBankUsernames(current_user.get_id())
 
                 usertype = "user"
@@ -200,6 +204,7 @@ def client():
 
         clientID = current_user.get_id()
         bankID = User.query.filter_by(username=bankUsername).first().getID()
+
         clientSharePath = Client_Data.query.filter_by(client_userid=clientID, bank_userid=bankID).first().getClientSharePath()
 
         # convert the base64 image to an image
@@ -215,8 +220,10 @@ def client():
         clientCheque = Common.open_image (filepath, 1)
         clientShare = Common.open_image (clientSharePath, 1)
 
+        # paste the client share on top of the blank share given by the client
         resultStr = Common.paste_on_top (clientShare, clientCheque, clientUsername)
 
+        # remove the temporary clientcheque file
         os.remove(filepath)
 
         return resultStr

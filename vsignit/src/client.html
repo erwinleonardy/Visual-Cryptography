@@ -52,15 +52,6 @@
           </div>
         </div>
 
-        <!-- <div class="row">
-          <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
-            <div class="custom-file">
-                <input type="file" class="custom-file-input" id="cheque-upload" required>
-                <label class="custom-file-label" for="cheque-upload" aria-describedby="inputGroupFileAddon02">Choose Client Share</label>
-            </div>
-          </div>
-        </div> -->
-
         <div class="row">
             <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
               <div id="loader"></div>
@@ -75,9 +66,7 @@
 
         <div class="row">
           <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
-            <div id="response-msg" class="alert alert-danger" role="alert" style="width:100%; text-align: center">
-              Oops! Your bank name field is empty. If you have registered with your bank and it doesn't show up here, please contact your bank.
-            </div>
+            <div id="response-msg" class="alert alert-danger" role="alert" style="width:100%; text-align: center"></div>
           </div>
         </div>
 
@@ -92,6 +81,7 @@
 </body>
 
 <script>
+  var errorTxt = "Oops! Your bank name field is empty. If you have registered with your bank and it doesn't show up here, please contact your bank."
   $("#response-msg").hide();
   $("#preview").hide();
 
@@ -104,6 +94,18 @@
   // dynamically checks input field when there is a new change
   function checkInput(val)
   {
+    $('#preview').hide();
+
+    // clear the cheque upload input field
+    $('#cheque-upload').removeClass('is-invalid');
+    $('#cheque-upload').removeClass('is-valid');
+    $('.custom-file-input').siblings(".custom-file-label").removeClass("selected");
+    $('.custom-file-input').siblings(".custom-file-label").addClass("selected").html("Choose Cheque");
+    var $el = $('.custom-file-input');
+    $el.wrap('<form>').closest('form').get(0).reset();
+    $el.unwrap();
+
+    // checks if the user enters any bank name
     var input = document.getElementById('bankInput').value;
 
     if(input != 'Choose your bank...')
@@ -111,13 +113,17 @@
       $('#response-msg').hide();
       $('#bankInput').removeClass('is-invalid');
       $('#bankInput').addClass('is-valid');
-      $("#chequeField").toggle();
+      $("#chequeField").show();
     }
+
     else  
     {
+      $("#response-msg").text(errorTxt);
       $('#response-msg').show();
       $('#cheque-upload').removeClass('is-invalid');
       $('#bankInput').removeClass('is-valid');
+      $('#response-msg').removeClass('alert-success');
+      $('#response-msg').addClass('alert-danger');
       $('#bankInput').addClass('is-invalid');
       $("#chequeField").hide();
     }
@@ -141,7 +147,7 @@
     $('#response-msg').hide();
     var cheque = document.getElementById("cheque-upload").files;
 
-    // checks if both of the fields are filled
+    // checks if an image is provided
     if (cheque.length > 0) 
     {
       document.getElementById("loader").style.display = "block";
@@ -157,14 +163,10 @@
 
         // store image (base64)
         var fd = new FormData();
-
-        // updates UI
-        $('#cheque-upload').addClass('is-valid');
-
-        // send to server via AJAX
         fd.append('bankName', bankName)
         fd.append('cheque',chequeData)
 
+        // send to server via AJAX
         var formData = new FormData(document.getElementById("clientForm"));
         $.ajax({
           type: 'post',
@@ -200,9 +202,9 @@
               document.getElementById("loader").style.display = "none";
               $('#preview').show();
               $('#response-msg').removeClass('alert-danger');
-              $('#cheque-upload').removeClass('alert-danger');
+              $('#cheque-upload').removeClass('is-invalid');
               $('#response-msg').addClass('alert-success');
-              $('#cheque-msg').addClass('alert-success');
+              $('#cheque-upload').addClass('is-valid');
               $("#response-msg").text("Your share has been embeded to the cheque! Click on the image to download.");
               $('#response-msg').toggle();
             }
@@ -225,6 +227,8 @@
 
     else
     {
+      $('#response-msg').removeClass('alert-success');
+      $('#response-msg').addClass('alert-danger');
       $('#cheque-upload').addClass('is-invalid');
       $("#response-msg").text("Oops! You forgot to upload your cheque!");
       $('#response-msg').toggle();
@@ -242,7 +246,7 @@
     $('#cheque-upload').removeClass('is-invalid');
     $('#bankInput').addClass('is-invalid');
     $('#response-msg').addClass('alert-danger');
-    $("#response-msg").text("Oops! Your bank name field is empty. If you have registered with your bank and it doesn't show up here, please contact your bank.");
+    $("#response-msg").text(errorTxt);
     $('#response-msg').show();
 
     return false;
