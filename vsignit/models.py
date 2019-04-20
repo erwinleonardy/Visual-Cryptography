@@ -84,9 +84,11 @@ class Transaction(UserMixin, db.Model):
     bank_userid = db.Column('bank_user_id', db.Integer, nullable=False)
     client_userid = db.Column('client_user_id', db.Integer, nullable=False)
     timestamp = db.Column('timestamp', db.DateTime(), nullable=False)
+    filepath = db.Column('filepath', db.String(70), nullable=False)
 
-    def __init__ (self, transactionNo, bank_userid, client_userid, timestamp):
+    def __init__ (self, transactionNo, bank_userid, client_userid, timestamp, filepath):
         self.transactionNo = transactionNo
         self.bank_userid = bank_userid
         self.client_userid = client_userid
         self.timestamp = timestamp
+        self.filepath = filepath

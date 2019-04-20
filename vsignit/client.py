@@ -25,8 +25,9 @@ class Client:
 
         hashed_ts = hashlib.sha1()
         hashed_ts.update(conct.encode('utf-8'))
+        filepath = "./vsignit/output/cheque/cheque_" + hashed_ts.hexdigest() + ".png"
 
-        newTransaction = Transaction(hashed_ts.hexdigest(), bank_userid, client_userid, st)
+        newTransaction = Transaction(hashed_ts.hexdigest(), bank_userid, client_userid, st, filepath) 
         db.session.add(newTransaction)
         db.session.commit()
 
@@ -66,14 +67,12 @@ class Client:
         dest.paste (source,(signX, signY))   
 
         # save the file temporarily
-        filepath = "./vsignit/output/tmp/" + clientUsername + "_final_cheque.png"
+        filepath = "./vsignit/output/cheque/" + clientUsername + "_overlayed_cheque.png"
         Common.save_image (dest, filepath)      
 
         # export the image to base64 format
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
         with open(filepath, "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read())
-
-        os.remove(filepath)
 
         return (encoded_string.decode("utf-8") + "," + clientUsername)
