@@ -25,19 +25,24 @@ class User(UserMixin, db.Model):
     
     id = db.Column('user_id', db.Integer, primary_key=True, unique=True, nullable=False)
     user_type = db.Column(db.Enum(UserType), nullable=False)
+    email = db.Column('email', db.String(100), nullable=False)
     username = db.Column('username', db.String(70), nullable=False)
     password = db.Column('password', db.String(70), nullable=False)
 
-    def __init__ (self, username, user_type, password):
+    def __init__ (self, username, user_type, email, password):
         self.user_type = UserType.user
         self.username = username
         self.password = password
+        self.email = email
 
     def getUsername (self):
         return self.username
 
     def getID (self):
         return self.id
+
+    def getEmail (self):
+        return self.email
 
 # stores bank's shares
 class Bank_Data(UserMixin, db.Model):
@@ -71,13 +76,17 @@ class Client_Data(UserMixin, db.Model):
     def getClientSharePath (self):
         return self.client_share_path
 
-# class User(db.Model):
-#     __tablename__ = 'user_table'
-    
-#     id = db.Column('user_id', db.Integer, primary_key=True, unique=True)
-#     username = db.Column('username', db.String(70))
-#     password = db.Column('password', db.String(70))
+# stores client's transaction
+class Transaction(UserMixin, db.Model):
+    __tablename__ = 'transaction'
 
-#     @staticmethod
-#     def getData(user):
-#         return ("{}, {}, {}".format(user.id, user.username, user.password))
+    transactionNo = db.Column('transaction_number', db.String(70), primary_key=True, unique=True, nullable=False)
+    bank_userid = db.Column('bank_user_id', db.Integer, nullable=False)
+    client_userid = db.Column('client_user_id', db.Integer, nullable=False)
+    timestamp = db.Column('timestamp', db.DateTime(), nullable=False)
+
+    def __init__ (self, transactionNo, bank_userid, client_userid, timestamp):
+        self.transactionNo = transactionNo
+        self.bank_userid = bank_userid
+        self.client_userid = client_userid
+        self.timestamp = timestamp

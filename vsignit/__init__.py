@@ -20,6 +20,8 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 app = Flask(__name__, template_folder='./src')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+login_manager = LoginManager()
+
 # Set the secret key to some random bytes. Keep this really secret!
 app.secret_key = b'\xdfe\x05\x86\xd1\xdc\xf6\x81\xbb\xf8\xf7_,\xba\x938'
 
@@ -30,7 +32,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False    # to silent the warning 
 
 # initialise the SQLAlchemy database
 db = SQLAlchemy(app)
-login_manager = LoginManager()
 login_manager.init_app(app)
 
 # routes is only imported here because it needs the access

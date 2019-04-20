@@ -9,7 +9,7 @@
 
 from PIL import Image
 import PIL.ImageOps
-import base64, os, time, datetime
+import os, time, datetime
 
 from vsignit.models import User, Client_Data
 
@@ -64,24 +64,6 @@ class Common():
             except IOError:
                 return None
 
-    # paste the source pic on top of the destination pic
-    @staticmethod
-    def paste_on_top (source, dest, username):
-        dest.paste (source,(signX, signY))   
-
-        # save the file temporarily
-        filepath = "./vsignit/output/tmp/" + username + "_final_cheque.png"
-        Common.save_image (dest, filepath)      
-
-        # export the image to base64 format
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
-        with open(filepath, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read())
-
-        os.remove(filepath)
-
-        return (encoded_string.decode("utf-8") + "," + username)
-
     # overlay the pic
     # this preserves the transparency
     @staticmethod
@@ -99,22 +81,24 @@ class Common():
         else:
             return "OK"
 
+    # get the banks this particular client subscribed
     @staticmethod
-    def getBankUsernames (userid):
-        # get the banks this particular client subscribed
-        bank_subcribed = Client_Data.query.filter_by(client_userid=userid).all()
-
-        print(bank_subcribed)
-        print("\n\n\n\n")
+    def getBankUsernames (clientid):
+        bank_subcribed = Client_Data.query.filter_by(client_userid=clientid).all()
 
         usernames = []
 
         for bank in bank_subcribed:
-            usernames.append(Common.getBankUsernameFromID(bank.getBankUserId()))
+            usernames.append(Common.getUsernameFromID(bank.getBankUserId()))
 
         return usernames
 
+    # convert ID -> Username 
     @staticmethod
-    def getBankUsernameFromID (userid):
-        username = User.query.filter_by(id=userid).first().getUsername() 
-        return username
+    def getUsernameFromID (userid):
+        return User.query.filter_by(id=userid).first().getUsername() 
+
+    # get email of the particular user
+    @staticmethod
+    def getUserEmail (userid):
+        return User.query.filter_by(id=userid).first().getEmail() 

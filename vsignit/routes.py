@@ -64,10 +64,11 @@ def register():
 
     elif request.method == 'POST':  
         username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
         verification = request.form['verification']
 
-        return Driver.register (username, password, verification)
+        return Driver.register (username, email, password, verification)
 
 @app.route('/logout')
 def logout():
@@ -219,7 +220,7 @@ def client():
         clientShare = Common.open_image (clientSharePath, 1)
 
         # paste the client share on top of the blank share given by the client
-        resultStr = Common.paste_on_top (clientShare, clientCheque, clientUsername)
+        resultStr = Driver.overlay_cheque (clientShare, clientCheque, clientID, bankID)
 
         # remove the temporary clientcheque file
         os.remove(filepath)

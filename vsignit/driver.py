@@ -18,6 +18,8 @@ from vsignit.shareReconstructor import ShareReconstuctor
 from vsignit.common import Common
 from vsignit.login import Login
 from vsignit.register import Register
+from vsignit.emailerService import EmailerService
+from vsignit.client import Client
 
 """
 Functions
@@ -41,17 +43,8 @@ class Driver():
         Register the user to the system
     """
     @staticmethod
-    def register (username, password, verification):
-        result = Register.register(username, password, verification)
-
-        if result == "OK":
-            return url_for('login')
-
-        elif result == "DuplicatedUser":
-            return "The username '{}' already exists!".format(username)
-            
-        elif result == "Mismatch":
-            return "Both of the password doesn't match!"
+    def register (username, email, password, verification):
+        return Register.register(username, email, password, verification)
 
     """
         Share Splitter Driver Function
@@ -96,8 +89,17 @@ class Driver():
             return encoded_str
 
     """
-        Share Reconstruction Driver Function
+        Client Page Driver Function
     """
     @staticmethod
-    def drop_share (source, dest, username):
-        Common.paste_on_top (source, dest, username)
+    def overlay_cheque (clientShare, clientCheque, client_userid, bank_userid):
+        clientUsername = Common.getUsernameFromID(client_userid)
+
+        result = Client.paste_on_top (clientShare, clientCheque, clientUsername)
+
+        transactionNo, timestamp = Client.add_transaction_to_db (bank_userid, client_userid)
+
+        Client.sends_emails(transactionNo, timestamp, bank_userid, client_userid)
+
+        return result
+        
