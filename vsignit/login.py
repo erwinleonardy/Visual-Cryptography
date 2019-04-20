@@ -11,6 +11,10 @@ import hashlib
 from vsignit.models import User
 
 class Login():
+    """
+        Checks if the username and password
+        provided can be found in the databse
+    """
     @staticmethod
     def login(username, password):
         sha_1 = hashlib.sha1()

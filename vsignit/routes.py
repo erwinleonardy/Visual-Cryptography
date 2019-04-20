@@ -17,11 +17,6 @@ from vsignit.driver import Driver
 from vsignit.common import Common
 from vsignit.models import UserType, User, Client_Data
 
-# @app.before_request
-# def make_session_permanent():
-#     session.modified = True
-#     app.permanent_session_lifetime = timedelta(seconds=5)
-
 @app.route('/', methods=['GET'])
 def index():
     if not current_user.is_authenticated:
@@ -83,9 +78,10 @@ def logout():
 def bank_generate():
     if request.method == 'GET':
         try:
-             # checks if user is logged in
+            # checks if user is logged in
             result = User.query.filter_by(id=current_user.get_id()).first()
 
+            # redirects page according to the result
             if not current_user.is_authenticated or result == None:
                 logout_user()
                 return redirect(url_for('login'))
@@ -129,9 +125,10 @@ def bank_generate():
 def bank_reconstruct():
     if request.method == 'GET':
         try:
-             # checks if user is logged in
+            # checks if user is logged in
             result = User.query.filter_by(id=current_user.get_id()).first()
 
+            # redirects page according to the result
             if not current_user.is_authenticated or result == None:
                 logout_user()
                 return redirect(url_for('login'))
@@ -181,6 +178,7 @@ def client():
             # checks if user is logged in
             result = User.query.filter_by(id=current_user.get_id()).first()
 
+            # redirects page according to the result
             if not current_user.is_authenticated or result == None:
                 logout_user()
                 return redirect(url_for('login'))

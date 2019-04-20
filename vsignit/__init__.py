@@ -13,10 +13,9 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
+# basic configuration
 UPLOAD_FOLDER = './input'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
-
-login_manager = LoginManager()
 
 app = Flask(__name__, template_folder='./src')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -29,7 +28,11 @@ app.secret_key = b'\xdfe\x05\x86\xd1\xdc\xf6\x81\xbb\xf8\xf7_,\xba\x938'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:erwin123@localhost/vsignit'  
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False    # to silent the warning message
 
+# initialise the SQLAlchemy database
 db = SQLAlchemy(app)
+login_manager = LoginManager()
 login_manager.init_app(app)
 
+# routes is only imported here because it needs the access
+# to the 'app' object
 from vsignit import routes
