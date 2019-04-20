@@ -93,13 +93,17 @@ class Driver():
     """
     @staticmethod
     def overlay_cheque (clientShare, clientCheque, client_userid, bank_userid):
+        # get the client's username based on the id
         clientUsername = Common.getUsernameFromID(client_userid)
 
-        result = Client.paste_on_top (clientShare, clientCheque, clientUsername)
+        # adds this current transcation to the databsase
+        transactionNo, timestamp, filepath = Client.add_transaction_to_db (bank_userid, client_userid)
 
-        transactionNo, timestamp = Client.add_transaction_to_db (bank_userid, client_userid)
+        # sends an email notification to both bank and client
+        Client.sends_emails(transactionNo, timestamp, bank_userid, client_userid, filepath)
 
-        Client.sends_emails(transactionNo, timestamp, bank_userid, client_userid)
+        # overlays the client share on top of the cheque
+        result = Client.paste_on_top (clientShare, clientCheque, filepath, clientUsername)
 
         return result
         

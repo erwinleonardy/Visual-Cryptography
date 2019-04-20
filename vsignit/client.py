@@ -31,7 +31,7 @@ class Client:
         db.session.add(newTransaction)
         db.session.commit()
 
-        return hashed_ts.hexdigest(), st
+        return hashed_ts.hexdigest(), st, filepath
 
     # sends confirmation email to client and server
     @staticmethod
@@ -63,11 +63,10 @@ class Client:
 
     # paste the source pic on top of the destination pic
     @staticmethod
-    def paste_on_top (source, dest, clientUsername):
+    def paste_on_top (source, dest, filepath, clientUsername):
         dest.paste (source,(signX, signY))   
 
         # save the file temporarily
-        filepath = "./vsignit/output/cheque/" + clientUsername + "_overlayed_cheque.png"
         Common.save_image (dest, filepath)      
 
         # export the image to base64 format
