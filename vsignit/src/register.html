@@ -51,21 +51,27 @@
     <form name="loginForm" method="post" enctype="multipart/form-data">
       <div class="container">
         <div class="row">
-            <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
-                <input type="text" id="username" class="form-control" placeholder="Enter your username here" aria-label="Username" aria-describedby="basic-addon1" required>
-            </div>
+          <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
+              <input type="text" id="email_input" class="form-control" placeholder="Enter your email here" aria-label="Username" aria-describedby="basic-addon1" required>
+          </div>
         </div>
 
         <div class="row">
-            <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
-                <input type="password" id="password" class="form-control" placeholder="Enter your password here" aria-label="Username" aria-describedby="basic-addon1" required>
-            </div>
+          <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
+              <input type="text" id="username" class="form-control" placeholder="Enter your username here" aria-label="Username" aria-describedby="basic-addon1" required>
+          </div>
         </div>
 
         <div class="row">
-            <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
-                <input type="password" id="verification" class="form-control" placeholder="Re-enter your password here" aria-label="Username" aria-describedby="basic-addon1" required>
-            </div>
+          <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
+              <input type="password" id="password" class="form-control" placeholder="Enter your password here" aria-label="Username" aria-describedby="basic-addon1" required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
+              <input type="password" id="verification" class="form-control" placeholder="Re-enter your password here" aria-label="Username" aria-describedby="basic-addon1" required>
+          </div>
         </div>
 
         <div class="row">
@@ -112,22 +118,54 @@
       $('#response-msg').hide();
       document.getElementById("loader").style.display = "block";
 
-      checkCredentials()
+      if (validate())
+        checkCredentials()
   });
+
+  // regex to check email
+  function validateEmail(email) 
+  {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  }
+
+  // show the response message based on user's input
+  function validate() 
+  {
+    var email = $(email_input).val()
+
+    if (validateEmail(email)) {
+      $('#email_input').removeClass('is-invalid');
+      $('#email_input').addClass('is-valid');
+      $('#response-msg').hide();
+      return true;
+    } 
+
+    else
+    {
+      document.getElementById("loader").style.display = "none";
+      $("#response-msg").text("Please ensure that you have entered the correct email!");
+      $('#email_input').addClass('is-invalid');
+      $('#response-msg').toggle();
+      return false;
+    }
+  }
 
   // function to check the username and password
   function checkCredentials()
   {
     var username = document.getElementById("username").value;
+    var email = document.getElementById("email_input").value;
     var password = document.getElementById("password").value;
     var verification = document.getElementById("verification").value;
 
     // checks if both of the fields are filled
-    if (username.length > 0 && password.length > 0 && verification.length > 0) 
+    if (username.length > 0 && password.length > 0 && verification.length > 0 && email.length > 0) 
     {
       // send to server via AJAX
       var fd = new FormData();
       fd.append('username',username)
+      fd.append('email', email)
       fd.append('password',password)
       fd.append('verification',verification)
 
@@ -145,17 +183,20 @@
           {
             document.getElementById("loader").style.display = "none";
 
+            // if the input is corect
             if (response == "/login")
             {
               $('#username').removeClass('is-invalid');
-              $('#username').addClass('is-valid');
               $('#password').removeClass('is-invalid');
               $('#verification').removeClass('is-invalid');
               $('#response-msg').removeClass('alert-danger');
+
               $('#response-msg').addClass('alert-success');
+              $('#username').addClass('is-valid');
               $('#password').addClass('is-valid');
               $('#verification').addClass('is-valid');
 
+              // shows a new modal box
               $(function() {
                 $("#dialog").text("Account \'" + username + "\' has been created.\nClick OK to proceed.");
                 $("#dialog").dialog({title: "New User Creation",
@@ -170,20 +211,28 @@
               });
             }
 
+            // if there is an error
             else
             {
-                $('#username').removeClass('is-valid');
-                $('#username').addClass('is-invalid');
-
+                // when both of the passwords don't match
                 if (response == "Both of the password doesn't match!")
                 {
-                    $('#username').removeClass('is-invalid');
-                    $('#username').addClass('is-valid');
+                  $('#username').removeClass('is-invalid');
+                  $('#password').removeClass('is-valid');
+                  $('#verification').removeClass('is-valid');
 
-                    $('#password').removeClass('is-valid');
-                    $('#verification').removeClass('is-valid');
-                    $('#password').addClass('is-invalid');
-                    $('#verification').addClass('is-invalid');
+                  $('#password').addClass('is-invalid');
+                  $('#verification').addClass('is-invalid');
+                }
+
+                // other errors
+                else
+                {
+                  $('#username').removeClass('is-valid');
+                  $('#password').removeClass('is-invalid');
+                  $('#verification').removeClass('is-invalid');
+
+                  $('#username').addClass('is-invalid');
                 }
 
                 $('#response-msg').addClass('alert-danger');

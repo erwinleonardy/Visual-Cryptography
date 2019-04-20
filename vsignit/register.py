@@ -19,7 +19,7 @@ class Register():
         both of the password match
     """
     @staticmethod
-    def register(username, password, verification):
+    def register(username, email, password, verification):
         # convert password input encoding to UTF-8
         pw1 = hashlib.sha1()
         pw2 = hashlib.sha1()
@@ -28,15 +28,15 @@ class Register():
         
         # if the user failed to re-enter the same password
         if pw1.hexdigest() != pw2.hexdigest():
-            return "Mismatch"
+            return "Both of the password doesn't match!"
 
         # if the password matches and the username doesn't exist
         elif (Common.userExists(username) == None):
-            newUser = User(username, UserType.admin, pw1.hexdigest())
+            newUser = User(username, UserType.admin, email, pw1.hexdigest())
             db.session.add(newUser)
             db.session.commit()
-            return "OK"
+            return "/login"
 
         else:
-            return "DuplicatedUser"
+            return "The username '" + username + "' already exists!"
          
