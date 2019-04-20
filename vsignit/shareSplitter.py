@@ -103,7 +103,9 @@ class ShareSplitter():
         # if yes, overwrites it
         if existingBank != None and existingClient != None:
             existingBank.bank_share_path = bank_share_path
-            existingClient.client_share_path = client_share_path      
+            existingClient.client_share_path = client_share_path 
+            db.session.commit()     
+            return "You have just overwritted \'" + username + "\' client and bank shares!"
 
         # else, creates a new record
         else:     
@@ -111,23 +113,22 @@ class ShareSplitter():
             newClientData = Client_Data(client_userid, bank_userid, client_share_path)
             db.session.add(newBankData)
             db.session.add(newClientData)
-        
-        db.session.commit()
+            db.session.commit()
+            return "Bank share and user shares have been created and stored!"
 
         # email share to the client
         # emailer = EmailerService()
         # emailer.sendShare(email, client_sharename)
 
         # convert the image into base64
-        with open(bank_share_path, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read())
+        # with open(bank_share_path, "rb") as image_file:
+        #     encoded_string = base64.b64encode(image_file.read())
 
         # delete the temp files
         # os.remove(bank_sharename)
         # os.remove(client_sharename)
 
         # send back bank share to the bank using AJAX
-        return (encoded_string.decode("utf-8"))
 
         # image1 = open_image ("cheque.jpg", 0)
         # image1.paste(outfile1, (signX, signY))       

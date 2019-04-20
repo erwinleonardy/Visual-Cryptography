@@ -151,21 +151,6 @@
               
               else
               {
-                // allows bank to download the reconstructed image 
-                var png_download = "data:image/png;base64,"
-                png_download += response
-
-                var newImage = document.createElement('img');
-                newImage.src = png_download;
-                newImage.height = 200;
-                newImage.width = 200;
-                document.getElementById("preview").innerHTML = newImage.outerHTML;
-
-                // creates a downloadable link
-                var a = document.getElementById('downloadLink'); //or grab it by tagname etc
-                a.href = png_download
-                a.download = client_username + "_bank_share"
-                
                 // updates UI
                 document.getElementById("loader").style.display = "none";
                 $('#preview').show();
@@ -175,7 +160,7 @@
                 $('#client_username').addClass('is-valid');
                 $('#response-msg').removeClass('alert-danger');
                 $('#response-msg').addClass('alert-success');
-                $("#response-msg").text("Bank share and user share have been created and stored! Click on the share to view your share!");
+                $("#response-msg").text(response);
                 $('#response-msg').toggle();
               }
             } 
