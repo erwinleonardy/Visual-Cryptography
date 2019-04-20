@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 17, 2019 at 03:57 PM
+-- Generation Time: Apr 20, 2019 at 08:42 AM
 -- Server version: 8.0.15
 -- PHP Version: 7.1.23
 
@@ -36,6 +36,7 @@ DROP TABLE IF EXISTS `vsignit`.`user_table`;
 CREATE TABLE IF NOT EXISTS `user_table` (
   `user_id` int(11) UNSIGNED NOT NULL,
   `user_type` enum('admin','user') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `email` varchar(100) NOT NULL,
   `username` varchar(70) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `password` varchar(70) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
@@ -44,12 +45,13 @@ CREATE TABLE IF NOT EXISTS `user_table` (
 -- Dumping data for table `user_table`
 --
 
-INSERT INTO `user_table` (`user_id`, `user_type`, `username`, `password`) VALUES
-(1, 'admin', 'DBS', '7026cf9936b5c5b974dc5db6422f542aed7b1f01'),
-(2, 'user', 'janedoe', '8a8deed44623d4c44268c26652d80945851c4f7f'),
-(3, 'user', 'johndoe', 'a51dda7c7ff50b61eaea0444371f4a6a9301e501'),
-(4, 'user', 'timapple', '5ee0edb9e2229c0838f1959779f1949031de0123'),
-(5, 'admin', 'HSBC', '616da28709f422331b28f7106673c5ad02b6d477');
+INSERT INTO `user_table` (`user_id`, `user_type`, `email`, `username`, `password`) VALUES
+(1, 'admin', 'veleseb@max-mail.info', 'DBS', '7026cf9936b5c5b974dc5db6422f542aed7b1f01'),
+(2, 'user', 'rusocevupo@direct-mail.info', 'janedoe', '8a8deed44623d4c44268c26652d80945851c4f7f'),
+(3, 'user', 'rusocevupo@direct-mail.info', 'johndoe', 'a51dda7c7ff50b61eaea0444371f4a6a9301e501'),
+(4, 'user', 'rusocevupo@direct-mail.info', 'timapple', '5ee0edb9e2229c0838f1959779f1949031de0123'),
+(5, 'admin', 'veleseb@max-mail.info', 'HSBC', '616da28709f422331b28f7106673c5ad02b6d477'),
+(7, 'user', 'rusocevupo@direct-mail.info', 'donaldtrump', '53e11eb7b24cc39e33733a0ff06640f1b39425ea');
 
 --
 -- Indexes for dumped tables
@@ -70,7 +72,7 @@ ALTER TABLE `user_table`
 -- AUTO_INCREMENT for table `user_table`
 --
 ALTER TABLE `user_table`
-  MODIFY `user_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `user_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
