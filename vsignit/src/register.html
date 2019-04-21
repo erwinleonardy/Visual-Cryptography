@@ -130,8 +130,6 @@
       fd.append('username',username)
       fd.append('password',password)
       fd.append('verification',verification)
-
-      var formData = new FormData(document.getElementById("clientForm"));
       $.ajax({
         type: 'post',
         url: '/register',

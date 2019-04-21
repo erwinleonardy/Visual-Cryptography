@@ -6,7 +6,7 @@
     handles the routing of our flask program.
 """
 
-import base64, re, os, time
+import base64, re, os, time, requests
 from flask import render_template, request, url_for, redirect, session, jsonify
 from flask_login import current_user, logout_user
 from PIL import Image
@@ -15,7 +15,7 @@ from datetime import timedelta
 from vsignit import app
 from vsignit.driver import Driver
 from vsignit.common import Common
-from vsignit.models import UserType, User, Client_Data
+from vsignit.models import UserType, User, Client_Data, Transaction
 
 @app.route('/', methods=['GET'])
 def index():
@@ -135,42 +135,35 @@ def bank_reconstruct():
                 return redirect(url_for('login'))
             
             else:
+                # extracts the pending cheques of that particular bank
+                transactions = Common.getAllTransactions(current_user.get_id())
+
                 usertype = "user"
                 if result.user_type == UserType.admin:
                     usertype = "admin"
-                return render_template('admin-reconstruct.html', usertype=usertype)
+                return render_template('admin-reconstruct.html', usertype=usertype, transactions=transactions)
         except Exception as e:
             return str(e)
 
-    elif request.method == 'POST':        
-        # print(request.form['file1'], file=sys.stderr)
+    elif request.method == 'POST':  
+        # retrieve the transaction from the DB
+        transactionNo = request.form['transactionNo']
+        transaction = Transaction.query.filter_by(transactionNo=transactionNo).first()
 
-        username = request.form['filename'].split("_")[0]
+        # reconsruct the share and return base64 encoding to the admin
+        if request.form['type'] == 'Verify':
+           
+            final_result = Driver.share_reconstruction (transaction)
 
-        # convert the base64 image to an image
-        base64_data1 = re.sub('^data:image/.+;base64,', '', request.form['file1'])
-        byte_data1 = base64.b64decode(base64_data1)
+            return final_result
 
-        base64_data2 = re.sub('^data:image/.+;base64,', '', request.form['file2'])
-        byte_data2 = base64.b64decode(base64_data2)
+        # if admin chooses to delete a transaction
+        elif request.form['type'] == 'Delete':
+            Driver.transaction_deletion (transaction)
+            return "Delete"
 
-        with open("./vsignit/input/clientCheque.png", "wb") as fh:
-            fh.write(byte_data1)
-
-        with open("./vsignit/input/bankShare.png", "wb") as fh:
-            fh.write(byte_data2)
-
-        # merge the client cheque and the bank share
-        # to reveal the reconstructed signature
-        clientCheque = Common.open_image ("./vsignit/input/clientCheque.png", 1)
-        bankShare = Common.open_image ("./vsignit/input/bankShare.png", 1)
-
-        final_result = Driver.share_reconstruction (clientCheque, bankShare, username)
-
-        os.remove("./vsignit/input/clientCheque.png")
-        os.remove("./vsignit/input/bankShare.png")
-
-        return final_result
+        return ""
+            
     
 @app.route('/client', methods=['GET', 'POST'])
 def client():
@@ -215,7 +208,7 @@ def client():
         with open(filepath, "wb") as fh:
             fh.write(byte_data1)
 
-        # generate two shares and send one of the shares to the server
+        # get the clientCheque and clientShare that we are going to overlay
         clientCheque = Common.open_image (filepath, 1)
         clientShare = Common.open_image (clientSharePath, 1)
 
@@ -226,3 +219,5 @@ def client():
         os.remove(filepath)
 
         return resultStr
+
+# print(request.form['file1'], file=sys.stderr)

@@ -57,6 +57,9 @@ class Bank_Data(UserMixin, db.Model):
         self.client_userid = client_userid
         self.bank_share_path = bank_share_path
 
+    def getBankSharePath (self):
+        return self.bank_share_path
+
 # stores client's shares
 class Client_Data(UserMixin, db.Model):
     __tablename__ = 'client_data'
@@ -92,3 +95,24 @@ class Transaction(UserMixin, db.Model):
         self.client_userid = client_userid
         self.timestamp = timestamp
         self.filepath = filepath
+        
+    def getTranscationNo (self):
+        return self.transactionNo
+
+    def getBankId (self):
+        return self.bank_userid
+
+    def getClientId (self):
+        return self.client_userid
+
+    def getBankUsername (Self):
+        return User.query.filter_by(id=self.bank_userid).first().getUsername() 
+
+    def getClientUsername (self):
+        return User.query.filter_by(id=self.client_userid).first().getUsername() 
+
+    def getTimestamp (self):
+        return self.timestamp
+
+    def getFilePath (self):
+        return self.filepath 

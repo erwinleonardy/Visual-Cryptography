@@ -8,10 +8,11 @@
 """
 
 from PIL import Image
+from sqlalchemy import desc
 import PIL.ImageOps
 import os, time, datetime
 
-from vsignit.models import User, Client_Data
+from vsignit.models import User, Client_Data, Transaction
 
 signX = 1740
 signY = 750
@@ -64,14 +65,6 @@ class Common():
             except IOError:
                 return None
 
-    # overlay the pic
-    # this preserves the transparency
-    @staticmethod
-    def overlay_pic (sourcePath, dest):
-        source = Image.open(sourcePath)
-        dest.paste(source, (signX+reconDist, signY+(reconDist*2)), mask=source)       
-        Common.save_image (dest, "final_cheque")   
-
     # this function checks if the client's
     # username given by the bank exists
     @staticmethod
@@ -92,6 +85,12 @@ class Common():
             usernames.append(Common.getUsernameFromID(bank.getBankUserId()))
 
         return usernames
+
+    # get all of the transactions of the bankID given
+    @staticmethod
+    def getAllTransactions (bankid):
+        pending_cheques = Transaction.query.filter_by(bank_userid=bankid).order_by(desc(Transaction.timestamp)).all()
+        return pending_cheques
 
     # convert ID -> Username 
     @staticmethod

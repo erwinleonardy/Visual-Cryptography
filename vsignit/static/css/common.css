@@ -45,3 +45,7 @@
     from{ bottom:-100px; opacity:0 } 
     to{ bottom:0; opacity:1 }
 }
+
+.table td {
+    text-align: center; 
+ }

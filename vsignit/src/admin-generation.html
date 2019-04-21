@@ -124,8 +124,6 @@
         // send to server via AJAX
         fd.append('clientUsername', client_username)
         fd.append('file',srcData)
-
-        var formData = new FormData(document.getElementById("generation"));
         $.ajax({
           type: 'post',
           url: '/bank-generate',

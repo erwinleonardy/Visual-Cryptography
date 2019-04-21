@@ -161,13 +161,10 @@
         // base64 data of the cheque
         chequeData = fileLoadedEvent.target.result; 
 
-        // store image (base64)
+        // send to server via AJAX
         var fd = new FormData();
         fd.append('bankName', bankName)
         fd.append('cheque',chequeData)
-
-        // send to server via AJAX
-        var formData = new FormData(document.getElementById("clientForm"));
         $.ajax({
           type: 'post',
           url: '/client',

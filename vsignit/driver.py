@@ -18,7 +18,6 @@ from vsignit.shareReconstructor import ShareReconstuctor
 from vsignit.common import Common
 from vsignit.login import Login
 from vsignit.register import Register
-from vsignit.emailerService import EmailerService
 from vsignit.client import Client
 
 """
@@ -70,9 +69,15 @@ class Driver():
         Share Reconstruction Driver Function
     """
     @staticmethod
-    def share_reconstruction (clientCheque, bankShare, username):
-        # attempt to reconstruct the share
-        outfile = ShareReconstuctor.reconstruct_shares(clientCheque, bankShare)
+    def share_reconstruction (transaction):
+        # retrieves the client cheque
+        transactionNo, clientUsername, clientCheque = ShareReconstuctor.getClientCheque (transaction)
+
+        # retrieves the bankShare
+        bankShare = ShareReconstuctor.getBankShare (transaction)
+        
+        # reconstruct the shares based on the client cheque and bank share given
+        outfile = ShareReconstuctor.reconstruct_shares(transactionNo, clientCheque, bankShare)
         
         # if error occurs, it will return None
         if outfile == None:
@@ -81,12 +86,25 @@ class Driver():
         # else, proceed
         else:
             # pass through 2 cleaning processes
-            outfile = ShareReconstuctor.remove_noise(outfile)
+            outfile = ShareReconstuctor.remove_noise(transactionNo, outfile)
 
             # send the reconstructed shares to the client
-            encoded_str = ShareReconstuctor.send_reconstructed(username, clientCheque, outfile)
+            encoded_str = ShareReconstuctor.send_reconstructed(transactionNo, clientUsername, clientCheque, outfile)
 
             return encoded_str
+
+    """
+        Delete the transaction from the DB
+    """
+    @staticmethod
+    def transaction_deletion (transaction):
+        # delete existing image
+        ShareReconstuctor.delete_cheque (transaction)
+
+        # delete the share from the DB and remove the image
+        ShareReconstuctor.delete_transaction (transaction)
+
+        print ("Deletion!!!!\n\n\n\n")
 
     """
         Client Page Driver Function
@@ -100,7 +118,7 @@ class Driver():
         transactionNo, timestamp, filepath = Client.add_transaction_to_db (bank_userid, client_userid)
 
         # sends an email notification to both bank and client
-        Client.sends_emails(transactionNo, timestamp, bank_userid, client_userid, filepath)
+        Client.sends_emails(transactionNo, timestamp, bank_userid, client_userid)
 
         # overlays the client share on top of the cheque
         result = Client.paste_on_top (clientShare, clientCheque, filepath, clientUsername)
