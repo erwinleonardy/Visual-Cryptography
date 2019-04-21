@@ -1,38 +1,19 @@
-"""
-    emailerService.py
-    by: Amit Singh
-
-    This file consist of the methods to 
-	send the email to the recipients
-"""
-
-import email, smtplib, ssl, os
-
-from email.mime.image import MIMEImage
-from email.mime.base import MIMEBase
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from vsignit import app, mail
+from flask_mail import Message
+from threading import Thread
 
 class EmailerService:
+    @staticmethod
+	def async_email(msg):
+		with app.app_context():
+			mail.send(msg)
+	
 	@staticmethod
-	def sendEmail (username, receiver_email, subject, msg_body):
-		# sender credentials
-		sender_email = "4youreyesonlyservice@gmail.com"
-		password = "123erwin"
-		message = MIMEMultipart("alternative")
-
-		# email header
-		message["Subject"] = subject
-		message["From"] = sender_email
-		message["To"] = receiver_email
-
-		# email body
-		text = """\
+	def send_email(username, receiver_email, subject, msg_body):
+		body =  """\
 		Hi, {}!\n""".format(username)
-
-		text += msg_body
-
-		text += """
+		body += msg_body
+		body += """
         
         Thank you for choosing VSignIt as your preferred encryption method.
         
@@ -46,9 +27,13 @@ class EmailerService:
 		Best Regards,
 		VSignIt Admin Team"""
 
+		msg = Message(subject=subject, body=body, recipients=[receiver_email])
+		thread = Thread(target=EmailerService.async_email, args=[msg])
+		thread.start()
+
+
 		# text += """!\
 		
-
 		# Here is your share! Please ensure that you keep this file safe :)
 		
 		# Thank you for choosing VSignIt as your preferred encryption method.
@@ -62,23 +47,3 @@ class EmailerService:
 		
 		# Best Regards,
 		# VSignIt Admin Team"""
-
-		# attach text
-		part1 = MIMEText(text, "plain")
-		message.attach(part1)
-
-		#part2 = MIMEText(html, "html")
-		#message.attach(part2)
-
-		# attach the image
-		# img_data = open(filename, 'rb').read()
-		# part3 = MIMEImage(img_data, name=os.path.basename(filename))
-		# message.attach(part3)
-
-		# send the email
-		context = ssl.create_default_context()
-		with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-			server.login(sender_email, password)
-			server.sendmail(
-				sender_email, receiver_email, message.as_string()
-			)

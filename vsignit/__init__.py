@@ -12,6 +12,7 @@
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail
 
 # basic configuration
 UPLOAD_FOLDER = './input'
@@ -33,6 +34,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False    # to silent the warning 
 # initialise the SQLAlchemy database
 db = SQLAlchemy(app)
 login_manager.init_app(app)
+
+# get email configurations from file and setup mail
+app.config.from_pyfile('flask.cfg')
+mail = Mail(app)
 
 # routes is only imported here because it needs the access
 # to the 'app' object
