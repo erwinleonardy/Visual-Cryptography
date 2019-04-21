@@ -9,7 +9,7 @@ class EmailerService:
             mail.send(msg)
 	
     @staticmethod
-    def send_email(username, receiver_email, subject, msg_body):
+    def sendEmail(username, receiver_email, subject, msg_body):
         body =  """\
         Hi, {}!\n""".format(username)
         body += msg_body
