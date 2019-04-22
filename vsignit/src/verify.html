@@ -1,0 +1,212 @@
+{% include "header.html" %}
+
+{% if 'admin' in usertype %}
+<!-- Body -->
+<body class = "body">
+  <!-- Nav Bar -->
+  {% with page_type="Bank", active_page="reconstruct" %}
+    {% include "navbar.html" %}
+  {% endwith %}
+  
+  <!-- Content -->
+  <div class="jumbotron">
+    <!-- Header -->
+    <div class="container">
+
+      <div class="row">
+        <div class="col">
+          <h1 class="display-4">Admin Page (Share Reconstruction)</h1>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <p class="lead">Use this panel to verify the cheques using our vSignIt Reconstruction Algorithm!</p>
+          <hr class="my-4">
+        </div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form id="verify" method="post" enctype="multipart/form-data" onsubmit="return false;">
+      <div class="container">
+        <div class="row table-responsive">
+          <table class="table table-borderless">
+            <tbody>
+                <tr>
+                  <td colspan="3">
+                    <p class="lead">Transaction No: {{ transaction.getTranscationNo() }}</p>
+                  </td>
+                </tr>
+    
+              <!-- <tr>
+                  <td>Bank Share</td>
+                  <td><p style="font-size:100px">+</p></td>
+                  <td>Client Share</td>
+              </tr>
+  
+              <tr>
+                  <td></td>
+                  <td><p style="font-size:80px">&darr;</p></td>
+                  <td></td>
+              </tr>
+  
+              <tr>
+                  <td></td>
+                  <td>Reconstructed Share</td>
+                  <td></td>
+              </tr>
+  
+              <tr>
+                  <td></td>
+                  <td><p style="font-size:80px">&darr;</p></td>
+                  <td></td>
+              </tr>
+  
+              <tr>
+                  <td></td>
+                  <td>Cleaning Phase I</td>
+                  <td></td>
+              </tr>
+  
+              <tr>
+                  <td></td>
+                  <td><p style="font-size:80px">&darr;</p></td>
+                  <td></td>
+              </tr>
+  
+              <tr>
+                  <td colspan="3">Cleaning Phase II + Cheque</td>
+              </tr> -->
+
+              <tr>
+                <td colspan="3">
+                  <a id="downloadLink" target="_blank" value="final_share" download>
+                    <div id="preview" style="margin-bottom: 10px; width:400px; height:280px; margin:0px auto">
+                      <img id="img_preview" width="100%" height="100%"/>
+                    </div>
+                  </a>
+                </td>
+              </tr>
+  
+              <tr>
+                <td colspan="3" style="padding-bottom:30px">
+                    <input type="submit" class="btn-lg btn-primary" value="Accept" style="margin-right:20px" name="Accept-{{ transaction.getTranscationNo() }}"/>
+                    <input type="submit" class="btn-lg btn-danger" value="Reject" name="Reject-{{ transaction.getTranscationNo() }}"/>
+                </td>
+              </tr>
+
+              <tr>
+                <td colspan="3">
+                  <p class="lead">
+                    Oops! Did you just press the wrong button because your finger is too <b>BIG</b>? Fret not! 
+                    Click <a id="back" href="https://www.a.com">here</a>!</p>
+                </td>
+              </tr>
+              
+            </tbody>
+          </table>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
+              <div id="loader"></div>
+            </div>
+        </div>
+      </div>
+    </form>
+    
+  </div>
+
+  <div class="row">
+    <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
+      <div id="loader"></div>
+    </div>
+  </div> 
+</body>
+
+<script>
+  // prevents user from hitting the back button
+  // (only works in safari)
+  // chrome doesn't need this feature anyway!
+  window.location.hash="no-back-button";
+  window.location.hash="Again-no-back-button";
+  window.onhashchange=function(){window.location.hash="no-back-button";}
+
+  // reads the transaction number from the hidden input value
+  $("form input[type=submit]").click(function() {
+    $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
+    $(this).attr("clicked", "true");
+  });
+
+  // goes back to the previous page when the link is clicked
+  var OnOneClick = function(e) { 
+    e.preventDefault(); 
+    window.location.href = "/bank-reconstruct"
+    return false; 
+  };
+
+  // loads the script when window is fully loaded
+  window.onload = function()
+  {
+    // allows client to download the overlayed image (empty cheque + client's share)
+    var png_download = "data:image/png;base64,"
+    png_download += "{{ reconstructed_cheque }}"
+
+    var newImage = document.getElementById("img_preview");
+    newImage.src = png_download;
+
+    var OneClick = document.getElementById("back");
+    OneClick.addEventListener('click', OnOneClick, false);
+
+    // creates a downloadable link
+    // var a = document.getElementById('downloadLink');
+    // a.href = png_download
+    // a.download = "{{ clientName }}" + "_client_cheque"
+  }
+
+  // execute this when the form is submitted
+  $(verify).submit(function(e) 
+  {
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+
+    var val = $("input[type=submit][clicked=true]").attr("name").split("-")
+    var response = val[0];
+    var transactionNo = val[1];
+
+    document.getElementById("loader").style.display = "block";
+    processTransaction(transactionNo, response);
+  });
+
+  function processTransaction (transactionNo, response)
+  {
+    console.log("Processing!!!");
+    var fd = new FormData();
+    fd.append('response', response)
+    fd.append('transactionNo', transactionNo)
+    $.ajax({
+      type: 'post',
+      url: '/bank-reconstruct/verify',
+      data: fd,
+      mimeType:"multipart/form-data",
+      contentType: false,
+      cache: false,
+      processData: false,
+      success: function(response){
+        // redirects to previous page
+        window.location.href = response
+      },
+
+      error: function(jqXHR, textStatus, errorThrown) 
+      {
+        alert(errorThrown)
+      }
+    });
+  }
+</script>
+
+{% else %}
+  {% include "forbidden.html" %}
+{% endif %}
+
+</html>

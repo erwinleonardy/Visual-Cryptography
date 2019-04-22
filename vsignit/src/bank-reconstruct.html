@@ -33,12 +33,12 @@
 
         <div class="row table-responsive">
           <table class="table table-hover table-striped">
-            <thead class="thead-dark">
+            <thead class="thead-dark" style="text-align:center">
               <tr>
                 <th scope="col">Transaction No</th>
                 <th scope="col">Client Username</th>
                 <th scope="col">Timestamp</th>
-                <th scope="col">Action</th>
+                <th scope="col" style="width:23%">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -47,21 +47,21 @@
                 <td>{{ transaction.getTranscationNo() }}</td>
                 <td>{{ transaction.getClientUsername() }}</td>
                 <td>{{ transaction.getTimestamp() }}</td>
-                <td style="color:white">
+                <td style="color:white; width:23%">
                   <!-- <a class="btn btn-primary">Verify</a> -->
-                  <input type="submit" class="btn btn-primary" value="Verify" name="Verify-{{ transaction.getTranscationNo() }}"/>
-                  <input type="submit" class="btn btn-danger" value="Delete" name="Delete-{{ transaction.getTranscationNo() }}"/>
+                  <button type="submit" class="btn btn-primary" name="Verify-{{ transaction.getTranscationNo() }}">
+                    <span></span>
+                    Verify
+                  </button>
+                  <button type="submit" class="btn btn-danger" name="Delete-{{ transaction.getTranscationNo() }}">Delete</button>
+
+                  <!-- <input type="submit" class="btn btn-primary" value="Verify" name="Verify-{{ transaction.getTranscationNo() }}"/>
+                  <input type="submit" class="btn btn-danger" value="Delete" name="Delete-{{ transaction.getTranscationNo() }}"/> -->
                 </td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
-        </div>
-
-        <div class="row">
-            <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
-              <div id="loader"></div>
-            </div>
         </div>
       </div>
     </form>
@@ -69,35 +69,57 @@
 </body>
 
 <script>
-  $("form input[type=submit]").click(function() {
-    $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
-    $(this).attr("clicked", "true");
-});
-
-  // execute this when the form is submitted
-  $(reconstruct).submit(function(e) 
-  {
-    e.preventDefault(); // avoid to execute the actual submit of the form.
-
-    var val = $("input[type=submit][clicked=true]").attr("name").split("-")
+  // reads the transaction number from the hidden input value
+  $("button").click(function() {
+    var val = this.name.split("-")
     var type = val[0];
     var transactionNo = val[1];
 
+    // if delete is clicked, give confirmation prompt
     if (type == "Delete")
     {
       var res = confirm("Are you sure that you want to delete transaction number \'" + transactionNo + "\'?\n\nCAUTION: This action cannot be undone!");
 
+      // cancel if user changes his mind
       if (res == false) {
         return;
       } 
     }
 
-    document.getElementById("loader").style.display = "block";
-    processTransaction(transactionNo, type);
+    // if user selects verify
+    else
+    {
+      // changes to loading button
+      $(this)[0].innerHTML = "<span></span> Loading..."
+      $(this)[0].id = "LoadingBox"
+      button = $(this).find("span")[0]; 
+      button.role = "status";      
+      button.className = "spinner-border spinner-border-sm LoadingText"
+    }
 
+    // continues processing the transaction
+    forwardTransaction(transactionNo, type);
   });
 
-  function processTransaction (transactionNo, type)
+  // loads this script when DOM is loaded
+  $(document).ready(function(){
+    // remove the 'Loading...' text when user goes back to the page
+    setInterval(function(){
+      if (window.performance && window.performance.navigation.type == window.performance.navigation.TYPE_BACK_FORWARD) {
+        document.getElementById('LoadingBox').innerHTML = "Verify";
+      }
+    }, 3000);
+        
+    // avoid submission of form
+    $(reconstruct).submit(function(e) 
+    {
+      e.preventDefault(); 
+    });
+  });
+
+  // forwards the transaction to the verification page
+  // if user choses to verify the transaction
+  function forwardTransaction (transactionNo, type)
   {
     var fd = new FormData();
     fd.append('type', type)
@@ -111,16 +133,18 @@
       cache: false,
       processData: false,
       success: function(response){
-        document.getElementById("loader").style.display = "none";
+        // reloads the page after deletion
         if (response == "Delete")
           window.location.reload();
+
+        // redirects users to the verification page
         else
-          alert(response);
+          window.location.href = response
       },
 
       error: function(jqXHR, textStatus, errorThrown) 
       {
-        alert("error!!!")
+        alert(errorThrown)
       }
     });
   }

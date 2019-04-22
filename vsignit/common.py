@@ -21,83 +21,83 @@ doubSignSize = signWidth * 2
 reconDist = signWidth - 85
 
 class Common():
-    # Open an Image
-    @staticmethod
-    def open_image(path, bw):
-        try:
-            image = Image.open(path)
+  # Open an Image
+  @staticmethod
+  def open_image(path, bw):
+    try:
+      image = Image.open(path)
 
-            if bw == 1:
-                image = image.convert('1')  # convert image to black and white
-            return image
+      if bw == 1:
+        image = image.convert('1')  # convert image to black and white
+      return image
 
-        except IOError:
-            return None
+    except IOError:
+      return None
 
-    # Save Image
-    @staticmethod
-    def save_image(image, filepath):
-        ts = time.time()
-        st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-        print("({}) {} has been successfully exported!".format(st, filepath))
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
-        image.save(filepath, optimize=True, format="PNG")
+  # Save Image
+  @staticmethod
+  def save_image(image, filepath):
+    ts = time.time()
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    print("({}) {} has been successfully exported!".format(st, filepath))
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    image.save(filepath, optimize=True, format="PNG")
 
-    # checks image dimension is a square
-    # if yes, return the resized image
-    # otherwise, return None
-    @staticmethod
-    def validate_resize_image (image):
-        width, height = image.size
-        if (width != height):
-            return None
-    
-        else:
-            try:
-                image.resize((signWidth, signWidth))
-                img_w, img_h = image.size
-                background = Image.new('1', (signWidth, signWidth), 255)
-                bg_w, bg_h = background.size
-                offset = ((bg_w - img_w) // 2, (bg_h - img_h) // 2)
-                background.paste(image, offset)
-                return image
+  # checks image dimension is a square
+  # if yes, return the resized image
+  # otherwise, return None
+  @staticmethod
+  def validate_resize_image (image):
+    width, height = image.size
+    if (width != height):
+      return None
 
-            except IOError:
-                return None
+    else:
+      try:
+        image.resize((signWidth, signWidth))
+        img_w, img_h = image.size
+        background = Image.new('1', (signWidth, signWidth), 255)
+        bg_w, bg_h = background.size
+        offset = ((bg_w - img_w) // 2, (bg_h - img_h) // 2)
+        background.paste(image, offset)
+        return image
 
-    # this function checks if the client's
-    # username given by the bank exists
-    @staticmethod
-    def userExists(username):
-        if User.query.filter_by(username=username).first() == None:
-            return None
-        else:
-            return "OK"
+      except IOError:
+        return None
 
-    # get the banks this particular client subscribed
-    @staticmethod
-    def getBankUsernames (clientid):
-        bank_subcribed = Client_Data.query.filter_by(client_userid=clientid).all()
+  # this function checks if the client's
+  # username given by the bank exists
+  @staticmethod
+  def userExists(username):
+    if User.query.filter_by(username=username).first() == None:
+      return None
+    else:
+      return "OK"
 
-        usernames = []
+  # get the banks this particular client subscribed
+  @staticmethod
+  def getBankUsernames (clientid):
+    bank_subcribed = Client_Data.query.filter_by(client_userid=clientid).all()
 
-        for bank in bank_subcribed:
-            usernames.append(Common.getUsernameFromID(bank.getBankUserId()))
+    usernames = []
 
-        return usernames
+    for bank in bank_subcribed:
+      usernames.append(Common.getUsernameFromID(bank.getBankUserId()))
 
-    # get all of the transactions of the bankID given
-    @staticmethod
-    def getAllTransactions (bankid):
-        pending_cheques = Transaction.query.filter_by(bank_userid=bankid).order_by(desc(Transaction.timestamp)).all()
-        return pending_cheques
+    return usernames
 
-    # convert ID -> Username 
-    @staticmethod
-    def getUsernameFromID (userid):
-        return User.query.filter_by(id=userid).first().getUsername() 
+  # get all of the transactions of the bankID given
+  @staticmethod
+  def getAllTransactions (bankid):
+    pending_cheques = Transaction.query.filter_by(bank_userid=bankid).order_by(desc(Transaction.timestamp)).all()
+    return pending_cheques
 
-    # get email of the particular user
-    @staticmethod
-    def getUserEmail (userid):
-        return User.query.filter_by(id=userid).first().getEmail() 
+  # convert ID -> Username 
+  @staticmethod
+  def getUsernameFromID (userid):
+    return User.query.filter_by(id=userid).first().getUsername() 
+
+  # get email of the particular user
+  @staticmethod
+  def getUserEmail (userid):
+    return User.query.filter_by(id=userid).first().getEmail() 

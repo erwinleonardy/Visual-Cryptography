@@ -11,12 +11,12 @@ import hashlib
 from vsignit.models import User
 
 class Login():
-    """
-        Checks if the username and password
-        provided can be found in the databse
-    """
-    @staticmethod
-    def login(username, password):
-        sha_1 = hashlib.sha1()
-        sha_1.update(password.encode('utf-8'))
-        return User.query.filter_by(username=username, password=sha_1.hexdigest()).first()
+  """
+      Checks if the username and password
+      provided can be found in the databse
+  """
+  @staticmethod
+  def login(username, password):
+    sha_1 = hashlib.sha1()
+    sha_1.update(password.encode('utf-8'))
+    return User.query.filter_by(username=username, password=sha_1.hexdigest()).first()
