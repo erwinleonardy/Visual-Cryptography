@@ -189,7 +189,6 @@ def bank_reconstruct_verify():
         return str(e)
 
   elif request.method == 'POST':  
-    print("IN POST\n\n\n\n\n")
     # retrieve the transaction from the DB
     transactionNo = request.form['transactionNo']
     transaction = Transaction.query.filter_by(transactionNo=transactionNo).first()
