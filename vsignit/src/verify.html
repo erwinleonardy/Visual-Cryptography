@@ -155,10 +155,9 @@
     return false; 
   };
 
+  // closes modal box when it is clicked
   $(document).click(function(event) {
-    
     if (!$(event.target).closest("#img_preview,.popUpClass,.close").length && $(".popUpClass,.close").is(":visible")) {
-      console.log("Hit\n\n\n\n");
       $('#myModal').hide();
     }
   });
