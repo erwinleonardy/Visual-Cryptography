@@ -7,7 +7,8 @@
     intended page
 """
 
-import hashlib
+from werkzeug.security import check_password_hash
+from flask_login import login_user
 from vsignit.models import User
 
 class Login():
@@ -17,6 +18,10 @@ class Login():
   """
   @staticmethod
   def login(username, password):
-    sha_1 = hashlib.sha1()
-    sha_1.update(password.encode('utf-8'))
-    return User.query.filter_by(username=username, password=sha_1.hexdigest()).first()
+    login = False
+    user = User.query.filter_by(username=username).first()
+    if user is not None and check_password_hash(user.password, password):
+      login_user(user)
+      login = True
+    
+    return login

@@ -8,7 +8,6 @@
 
 from __future__ import print_function
 from PIL import Image
-from flask_login import login_user
 from flask import url_for
 import PIL.ImageOps
 import re, time, base64, sys, os
@@ -29,12 +28,8 @@ class Driver():
   """
   @staticmethod
   def login (username, password):
-    result = Login.login(username, password)  
-
-    if result != None:
-      login_user(result)
+    if Login.login(username, password):
       return url_for('index')
-        
     else:
       return ""
 

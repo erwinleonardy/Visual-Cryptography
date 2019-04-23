@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `user_table` (
   `user_type` enum('admin','user') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `email` varchar(100) NOT NULL,
   `username` varchar(70) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
-  `password` varchar(70) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL
+  `password` varchar(128) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 --
@@ -46,12 +46,12 @@ CREATE TABLE IF NOT EXISTS `user_table` (
 --
 
 INSERT INTO `user_table` (`user_id`, `user_type`, `email`, `username`, `password`) VALUES
-(1, 'admin', 'veleseb@max-mail.info', 'DBS', '7026cf9936b5c5b974dc5db6422f542aed7b1f01'),
-(2, 'user', 'rusocevupo@direct-mail.info', 'janedoe', '8a8deed44623d4c44268c26652d80945851c4f7f'),
-(3, 'user', 'rusocevupo@direct-mail.info', 'johndoe', 'a51dda7c7ff50b61eaea0444371f4a6a9301e501'),
-(4, 'user', 'rusocevupo@direct-mail.info', 'timapple', '5ee0edb9e2229c0838f1959779f1949031de0123'),
-(5, 'admin', 'veleseb@max-mail.info', 'HSBC', '616da28709f422331b28f7106673c5ad02b6d477'),
-(7, 'user', 'rusocevupo@direct-mail.info', 'donaldtrump', '53e11eb7b24cc39e33733a0ff06640f1b39425ea');
+(1, 'admin', 'veleseb@max-mail.info', 'DBS', 'pbkdf2:sha256:150000$3DaWGCwB$90db741fbaa5420fad5cee64646562e74d355d553e09488adc881a0ca4babae1'),
+(2, 'user', 'rusocevupo@direct-mail.info', 'janedoe', 'pbkdf2:sha256:150000$kouFGPTV$f7890d5acbb3ec18c83f3af4fbe6cfc1daa21d7976986dc8d04879dd4f91c237'),
+(3, 'user', 'rusocevupo@direct-mail.info', 'johndoe', 'pbkdf2:sha256:150000$8SdvwIgg$76228fa362efeddcc71e20744d44b69002cc29b2263e3c232772c8241d03bc9b'),
+(4, 'user', 'rusocevupo@direct-mail.info', 'timapple', 'pbkdf2:sha256:150000$7mOYt08J$fc0307caf5bdb16f1933c1e4244b9d27fc7cb5c3cca54d46639283f9ef08cc37'),
+(5, 'admin', 'veleseb@max-mail.info', 'HSBC', 'pbkdf2:sha256:150000$Dj5kYxxr$fb25ef376b2d2ff36269e9dcd8eaed15f80dedf884345f146abea7421c306480'),
+(7, 'user', 'rusocevupo@direct-mail.info', 'donaldtrump', 'pbkdf2:sha256:150000$uloLEq3t$5fc7cc6cfbc624f8e1602e1e3e18488c254d42328c1b615eedc265cdbd510010');
 
 --
 -- Indexes for dumped tables
