@@ -53,28 +53,31 @@
         </div>
 
         <div class="row">
+          <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
+              <button class="btn btn-primary btn-lg active" type="submit" aria-pressed="true" style="width:100%">Sign Cheque</button>
+          </div>
+        </div>
+
+        <!-- Loader -->
+        <div class="row">
             <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
               <div id="loader"></div>
             </div>
         </div> 
 
+        <!-- Image Preview for Cheque -->
         <div class="row">
           <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
               <a id="downloadLink" target="_blank" value="client_share" download><div id="preview" style="margin-bottom: 10px; max-height: 250px; max-width: 250px"></div></a>
           </div>
         </div>
 
+        <!-- Response Message Box for client-->
         <div class="row">
           <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
             <div id="response-msg" class="alert alert-danger" role="alert" style="width:100%; text-align: center"></div>
           </div>
         </div>
-
-        <div class="row">
-            <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
-                <button class="btn btn-primary btn-lg active" type="submit" aria-pressed="true" style="width:100%">Sign Cheque</button>
-            </div>
-          </div>
       </div>
     </form>
   </div>
@@ -202,7 +205,7 @@
               $('#cheque-upload').removeClass('is-invalid');
               $('#response-msg').addClass('alert-success');
               $('#cheque-upload').addClass('is-valid');
-              $("#response-msg").text("Your share has been embeded to the cheque! Click on the image to download.");
+              $("#response-msg").text("Your embeded cheque has been sent to the bank! Click on the image to download your copy!");
               $('#response-msg').toggle();
             }
 

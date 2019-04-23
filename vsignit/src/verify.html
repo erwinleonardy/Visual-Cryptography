@@ -81,11 +81,12 @@
 
               <tr>
                 <td colspan="3">
-                  <a id="downloadLink" target="_blank" value="final_share" download>
+                  <!-- <a id="downloadLink" target="_blank" value="final_share" download> -->
                     <div id="preview" style="margin-bottom: 10px; width:400px; height:280px; margin:0px auto">
                       <img id="img_preview" width="100%" height="100%"/>
+                      <p class="font-weight-normal textBox">Click to enlarge</p>
                     </div>
-                  </a>
+                  <!-- </a> -->
                 </td>
               </tr>
   
@@ -108,10 +109,18 @@
           </table>
         </div>
 
+        <!-- Loader -->
         <div class="row">
             <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
               <div id="loader"></div>
             </div>
+        </div>
+
+        <!-- Popup Image Box -->
+        <div id="myModal" class="modal">
+          <span class="close">&times;</span>
+          <img class="modal-content" id="popUpImg">
+          <div id="caption"></div>
         </div>
       </div>
     </form>
@@ -146,6 +155,14 @@
     return false; 
   };
 
+  $(document).click(function(event) {
+    
+    if (!$(event.target).closest("#img_preview,.popUpClass,.close").length && $(".popUpClass,.close").is(":visible")) {
+      console.log("Hit\n\n\n\n");
+      $('#myModal').hide();
+    }
+  });
+
   // loads the script when window is fully loaded
   window.onload = function()
   {
@@ -155,14 +172,44 @@
 
     var newImage = document.getElementById("img_preview");
     newImage.src = png_download;
+    newImage.alt = "Transcation #{{ transaction.getTranscationNo() }}";
 
+    // adds back button listener (only work in safari)
     var OneClick = document.getElementById("back");
     OneClick.addEventListener('click', OnOneClick, false);
 
-    // creates a downloadable link
-    // var a = document.getElementById('downloadLink');
-    // a.href = png_download
-    // a.download = "{{ clientName }}" + "_client_cheque"
+    /*
+     * Modal Box -> Popup Box
+     */
+    // Get the modal
+    var modal = document.getElementById('myModal');
+
+    // Get the image and insert it inside the modal - use its "alt" text as a caption
+    var img = document.getElementById('img_preview');
+    var modalImg = document.getElementById("popUpImg");
+    var captionText = document.getElementById("caption");
+    img.onclick = function(){
+      modal.style.display = "block";
+      modalImg.src = this.src;
+      modalImg.name = "popUpClass"
+      captionText.innerHTML = this.alt;
+    }
+
+    // Get the <span> element that closes the 
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() { 
+      modal.style.display = "none";
+    }
+
+    // or close when esc key is pressed
+    $(document).keydown(function(event) { 
+      if (event.keyCode == 27) { 
+        $('#myModal').hide();
+      }
+    });
+
   }
 
   // execute this when the form is submitted
@@ -174,7 +221,7 @@
     var response = val[0];
     var transactionNo = val[1];
 
-    document.getElementById("loader").style.display = "block";
+    // document.getElementById("loader").style.display = "block";
     processTransaction(transactionNo, response);
   });
 

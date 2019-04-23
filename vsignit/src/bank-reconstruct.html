@@ -33,6 +33,7 @@
 
         <div class="row table-responsive">
           <table class="table table-hover table-striped">
+
             <thead class="thead-dark" style="text-align:center">
               <tr>
                 <th scope="col">Transaction No</th>
@@ -41,6 +42,7 @@
                 <th scope="col" style="width:23%">Action</th>
               </tr>
             </thead>
+
             <tbody>
               {% for transaction in transactions %}
               <tr>
@@ -48,15 +50,10 @@
                 <td>{{ transaction.getClientUsername() }}</td>
                 <td>{{ transaction.getTimestamp() }}</td>
                 <td style="color:white; width:23%">
-                  <!-- <a class="btn btn-primary">Verify</a> -->
                   <button type="submit" class="btn btn-primary" name="Verify-{{ transaction.getTranscationNo() }}">
-                    <span></span>
-                    Verify
+                    <span></span> Verify
                   </button>
                   <button type="submit" class="btn btn-danger" name="Delete-{{ transaction.getTranscationNo() }}">Delete</button>
-
-                  <!-- <input type="submit" class="btn btn-primary" value="Verify" name="Verify-{{ transaction.getTranscationNo() }}"/>
-                  <input type="submit" class="btn btn-danger" value="Delete" name="Delete-{{ transaction.getTranscationNo() }}"/> -->
                 </td>
               </tr>
               {% endfor %}
