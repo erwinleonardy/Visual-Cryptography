@@ -1,43 +1,31 @@
-"""
-    shareSplitter.py
-    by: Erwin Leonardy
+# Filename: shareSplitter.py
+# Author: Erwin Leonardy
+# Descrption: This file contains all of the necessary functions to split the shares
 
-    This file contains all of the necessary
-    functions to split the shares
-"""
-
-from PIL import Image
-import PIL.ImageOps
-import random, base64, os
-from flask_login import current_user
+import PIL.ImageOps, random, base64, os
 from sqlalchemy.exc import IntegrityError
+from flask_login import current_user
+from PIL import Image
 
-from vsignit import db
 from vsignit.models import User, UserType, Client_Data, Bank_Data
 from vsignit.emailerService import EmailerService
 from vsignit.common import Common
+from vsignit import db
 
 class ShareSplitter():
-  """
-      This function resizes to the desired 
-      dimension, which is (200 x 200)
-  """
+  # Function resizes to the desired dimension (200 x 200)
   @staticmethod
-  def resize (image):
+  def resize(image):
     return image.resize((200, 200))
 
-  """
-      This function takes in an image
-      and split it into two shares using
-      (2,2) Basic VC Scheme
-  """
+  # Function split image into two shares using (2,2) Basic VC Scheme
   @staticmethod
-  def split_signature (image):
+  def create_shares(image):
     pattern = ((0,0,255,255), (255,255,0,0), (0,255,255,0), (255,0,0,255), (255,0,255,0), (0,255,0,255))
 
       # 1 -> 8bit B/W
-    outfile1 = Image.new("1", [dimension * 2 for dimension in image.size])
-    outfile2 = Image.new("1", [dimension * 2 for dimension in image.size])
+    share1 = Image.new("1", [dimension * 2 for dimension in image.size])
+    share2 = Image.new("1", [dimension * 2 for dimension in image.size])
     
     # horizontal axis
     for x in range(0, image.size[0], 2):
@@ -49,10 +37,10 @@ class ShareSplitter():
         pat = random.choice(pattern)
 
         # always get one share
-        outfile1.putpixel((x * 2, y * 2), pat[0])
-        outfile1.putpixel((x * 2 + 1, y * 2), pat[1])
-        outfile1.putpixel((x * 2, y * 2 + 1), pat[2])
-        outfile1.putpixel((x * 2 + 1, y * 2 + 1), pat[3])
+        share1.putpixel((x * 2, y * 2), pat[0])
+        share1.putpixel((x * 2 + 1, y * 2), pat[1])
+        share1.putpixel((x * 2, y * 2 + 1), pat[2])
+        share1.putpixel((x * 2 + 1, y * 2 + 1), pat[3])
     
         # if it is black
         # pick a complimentary pair
@@ -60,10 +48,10 @@ class ShareSplitter():
         # X O   O X
         # O X   X O
         if sourcepixel == 0:
-          outfile2.putpixel((x * 2, y * 2), 255 - pat[0])
-          outfile2.putpixel((x * 2 + 1, y * 2), 255 - pat[1])
-          outfile2.putpixel((x * 2, y * 2 + 1), 255 - pat[2])
-          outfile2.putpixel((x * 2 + 1, y * 2 + 1), 255 - pat[3])
+          share2.putpixel((x * 2, y * 2), 255 - pat[0])
+          share2.putpixel((x * 2 + 1, y * 2), 255 - pat[1])
+          share2.putpixel((x * 2, y * 2 + 1), 255 - pat[2])
+          share2.putpixel((x * 2 + 1, y * 2 + 1), 255 - pat[3])
         
         # if it is white
         # pick the same pairs
@@ -71,21 +59,16 @@ class ShareSplitter():
         # X O   X O
         # O X   O X
         elif sourcepixel == 255:
-          outfile2.putpixel((x * 2, y * 2), pat[0])
-          outfile2.putpixel((x * 2 + 1, y * 2), pat[1])
-          outfile2.putpixel((x * 2, y * 2 + 1), pat[2])
-          outfile2.putpixel((x * 2 + 1, y * 2 + 1), pat[3])
+          share2.putpixel((x * 2, y * 2), pat[0])
+          share2.putpixel((x * 2 + 1, y * 2), pat[1])
+          share2.putpixel((x * 2, y * 2 + 1), pat[2])
+          share2.putpixel((x * 2 + 1, y * 2 + 1), pat[3])
       
-    return outfile1, outfile2
+    return share1, share2
 
-  """
-      This function sends the client share
-      to the client's email provided and 
-      the bank's share will be available
-      for download
-  """
+  # Function sends client/bank shares to respective emails
   @staticmethod
-  def send_shares (outfile1, outfile2, username):
+  def store_shares(share1, share2, username):
     bank_userid = current_user.get_id()
     client_userid = User.query.filter_by(username=username).first().id
     bank_username = User.query.filter_by(id=bank_userid).first().username
@@ -93,8 +76,8 @@ class ShareSplitter():
     # export image shares
     bank_share_path = "./vsignit/output/bank/" + username + "_" + bank_username + "_bank_share.png"
     client_share_path = "./vsignit/output/client/" + username + "_" + bank_username + "_client_share.png"
-    Common.save_image(outfile1, bank_share_path)
-    Common.save_image(outfile2, client_share_path)
+    Common.save_image(share1, bank_share_path)
+    Common.save_image(share2, client_share_path)
 
     # checks if data already exists
     existingBank = Bank_Data.query.get([bank_userid, client_userid])

@@ -1,16 +1,11 @@
-"""
-    common.py
-    by: Erwin Leonardy
+# Filename: common.py
+# Author: Erwin Leonardy
+# Descrption: This file contains all of the supporting functions that are shared across the 
+#             other python files
 
-    This file contains all of the supporting
-    functions that are shared across the 
-    other python files
-"""
-
-from PIL import Image
+import PIL.ImageOps, os, time, datetime
 from sqlalchemy import desc
-import PIL.ImageOps
-import os, time, datetime
+from PIL import Image
 
 from vsignit.models import User, Client_Data, Transaction
 
@@ -21,7 +16,7 @@ doubSignSize = signWidth * 2
 reconDist = signWidth - 85
 
 class Common():
-  # Open an Image
+  # Function Opens an Image
   @staticmethod
   def open_image(path, bw):
     try:
@@ -34,7 +29,7 @@ class Common():
     except IOError:
       return None
 
-  # Save Image
+  # Function Saves Image
   @staticmethod
   def save_image(image, filepath):
     ts = time.time()
@@ -43,11 +38,10 @@ class Common():
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     image.save(filepath, optimize=True, format="PNG")
 
-  # checks image dimension is a square
-  # if yes, return the resized image
-  # otherwise, return None
+  # function checks image dimension is a square;
+  # yes - return resize image, no - return None
   @staticmethod
-  def validate_resize_image (image):
+  def validate_resize_image(image):
     width, height = image.size
     if (width != height):
       return None
@@ -68,7 +62,7 @@ class Common():
   # this function checks if the client's
   # username given by the bank exists
   @staticmethod
-  def userExists(username):
+  def user_exists(username):
     if User.query.filter_by(username=username).first() == None:
       return None
     else:
@@ -76,28 +70,28 @@ class Common():
 
   # get the banks this particular client subscribed
   @staticmethod
-  def getBankUsernames (clientid):
-    bank_subcribed = Client_Data.query.filter_by(client_userid=clientid).all()
+  def get_bank_usernames(client_userid):
+    bank_subcribed = Client_Data.query.filter_by(client_userid=client_userid).all()
 
     usernames = []
 
     for bank in bank_subcribed:
-      usernames.append(Common.getUsernameFromID(bank.getBankUserId()))
+      usernames.append(Common.userid_to_username(bank.getBankUserId()))
 
     return usernames
 
   # get all of the transactions of the bankID given
   @staticmethod
-  def getAllTransactions (bankid):
-    pending_cheques = Transaction.query.filter_by(bank_userid=bankid).order_by(desc(Transaction.timestamp)).all()
+  def get_bank_transactions(bank_userid):
+    pending_cheques = Transaction.query.filter_by(bank_userid=bank_userid).order_by(desc(Transaction.timestamp)).all()
     return pending_cheques
 
   # convert ID -> Username 
   @staticmethod
-  def getUsernameFromID (userid):
+  def userid_to_username(userid):
     return User.query.filter_by(id=userid).first().getUsername() 
 
   # get email of the particular user
   @staticmethod
-  def getUserEmail (userid):
+  def userid_to_useremail(userid):
     return User.query.filter_by(id=userid).first().getEmail() 

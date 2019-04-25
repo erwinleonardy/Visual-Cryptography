@@ -1,17 +1,13 @@
-"""
-    routes.py
-    by: Erwin Leonardy
-
-    This file serves as the file that
-    handles the routing of our flask program.
-"""
+# Filename: routes.py
+# Author: Erwin Leonardy
+# Descrption: This file serves as the file that handles the routing of our flask program.
 
 import base64, re, os, time, requests
 from flask import render_template, request, url_for, redirect, session, jsonify
 from flask_login import current_user, logout_user
 from PIL import Image
-
 from datetime import timedelta
+
 from vsignit import app
 from vsignit.driver import Driver
 from vsignit.common import Common
@@ -113,7 +109,7 @@ def bank_generate():
 
     # checks if the image dimension is valid
     if Common.validate_resize_image(image) != None:
-      bank_share = Driver.share_splitter(image, username)
+      bank_share = Driver.create_shares(image, username)
       os.remove("./vsignit/output/tmp/" + username + "_imageToSave.png")
       return bank_share
 
@@ -134,7 +130,7 @@ def bank_reconstruct():
       
       else:
         # extracts the pending cheques of that particular bank
-        transactions = Common.getAllTransactions(current_user.get_id())
+        transactions = Common.get_bank_transactions(current_user.get_id())
 
         usertype = "user"
         if result.user_type == UserType.admin:
@@ -178,7 +174,7 @@ def bank_reconstruct_verify():
         transaction = Transaction.query.filter_by(transactionNo=transactionNo).first()
 
         # reconstruct the share and sends the base64 to the client
-        recon_cheque, clean1, recon = Driver.share_reconstruction (transaction)
+        recon_cheque, clean1, recon = Driver.reconstruct_shares (transaction)
 
         usertype = "user"
         if result.user_type == UserType.admin:
@@ -194,7 +190,7 @@ def bank_reconstruct_verify():
     transaction = Transaction.query.filter_by(transactionNo=transactionNo).first()
 
     # verify the given cheque
-    Driver.share_verification (transaction, request.form['response'])
+    Driver.transaction_verification(transaction, request.form['response'])
 
     # delete the transaction
     Driver.transaction_deletion (transaction)
@@ -216,7 +212,7 @@ def client():
 
       else:
         # extracts the bank the client subscribed to
-        usernames = Common.getBankUsernames(current_user.get_id())
+        usernames = Common.get_bank_usernames(current_user.get_id())
 
         usertype = "user"
         if result.user_type == UserType.admin:
@@ -250,7 +246,7 @@ def client():
     clientShare = Common.open_image (clientSharePath, 1)
 
     # paste the client share on top of the blank share given by the client
-    resultStr = Driver.overlay_cheque (clientShare, clientCheque, clientID, bankID)
+    resultStr = Driver.client_signcheque (clientShare, clientCheque, clientID, bankID)
 
     # remove the temporary clientcheque file
     os.remove(filepath)

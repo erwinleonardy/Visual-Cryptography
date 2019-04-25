@@ -1,13 +1,7 @@
-"""
-    __init__.py
-    by: Erwin Leonardy
-
-    This file would be called automatically
-    once the package 'vsignit' is called.
-
-    It serves to initiliase the flask application
-    and also the database
-"""
+# Filename: __init__.py
+# Author: Erwin Leonardy
+# Descrption: This file would be called automatically once the package 'vsignit' is called.
+#             It serves to initiliase the flask application and also the database
 
 from flask import Flask
 from flask_login import LoginManager

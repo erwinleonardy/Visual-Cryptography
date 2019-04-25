@@ -1,14 +1,12 @@
-"""
-    models.py
-    by: Erwin Leonardy
+# Filename: models.py
+# Author: Erwin Leonardy
+# Descrption: This file serves as the model (classes) that is going to store the result of 
+#             the data extracted from the database
 
-    This file serves as the model (classes) 
-    that is going to store the result of the
-    data extracted from the database
-"""
-from flask_login import UserMixin
-from vsignit import db, login_manager
 import enum
+from flask_login import UserMixin
+
+from vsignit import db, login_manager
 
 @login_manager.user_loader
 def load_user(id):
@@ -29,19 +27,19 @@ class User(UserMixin, db.Model):
   username = db.Column('username', db.String(70), nullable=False)
   password = db.Column('password', db.String(70), nullable=False)
 
-  def __init__ (self, username, user_type, email, password):
+  def __init__(self, username, user_type, email, password):
     self.user_type = UserType.user
     self.username = username
     self.password = password
     self.email = email
 
-  def getUsername (self):
+  def getUsername(self):
     return self.username
 
-  def getID (self):
+  def getID(self):
     return self.id
 
-  def getEmail (self):
+  def getEmail(self):
     return self.email
 
 # stores bank's shares
@@ -52,12 +50,12 @@ class Bank_Data(UserMixin, db.Model):
   client_userid = db.Column('client_user_id', db.Integer, primary_key=True, unique=True, nullable=False)
   bank_share_path = db.Column('bank_share_path', db.String(100), nullable=False)
 
-  def __init__ (self, bank_userid, client_userid, bank_share_path):
+  def __init__(self, bank_userid, client_userid, bank_share_path):
     self.bank_userid = bank_userid
     self.client_userid = client_userid
     self.bank_share_path = bank_share_path
 
-  def getBankSharePath (self):
+  def getBankSharePath(self):
     return self.bank_share_path
 
 # stores client's shares
@@ -73,10 +71,10 @@ class Client_Data(UserMixin, db.Model):
     self.bank_userid = bank_userid
     self.client_share_path = client_share_path
 
-  def getBankUserId (self):
+  def getBankUserId(self):
     return self.bank_userid
 
-  def getClientSharePath (self):
+  def getClientSharePath(self):
     return self.client_share_path
 
 # stores client's transaction
@@ -89,30 +87,30 @@ class Transaction(UserMixin, db.Model):
   timestamp = db.Column('timestamp', db.DateTime(), nullable=False)
   filepath = db.Column('filepath', db.String(70), nullable=False)
 
-  def __init__ (self, transactionNo, bank_userid, client_userid, timestamp, filepath):
+  def __init__(self, transactionNo, bank_userid, client_userid, timestamp, filepath):
     self.transactionNo = transactionNo
     self.bank_userid = bank_userid
     self.client_userid = client_userid
     self.timestamp = timestamp
     self.filepath = filepath
       
-  def getTranscationNo (self):
+  def getTranscationNo(self):
     return self.transactionNo
 
-  def getBankId (self):
+  def getBankId(self):
     return self.bank_userid
 
-  def getClientId (self):
+  def getClientId(self):
     return self.client_userid
 
-  def getBankUsername (self):
+  def getBankUsername(self):
     return User.query.filter_by(id=self.bank_userid).first().getUsername() 
 
-  def getClientUsername (self):
+  def getClientUsername(self):
     return User.query.filter_by(id=self.client_userid).first().getUsername() 
 
-  def getTimestamp (self):
+  def getTimestamp(self):
     return self.timestamp
 
-  def getFilePath (self):
+  def getFilePath(self):
     return self.filepath 
