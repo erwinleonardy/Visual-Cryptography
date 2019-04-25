@@ -15,29 +15,18 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 
 # basic configuration
-UPLOAD_FOLDER = './output'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 app = Flask(__name__, template_folder='./src')
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-login_manager = LoginManager()
-
-# Set the secret key to some random bytes. Keep this really secret!
-app.secret_key = b'\xdfe\x05\x86\xd1\xdc\xf6\x81\xbb\xf8\xf7_,\xba\x938'
-
-# this code is to connect to your database
-# Format: mysql://username:password@localhost/databaseName
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:erwin123@localhost/vsignit'  
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False    # to silent the warning message
-
-# initialise the SQLAlchemy database
-db = SQLAlchemy(app)
-login_manager.init_app(app)
-
-# get email configurations from file and setup mail
 app.config.from_pyfile('flask.cfg')
+
+# initialise the SQLAlchemy database and Mail
+db = SQLAlchemy(app)
 mail = Mail(app)
+
+# initialize login_manager
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 # routes is only imported here because it needs the access
 # to the 'app' object
