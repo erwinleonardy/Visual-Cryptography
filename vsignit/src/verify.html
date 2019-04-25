@@ -31,74 +31,62 @@
     <form id="verify" method="post" enctype="multipart/form-data" onsubmit="return false;">
       <div class="container">
         <div class="row table-responsive">
-          <table class="table table-borderless">
-            <tbody>
-                <tr>
-                  <td colspan="3">
-                    <p class="lead">Transaction No: {{ transaction.getTranscationNo() }}</p>
-                  </td>
-                </tr>
-    
-              <!-- <tr>
-                  <td>Bank Share</td>
-                  <td><p style="font-size:100px">+</p></td>
-                  <td>Client Share</td>
-              </tr>
-  
-              <tr>
-                  <td></td>
-                  <td><p style="font-size:80px">&darr;</p></td>
-                  <td></td>
-              </tr>
-  
-              <tr>
-                  <td></td>
-                  <td>Reconstructed Share</td>
-                  <td></td>
-              </tr>
-  
-              <tr>
-                  <td></td>
-                  <td><p style="font-size:80px">&darr;</p></td>
-                  <td></td>
-              </tr>
-  
-              <tr>
-                  <td></td>
-                  <td>Cleaning Phase I</td>
-                  <td></td>
-              </tr>
-  
-              <tr>
-                  <td></td>
-                  <td><p style="font-size:80px">&darr;</p></td>
-                  <td></td>
-              </tr>
-  
-              <tr>
-                  <td colspan="3">Cleaning Phase II + Cheque</td>
-              </tr> -->
 
+          <!-- Table -->
+          <table align="center" cellspacing="0" cellpadding="0" style="overflow-x: auto; width:100%; max-width:650px">
+            <tbody>
+
+              <!-- Header -->
               <tr>
-                <td colspan="3">
+                <td colspan="2" style="display:inline-block; text-align: center">
+                  <p class="lead font-weight-bold">Transaction No: {{ transaction.getTranscationNo() }}</p>
+                  <button type="button" id="morePics" class="btn-lg btn-info" style="border-radius:3%;margin-bottom: 15px">Show me the process</button>
+                </td>
+              </tr>
+
+              <!-- Additional Pictures -->
+              <tr id="add_pictures">
+                <td style="display:inline-block; text-align: center">
+                  <div id="pic1" style="padding-bottom: 10px; width:200px; height:200px; margin:0px auto">
+                    <img id="recon_preview" width="100%" height="100%"/>
+                    <p class="font-weight-normal textBox"></p>
+                  </div>
+                  <p class="lead">Reconstructed Share</p>
+                </td>
+
+                <td style="display:inline-block; text-align: center">
+                  <div id="pic2" style="padding-bottom: 10px; width:200px; height:200px; margin:0px auto">
+                    <img id="clean1_preview" width="100%" height="100%"/>
+                    <p class="font-weight-normal textBox"></p>
+                  </div>
+                  <p class="lead">Cleaning Phase I</p>
+                </td>
+              </tr>
+
+              <!-- Reconstructed Cheque -->
+              <tr>
+                <td colspan="2" style="text-align: center">
                   <!-- <a id="downloadLink" target="_blank" value="final_share" download> -->
-                    <div id="preview" style="margin-bottom: 10px; width:400px; height:280px; margin:0px auto">
-                      <img id="img_preview" width="100%" height="100%"/>
+                    <div id="cheque_img_box" style="padding-bottom: 10px; width:400px; height:280px; margin:0px auto; text-align: center; display:inline-block;">
+                      <img id="cheque_preview" width="100%" height="100%"/>
                       <p class="font-weight-normal textBox">Click to enlarge</p>
                     </div>
                   <!-- </a> -->
+                  <p class="lead"> Cleaning Phase II + Cheque </p>
                 </td>
               </tr>
   
+              <!-- Submit Buttons -->
               <tr>
-                <td colspan="3" style="padding-bottom:30px">
-                    <input type="submit" class="btn-lg btn-primary" value="Accept" style="margin-right:20px" name="Accept-{{ transaction.getTranscationNo() }}"/>
-                    <input type="submit" class="btn-lg btn-danger" value="Reject" name="Reject-{{ transaction.getTranscationNo() }}"/>
+                <td colspan="2" style="padding-bottom:30px; text-align: center; display:inline-block;">
+                  <input type="submit" class="btn-lg btn-primary" value="Accept" style="margin-right:20px" name="Accept-{{ transaction.getTranscationNo() }}"/>
+                  <input type="submit" class="btn-lg btn-danger" value="Reject" name="Reject-{{ transaction.getTranscationNo() }}"/>
                 </td>
               </tr>
 
+              <!-- Back Buttons -->
               <tr>
-                <td colspan="3">
+                <td colspan="2" style="text-align: center; display:inline-block;">
                   <p class="lead">
                     Oops! Did you just press the wrong button because your finger is too <b>BIG</b>? Fret not! 
                     Click <a id="back" href="https://www.a.com">here</a>!</p>
@@ -157,7 +145,7 @@
 
   // closes modal box when it is clicked
   $(document).click(function(event) {
-    if (!$(event.target).closest("#img_preview,.popUpClass,.close").length && $(".popUpClass,.close").is(":visible")) {
+    if (!$(event.target).closest("#cheque_preview,.popUpClass,.close").length && $(".popUpClass,.close").is(":visible")) {
       $('#myModal').hide();
     }
   });
@@ -165,13 +153,24 @@
   // loads the script when window is fully loaded
   window.onload = function()
   {
-    // allows client to download the overlayed image (empty cheque + client's share)
-    var png_download = "data:image/png;base64,"
-    png_download += "{{ reconstructed_cheque }}"
+    $("#add_pictures").hide();
+    // extracts encoded pics
+    recon_cheque = "data:image/png;base64,{{ recon_cheque }}";
+    clean1 = "data:image/png;base64,{{ clean1 }}";
+    recon = "data:image/png;base64,{{ recon }}";
 
-    var newImage = document.getElementById("img_preview");
-    newImage.src = png_download;
-    newImage.alt = "Transcation #{{ transaction.getTranscationNo() }}";
+    // loads the pictures
+    var image = document.getElementById("recon_preview");
+    image.src = recon;
+    image.alt = "Recon #{{ transaction.getTranscationNo() }}";
+
+    image = document.getElementById("clean1_preview");
+    image.src = clean1;
+    image.alt = "Clean 1 #{{ transaction.getTranscationNo() }}";
+    
+    image = document.getElementById("cheque_preview");
+    image.src = recon_cheque;
+    image.alt = "Transcation #{{ transaction.getTranscationNo() }}";
 
     // adds back button listener (only work in safari)
     var OneClick = document.getElementById("back");
@@ -184,7 +183,7 @@
     var modal = document.getElementById('myModal');
 
     // Get the image and insert it inside the modal - use its "alt" text as a caption
-    var img = document.getElementById('img_preview');
+    var img = document.getElementById('cheque_preview');
     var modalImg = document.getElementById("popUpImg");
     var captionText = document.getElementById("caption");
     img.onclick = function(){
@@ -209,6 +208,10 @@
       }
     });
 
+    $("#morePics").click(function() {
+      $("#add_pictures").fadeToggle(1000, "linear");
+      $("#morePics").value("Ok! Hide it for me now!")
+    });
   }
 
   // execute this when the form is submitted

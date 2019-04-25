@@ -105,7 +105,7 @@ class Transaction(UserMixin, db.Model):
   def getClientId (self):
     return self.client_userid
 
-  def getBankUsername (Self):
+  def getBankUsername (self):
     return User.query.filter_by(id=self.bank_userid).first().getUsername() 
 
   def getClientUsername (self):

@@ -178,13 +178,13 @@ def bank_reconstruct_verify():
         transaction = Transaction.query.filter_by(transactionNo=transactionNo).first()
 
         # reconstruct the share and sends the base64 to the client
-        reconstructed_cheque = Driver.share_reconstruction (transaction)
+        recon_cheque, clean1, recon = Driver.share_reconstruction (transaction)
 
         usertype = "user"
         if result.user_type == UserType.admin:
             usertype = "admin"
 
-        return render_template('verify.html', usertype=usertype, transaction=transaction, reconstructed_cheque=reconstructed_cheque)
+        return render_template('verify.html', usertype=usertype, transaction=transaction, recon_cheque=recon_cheque, clean1=clean1, recon=recon)
     except Exception as e:
         return str(e)
 

@@ -84,9 +84,9 @@ class Driver():
       outfile = ShareReconstuctor.remove_noise(transactionNo, outfile)
 
       # send the reconstructed shares to the client
-      encoded_str = ShareReconstuctor.send_reconstructed(transactionNo, clientCheque, outfile)
+      recon_cheque, clean1, recon = ShareReconstuctor.get_reconstructed(transaction, clientCheque, outfile)
 
-      return encoded_str
+      return recon_cheque, clean1, recon
 
   """
       This function is triggered during verification process.
@@ -118,6 +118,9 @@ class Driver():
   def transaction_deletion (transaction):
     # delete existing image
     ShareReconstuctor.delete_cheque (transaction)
+
+    # send rejection email
+    ShareReconstuctor.emailReject(transaction.getTranscationNo(), transaction.getClientId(), transaction.getBankId())
 
     # delete the share from the DB and remove the image
     ShareReconstuctor.delete_transaction (transaction)

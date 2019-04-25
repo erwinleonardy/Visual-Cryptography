@@ -164,24 +164,31 @@ class ShareReconstuctor():
         to be downloaded
     """
     @staticmethod
-    def send_reconstructed (transactionNo, clientCheque, outfile):
+    def get_reconstructed (transaction, clientCheque, outfile):
       # replace the area with white color
       for x in range(signX, signX+(doubSignSize)):
           for y in range(signY, signY+(doubSignSize)):
               clientCheque.putpixel((x, y), 255)
 
       # place the clean shares to it
+      transactionNo = transaction.getTranscationNo()
       ShareReconstuctor.overlay_pic(transactionNo, "./vsignit/output/tmp/clean2_" + transactionNo + ".png", clientCheque)
 
-      # send back the final cheque to the bank using AJAX
-      with open("./vsignit/output/tmp/recon_cheque_" + transactionNo + ".png", "rb") as image_file:
-          encoded_string = base64.b64encode(image_file.read())
+      # send back all of the images back in BASE64 format
+      bankUsername = transaction.getBankUsername()
+      clientUsername = transaction.getClientUsername()
 
-      Common.open_image("./vsignit/output/tmp/recon_cheque_" + transactionNo + ".png", 1)
+      with open("./vsignit/output/tmp/recon_cheque_" + transactionNo + ".png", "rb") as data:
+        recon_cheque = base64.b64encode(data.read())
+      # data += ",".encode('utf-8')
 
-      # os.remove("./vsignit/output/final_cheque.png")
+      with open("./vsignit/output/tmp/clean1_" + transactionNo + ".png", "rb") as data:
+        clean1 = base64.b64encode(data.read())
 
-      return (encoded_string.decode("utf-8"))
+      with open("./vsignit/output/tmp/recon_" + transactionNo + ".png", "rb") as data:
+        recon = base64.b64encode(data.read())
+
+      return recon_cheque.decode("utf-8"), clean1.decode("utf-8"), recon.decode("utf-8")
 
     """
         This function is send successful email to the bank and client

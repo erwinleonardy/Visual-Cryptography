@@ -15,7 +15,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 
 # basic configuration
-UPLOAD_FOLDER = './input'
+UPLOAD_FOLDER = './output'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 app = Flask(__name__, template_folder='./src')

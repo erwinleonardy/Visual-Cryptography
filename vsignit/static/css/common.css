@@ -56,22 +56,22 @@
 /* 
 * Image hover modal
 */
-#preview:hover #img_preview{
+#cheque_img_box:hover #cheque_preview{
   opacity: 0.2
 }
 
-#preview .textBox {
+#cheque_img_box .textBox {
   position:relative;
   bottom:150px;
   left:8px;
   visibility:hidden !important;
 }
 
-#preview:hover .textBox {
+#cheque_img_box:hover .textBox {
   visibility:visible !important;
 }
 
-#img_preview {
+#cheque_preview {
   border-radius: 5px;
   cursor: pointer;
   transition: 0.3s;
