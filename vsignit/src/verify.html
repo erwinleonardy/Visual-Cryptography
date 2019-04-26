@@ -219,7 +219,7 @@
     var transactionNo = val[1];
 
     // only process it if it is of type "Delete" or "Verify"
-    if (type == "Delete" || type == "Verify")
+    if (type == "accept" || type == "reject")
     {
       // if delete is clicked, give confirmation prompt
       var res = confirm("Are you sure that you want to " + type + " cheque number \'" + transactionNo + "\'?\n\nCAUTION: This action cannot be undone!");
