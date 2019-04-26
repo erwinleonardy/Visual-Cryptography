@@ -22,6 +22,6 @@ mail = Mail(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-# routes is only imported here because it needs the access
+# routes is only imported here because it needs access
 # to the 'app' object
 from vsignit import routes
