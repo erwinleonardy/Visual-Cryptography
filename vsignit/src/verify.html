@@ -39,8 +39,8 @@
               <!-- Header -->
               <tr>
                 <td colspan="2" style="display:inline-block; text-align: center">
-                  <p class="lead font-weight-bold">Transaction No: {{ transaction.getTranscationNo() }}</p>
-                  <button type="button" id="morePics" class="btn-lg btn-info" style="border-radius:3%;margin-bottom: 15px">Show me the process</button>
+                  <p class="lead">Transaction No: {{ transaction.getTranscationNo() }}</p>
+                  <input type="button" id="morePics" class="btn-lg btn-primary" style="margin-bottom: 15px" value="Show me the process"/>
                 </td>
               </tr>
 
@@ -67,7 +67,7 @@
               <tr style="text-align: center">
                 <td colspan="2" style="text-align: center">
                   <!-- <a id="downloadLink" target="_blank" value="final_share" download> -->
-                    <div id="cheque_img_box" style="padding-bottom: 10px; width:400px; height:280px; margin:0px auto; text-align: center; display:inline-block;">
+                    <div id="cheque_img_box" style="padding-bottom: 10px; width:400px; height:270px; margin:0px auto; text-align: center; display:inline-block;">
                       <img id="cheque_preview" width="100%" height="100%"/>
                       <p class="font-weight-normal textBox">Click to enlarge</p>
                     </div>
@@ -79,8 +79,8 @@
               <!-- Submit Buttons -->
               <tr align="center" style="margin:0px auto">
                 <td colspan="2" style="padding-bottom:30px; text-align: center; display:inline-block;">
-                  <input type="submit" class="btn-lg btn-primary" value="Accept" style="margin-right:20px" name="Accept-{{ transaction.getTranscationNo() }}"/>
-                  <input type="submit" class="btn-lg btn-danger" value="Reject" name="Reject-{{ transaction.getTranscationNo() }}"/>
+                  <button type="submit" class="btn-lg btn-primary" style="margin-right:20px" name="accept-{{ transaction.getTranscationNo() }}">Accept</button>
+                  <button type="submit" class="btn-lg btn-danger" name="reject-{{ transaction.getTranscationNo() }}">Reject</button>
                 </td>
               </tr>
 
@@ -213,17 +213,35 @@
     });
   }
 
+  // reads the transaction number from the hidden input value
+  $("button").click(function() {
+    var val = this.name.split("-")
+    var type = val[0];
+    var transactionNo = val[1];
+
+    // if delete is clicked, give confirmation prompt
+    var res = confirm("Are you sure that you want to " + type + " cheque number \'" + transactionNo + "\'?\n\nCAUTION: This action cannot be undone!");
+
+    // cancel if user changes his mind
+    if (res == false) {
+      return;
+    } 
+
+    // changes to loading button
+    $(this)[0].innerHTML = "<span></span> Loading..."
+    $(this)[0].id = "LoadingBox"
+    button = $(this).find("span")[0]; 
+    button.role = "status";      
+    button.className = "spinner-border spinner-border-sm LoadingText"
+
+    // continues processing the transaction
+    processTransaction(transactionNo, type);
+  });
+
   // execute this when the form is submitted
   $(verify).submit(function(e) 
   {
     e.preventDefault(); // avoid to execute the actual submit of the form.
-
-    var val = $("input[type=submit][clicked=true]").attr("name").split("-")
-    var response = val[0];
-    var transactionNo = val[1];
-
-    // document.getElementById("loader").style.display = "block";
-    processTransaction(transactionNo, response);
   });
 
   function processTransaction (transactionNo, response)

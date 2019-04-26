@@ -201,7 +201,7 @@ def client():
       else:
         # extracts the bank the client subscribed to
         usernames = Common.get_bank_usernames(current_user.get_id())
-        
+
         return render_template('client.html', result=result, usernames=usernames, clientName=result.getUsername())
     except Exception as e:
         return str(e)

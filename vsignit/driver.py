@@ -82,10 +82,9 @@ class Driver():
     bank_userid = transaction.getBankId()
     
     # checks users response
-    # 'Accept' -> Sends successful email to the client and bank
-    # 'Reject' -> sends fail email to the client and bank
-    # 
-    if bank_response == 'Accept':
+    # 'accept' -> Sends successful email to the client and bank
+    # 'reject' -> sends fail email to the client and bank
+    if bank_response == 'accept':
       ShareReconstuctor.verification_success_email(transaction_no, client_userid, bank_userid)
 
     else:
