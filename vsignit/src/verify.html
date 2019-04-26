@@ -1,10 +1,9 @@
 {% include "header.html" %}
 
 {% if result.isAdmin() and result.getUsername() == transaction.getBankUsername() %}
-<!-- Body -->
-<body class = "body">
+
   <!-- Nav Bar -->
-  {% with page_type="Bank", active_page="reconstruct" %}
+  {%  with page_type="Bank", username=result.getUsername(), active_page="reconstruct" %}
     {% include "navbar.html" %}
   {% endwith %}
   
@@ -37,7 +36,7 @@
             <tbody>
 
               <!-- Header -->
-              <tr>
+              <tr align="center" >
                 <td colspan="2" style="display:inline-block; text-align: center">
                   <p class="lead">Transaction No: {{ transaction.getTranscationNo() }}</p>
                   <input type="button" id="morePics" class="btn-lg btn-primary" style="margin-bottom: 15px" value="Show me the process"/>
@@ -219,23 +218,27 @@
     var type = val[0];
     var transactionNo = val[1];
 
-    // if delete is clicked, give confirmation prompt
-    var res = confirm("Are you sure that you want to " + type + " cheque number \'" + transactionNo + "\'?\n\nCAUTION: This action cannot be undone!");
+    // only process it if it is of type "Delete" or "Verify"
+    if (type == "Delete" || type == "Verify")
+    {
+      // if delete is clicked, give confirmation prompt
+      var res = confirm("Are you sure that you want to " + type + " cheque number \'" + transactionNo + "\'?\n\nCAUTION: This action cannot be undone!");
 
-    // cancel if user changes his mind
-    if (res == false) {
-      return;
-    } 
+      // cancel if user changes his mind
+      if (res == false) {
+        return;
+      } 
 
-    // changes to loading button
-    $(this)[0].innerHTML = "<span></span> Loading..."
-    $(this)[0].id = "LoadingBox"
-    button = $(this).find("span")[0]; 
-    button.role = "status";      
-    button.className = "spinner-border spinner-border-sm LoadingText"
+      // changes to loading button
+      $(this)[0].innerHTML = "<span></span> Loading..."
+      $(this)[0].id = "LoadingBox"
+      button = $(this).find("span")[0]; 
+      button.role = "status";      
+      button.className = "spinner-border spinner-border-sm LoadingText"
 
-    // continues processing the transaction
-    processTransaction(transactionNo, type);
+      // continues processing the transaction
+      processTransaction(transactionNo, type);
+    }
   });
 
   // execute this when the form is submitted
@@ -275,4 +278,4 @@
   {% include "forbidden.html" %}
 {% endif %}
 
-</html>
+{% include "footer.html" %}

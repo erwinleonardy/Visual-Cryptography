@@ -1,10 +1,9 @@
 {% include "header.html" %}
 
 {% if result.isAdmin() %}
-<!-- Body -->
-<body class = "body">
+
   <!-- Nav Bar -->
-  {% with page_type="Bank", active_page="generate" %}
+  {% with page_type="Bank", username=result.getUsername(), active_page="generate" %}
     {% include "navbar.html" %}
   {% endwith %}
 
@@ -190,4 +189,4 @@
   {% include "forbidden.html" %}
 {% endif %}
 
-</html>
+{% include "footer.html" %}

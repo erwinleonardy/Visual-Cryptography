@@ -84,7 +84,7 @@ def bank_generate():
           return redirect(url_for('login'))
 
         else:
-          return render_template('admin-generation.html', result=result)
+          return render_template('bank-generation.html', result=result)
 
       except Exception as e:
         return str(e)

@@ -1,10 +1,9 @@
 {% include "header.html" %}
 
 {% if result.isAdmin() %}
-<!-- Body -->
-<body class = "body">
+
   <!-- Nav Bar -->
-  {% with page_type="Bank", active_page="reconstruct" %}
+  {% with page_type="Bank", username=result.getUsername(), active_page="reconstruct" %}
     {% include "navbar.html" %}
   {% endwith %}
   
@@ -31,6 +30,10 @@
     <form id="reconstruct" method="post" enctype="multipart/form-data" onsubmit="return false;">
       <div class="container">
 
+        {% if transactions == [] %}
+          <p class="lead">Yey! There is currently no cheque to be processed!</p>
+
+        {% else %}
         <div class="row table-responsive">
           <table class="table table-hover table-striped">
 
@@ -57,6 +60,7 @@
                 </td>
               </tr>
               {% endfor %}
+            {% endif %}
             </tbody>
           </table>
         </div>
@@ -72,30 +76,34 @@
     var type = val[0];
     var transactionNo = val[1];
 
-    // if delete is clicked, give confirmation prompt
-    if (type == "Delete")
+    // only process it if it is of type "Delete" or "Verify"
+    if (type == "Delete" || type == "Verify")
     {
-      var res = confirm("Are you sure that you want to delete transaction number \'" + transactionNo + "\'?\n\nCAUTION: This action cannot be undone!");
+      // if delete is clicked, give confirmation prompt
+      if (type == "Delete")
+      {
+        var res = confirm("Are you sure that you want to delete transaction number \'" + transactionNo + "\'?\n\nCAUTION: This action cannot be undone!");
 
-      // cancel if user changes his mind
-      if (res == false) {
-        return;
-      } 
+        // cancel if user changes his mind
+        if (res == false) {
+          return;
+        } 
+      }
+
+      // if user selects verify
+      else
+      {
+        // changes to loading button
+        $(this)[0].innerHTML = "<span></span> Loading..."
+        $(this)[0].id = "LoadingBox"
+        button = $(this).find("span")[0]; 
+        button.role = "status";      
+        button.className = "spinner-border spinner-border-sm LoadingText"
+      }
+
+      // continues processing the transaction
+      forwardTransaction(transactionNo, type);
     }
-
-    // if user selects verify
-    else
-    {
-      // changes to loading button
-      $(this)[0].innerHTML = "<span></span> Loading..."
-      $(this)[0].id = "LoadingBox"
-      button = $(this).find("span")[0]; 
-      button.role = "status";      
-      button.className = "spinner-border spinner-border-sm LoadingText"
-    }
-
-    // continues processing the transaction
-    forwardTransaction(transactionNo, type);
   });
 
   // loads this script when DOM is loaded
@@ -151,4 +159,4 @@
   {% include "forbidden.html" %}
 {% endif %}
 
-</html>
+{% include "footer.html" %}

@@ -9,41 +9,47 @@
     </button>
     
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            {% if 'Bank' in page_type %}
-                <li class="nav-item dropdown active">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Bank Page
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a {% if 'generate' in active_page %} class="active dropdown-item"{% else %} class="dropdown-item" {% endif %}
-                         href="/bank-generate">Share Generation</a>
-                        <a {% if 'reconstruct' in active_page %} class="active dropdown-item"{% else %} class="dropdown-item" {% endif %}
-                         href="/bank-reconstruct">Share Reconstruction</a>
-                    </div>
-                </li>
-            {% else %}
+      <ul class="navbar-nav mr-auto">
+        <!-- Only show this option if signed in user is a bank -->
+        {% if 'Bank' in page_type %}
 
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Client Page<span class="sr-only">(current)</span></a>
-                </li>
+          <li {% if 'generate' in active_page %} class="active nav-item"{% else %} class="nav-item" {% endif %}>
+            <a class="nav-link" href="/bank-generate">Share Generation</a>
+          </li>
 
-            {% endif %}
-            
-            <!--
-            <li class="nav-item">
-                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-            </li>
-            -->
+          <li {% if 'reconstruct' in active_page %} class="active nav-item"{% else %} class="nav-item" {% endif %}>
+            <a class="nav-link" href="/bank-reconstruct">Share Reconstruction</a>
+          </li>
+          
+        <!-- Only show this option if signed in user is a client -->
+        {% else %}
+
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Client Page<span class="sr-only">(current)</span></a>
+          </li>
+
+        {% endif %}
+        
+        <!--
+        <li class="nav-item">
+            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+        </li>
+        -->
+      </ul>
+
+      <!-- Logout Button -->
+      <div class="form-inline my-2 my-lg-0">
+        <ul class="navbar-nav mr-auto container-fluid">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="displayName" 
+              role="button" data-toggle="dropdown" aria-haspopup="true" 
+              aria-expanded="false">Hi, {{ username }}</a>
+            <div class="dropdown-menu" aria-labelledby="displayName">
+              <a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a>
+            </div>
+          </li>
         </ul>
-
-        <div class="form-inline my-2 my-lg-0">
-            <ul class="navbar-nav mr-auto">
-                <li>
-                    <a class="nav-link" href="{{ url_for('logout') }}" style="padding-left:0px">Logout</a>
-                </li>
-            </ul>
-        </div>
+      </div>
 
         <!-- <form class="form-inline my-2 my-lg-0">
         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
