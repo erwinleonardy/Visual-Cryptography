@@ -84,10 +84,7 @@ def bank_generate():
           return redirect(url_for('login'))
 
         else:
-          usertype = "user"
-          if result.user_type == UserType.admin:
-            usertype = "admin"
-          return render_template('admin-generation.html', usertype=usertype)
+          return render_template('admin-generation.html', result=result)
 
       except Exception as e:
         return str(e)
@@ -132,10 +129,7 @@ def bank_reconstruct():
         # extracts the pending cheques of that particular bank
         transactions = Common.get_bank_transactions(current_user.get_id())
 
-        usertype = "user"
-        if result.user_type == UserType.admin:
-            usertype = "admin"
-        return render_template('bank-reconstruct.html', usertype=usertype, transactions=transactions)
+        return render_template('bank-reconstruct.html', result=result, transactions=transactions)
     except Exception as e:
       return str(e)
 
@@ -143,8 +137,6 @@ def bank_reconstruct():
     # retrieve the transaction from the DB
     transactionNo = request.form['transactionNo']
     transaction = Transaction.query.filter_by(transactionNo=transactionNo).first()
-
-    print(request.form['type'])
 
     # reconsruct the share and return base64 encoding to the admin
     if request.form['type'] == 'Verify':
@@ -176,11 +168,7 @@ def bank_reconstruct_verify():
         # reconstruct the share and sends the base64 to the client
         recon_cheque, clean1, recon = Driver.reconstruct_shares (transaction)
 
-        usertype = "user"
-        if result.user_type == UserType.admin:
-            usertype = "admin"
-
-        return render_template('verify.html', usertype=usertype, transaction=transaction, recon_cheque=recon_cheque, clean1=clean1, recon=recon)
+        return render_template('verify.html', result=result, transaction=transaction, recon_cheque=recon_cheque, clean1=clean1, recon=recon)
     except Exception as e:
         return str(e)
 
@@ -213,12 +201,8 @@ def client():
       else:
         # extracts the bank the client subscribed to
         usernames = Common.get_bank_usernames(current_user.get_id())
-
-        usertype = "user"
-        if result.user_type == UserType.admin:
-          usertype = "admin"
-
-        return render_template('client.html', usertype=usertype, usernames=usernames, clientName=result.getUsername())
+        
+        return render_template('client.html', result=result, usernames=usernames, clientName=result.getUsername())
     except Exception as e:
         return str(e)
 

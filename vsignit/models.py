@@ -36,11 +36,20 @@ class User(UserMixin, db.Model):
   def getUsername(self):
     return self.username
 
+  def getUserType(self):
+    return self.user_type
+
   def getID(self):
     return self.id
 
   def getEmail(self):
     return self.email
+
+  def isAdmin (self):
+    if self.user_type == UserType.admin:
+      return True
+    else:
+      return False
 
 # stores bank's shares
 class Bank_Data(UserMixin, db.Model):
