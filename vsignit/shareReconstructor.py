@@ -7,7 +7,6 @@ from PIL import Image
 
 from vsignit.common import signX, signY, signWidth, doubSignSize, reconDist
 from vsignit.models import Transaction, Bank_Data
-from vsignit.emailerService import EmailerService
 from vsignit.common import Common
 from vsignit import db
 
@@ -159,55 +158,3 @@ class ShareReconstuctor():
       recon = base64.b64encode(data.read())
 
     return recon_cheque.decode("utf-8"), clean1.decode("utf-8"), recon.decode("utf-8")
-
-  # This function is send successful email to the bank and client
-  @staticmethod
-  def verification_success_email(transaction_no, client_userid, bank_userid):
-    clientUsername = Common.userid_to_username(client_userid)
-    bankUsername = Common.userid_to_username(bank_userid)
-    bank_email = Common.userid_to_useremail(bank_userid)
-    client_email = Common.userid_to_useremail(client_userid)
-
-    # send email to bank
-    bankSubject = "({}) Outcome of Cheque {}".format(bankUsername, transaction_no)
-    bankMessage = """
-    You have have just decided to accept a cheque from {}.
-
-    Transaction Number: {}""".format(clientUsername, transaction_no)
-    EmailerService.send_email(bankUsername, bank_email, bankSubject, bankMessage)
-
-    # send email to client
-    clientSubject = "({}) Outcome of Cheque {}".format(clientUsername, transaction_no)
-    clientMessage = """
-    Hooray! {} have just decided to accept your cheque.
-
-    Transaction Number: {}
-    
-    Please do call your bank hotline if you have further enquiries.""".format(bankUsername, transaction_no)
-    EmailerService.send_email(clientUsername, client_email, clientSubject, clientMessage)
-
-  # This function is send fail email to the bank and client
-  @staticmethod
-  def verification_rejected_email(transaction_no, client_userid, bank_userid):
-    clientUsername = Common.userid_to_username(client_userid)
-    bankUsername = Common.userid_to_username(bank_userid)
-    bank_email = Common.userid_to_useremail(bank_userid)
-    client_email = Common.userid_to_useremail(client_userid)
-
-    # send email to bank
-    bankSubject = "({}) Outcome of Cheque {}".format(bankUsername, transaction_no)
-    bankMessage = """
-    You have have just decided to reject a cheque from {}.
-
-    Transaction Number: {}""".format(clientUsername, transaction_no)
-    EmailerService.send_email(bankUsername, bank_email, bankSubject, bankMessage)
-
-    # send email to client
-    clientSubject = "({}) Outcome of Cheque {}".format(clientUsername, transaction_no)
-    clientMessage = """
-    {} have just decided to reject your cheque.
-
-    Transaction Number: {}
-    
-    Please do call your bank hotline if you think something has gone amiss.""".format(bankUsername, transaction_no)
-    EmailerService.send_email(clientUsername, client_email, clientSubject, clientMessage)

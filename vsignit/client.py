@@ -5,7 +5,6 @@
 import os, time, datetime, base64, hashlib
 
 from vsignit.common import Common, signX, signY
-from vsignit.emailerService import EmailerService
 from vsignit.models import Transaction
 from vsignit import db
 
@@ -28,34 +27,6 @@ class Client:
     db.session.commit()
 
     return hashed_ts.hexdigest(), st, filepath
-
-  # Function sends confirmation email to client and server
-  @staticmethod
-  def signcheque_email(transaction_no, timestamp, bank_userid, client_userid):
-    clientUsername = Common.userid_to_username(client_userid)
-    bankUsername = Common.userid_to_username(bank_userid)
-    bank_email = Common.userid_to_useremail(bank_userid)
-    client_email = Common.userid_to_useremail(client_userid)
-
-    # send email to bank
-    bankSubject = "({}) New Cheque from {}".format(bankUsername, clientUsername)
-    bankMessage = """
-    You have received a new cheque to be processed from {}.
-
-    Transaction Number: {}
-    Transaction Time: {}""".format(clientUsername, transaction_no, timestamp)
-    EmailerService.send_email(bankUsername, bank_email, bankSubject, bankMessage)
-
-    # send email to client
-    clientSubject = "({}) Your cheque has been sent to {}".format(clientUsername, bankUsername)
-    clientMessage = """
-    Your cheque is currently being processed by {}.
-
-    Transaction Number: {}
-    Transaction Time: {}
-    
-    Your bank will contact you should they have any issue.""".format(bankUsername, transaction_no, timestamp)
-    EmailerService.send_email(clientUsername, client_email, clientSubject, clientMessage)
 
   # Function pastes the source pic on top of the destination pic
   @staticmethod

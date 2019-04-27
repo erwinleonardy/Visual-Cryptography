@@ -2,6 +2,7 @@
 # Author: Amit Hundal, Harpreet Kang 
 # Descrption: Defines functions to send asynchronous emails
 
+import inspect
 from flask_mail import Message
 from threading import Thread
 
@@ -35,6 +36,6 @@ class EmailerService:
       VSignIt Admin Team
     """
 
-    msg = Message(subject=subject, body=msg_body, recipients=[receiver_email])
+    msg = Message(subject=subject, body=inspect.cleandoc(msg_body), recipients=[receiver_email])
     thread = Thread(target=EmailerService.async_email, args=[msg])
     thread.start()

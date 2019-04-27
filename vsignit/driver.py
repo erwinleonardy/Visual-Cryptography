@@ -85,10 +85,10 @@ class Driver():
     # 'accept' -> Sends successful email to the client and bank
     # 'reject' -> sends fail email to the client and bank
     if bank_response == 'accept':
-      ShareReconstuctor.verification_success_email(transaction_no, client_userid, bank_userid)
+      Common.transaction_email(transaction_no, client_userid, bank_userid, bank_response)
 
     else:
-      ShareReconstuctor.verification_rejected_email(transaction_no, client_userid,bank_userid)
+      Common.transaction_email(transaction_no, client_userid,bank_userid, bank_response)
 
   # Function to delete the transaction from the DB
   @staticmethod
@@ -97,7 +97,7 @@ class Driver():
     ShareReconstuctor.delete_cheque (transaction)
 
     # send rejection email
-    ShareReconstuctor.verification_rejected_email(transaction.getTranscationNo(), transaction.getClientId(), transaction.getBankId())
+    Common.transaction_email(transaction.getTranscationNo(), transaction.getClientId(), transaction.getBankId(), 'reject')
 
     # delete the share from the DB and remove the image
     ShareReconstuctor.delete_transaction (transaction)
@@ -112,7 +112,7 @@ class Driver():
     transactionNo, timestamp, filepath = Client.store_transaction (bank_userid, client_userid)
 
     # sends an email notification to both bank and client
-    Client.signcheque_email (transactionNo, timestamp, bank_userid, client_userid)
+    Common.signcheque_email (transactionNo, timestamp, bank_userid, client_userid)
 
     # overlays the client share on top of the cheque
     result = Client.signcheque (client_share, client_cheque, filepath, clientUsername)
