@@ -37,12 +37,22 @@ class ShareReconstuctor():
   # Function removes the cheque image which bears the transaction number given
   @staticmethod
   def delete_cheque(transaction):
-    filepath = transaction.getFilePath()
-    os.remove(filepath)
+    chequeFilepath = transaction.getFilePath()
+    os.remove(chequeFilepath)
 
-  # Function removes the transaction record from the databse
+  # Function removes the transaction record and temp. reconstructed images from the database
   @staticmethod
   def delete_transaction(transaction):
+    reconCheque = "./vsignit/output/tmp/recon_cheque_" + transaction.getTranscationNo() + ".png"
+    reconFilepath = "./vsignit/output/tmp/recon_" + transaction.getTranscationNo() + ".png"
+    clean1Filepath = "./vsignit/output/tmp/clean1_" + transaction.getTranscationNo() + ".png"
+    clean2Filepath = "./vsignit/output/tmp/clean2_" + transaction.getTranscationNo() + ".png"
+
+    os.remove(reconCheque)
+    os.remove(reconFilepath)
+    os.remove(clean1Filepath)
+    os.remove(clean2Filepath)
+
     db.session.delete(transaction)
     db.session.commit()
 
