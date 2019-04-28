@@ -1,111 +1,82 @@
 {% include "header.html" %}
 
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<!-- Nav Bar -->
+{%  with page_type="Unauthorised", active_page="reconstruct" %}
+  {% include "navbar.html" %}
+{% endwith %}
 
-<style>
-.ui-dialog-titlebar-close{
-    display: none;
-}
-</style>
-
-<!-- Body -->
-<body class = "body">
-  <!-- Nav Bar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-
-    <a class="navbar-brand" href="#">
-      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="">
-    </a>
-    
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-  
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-      </ul>
+<!-- Content -->
+<div class="jumbotron">
+  <!-- Header -->
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h1 class="display-4">Sign Up</h1>
+      </div>
     </div>
-  </nav>
 
-  <!-- Content -->
-  <div class="jumbotron">
-    <!-- Header -->
+    <div class="row">
+      <div class="col">
+        <p class="lead">Your journey to the perfectly secure signing application begins here!</p>
+        <hr class="my-4">
+      </div>
+    </div>
+  </div>
+  
+  <!-- Form -->
+  <form name="loginForm" method="post" enctype="multipart/form-data">
     <div class="container">
       <div class="row">
-        <div class="col">
-          <h1 class="display-4">Sign Up</h1>
+        <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
+            <input type="text" id="email_input" class="form-control" placeholder="Enter your email here" aria-label="Username" aria-describedby="basic-addon1" required>
         </div>
       </div>
 
       <div class="row">
-        <div class="col">
-          <p class="lead">Your journey to the perfectly secure signing application begins here!</p>
-          <hr class="my-4">
+        <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
+            <input type="text" id="username" class="form-control" placeholder="Enter your username here" aria-label="Username" aria-describedby="basic-addon1" required>
         </div>
       </div>
-    </div>
-    
-    <!-- Form -->
-    <form name="loginForm" method="post" enctype="multipart/form-data">
-      <div class="container">
-        <div class="row">
-          <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
-              <input type="text" id="email_input" class="form-control" placeholder="Enter your email here" aria-label="Username" aria-describedby="basic-addon1" required>
-          </div>
+
+      <div class="row">
+        <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
+            <input type="password" id="password" class="form-control" placeholder="Enter your password here" aria-label="Username" aria-describedby="basic-addon1" required>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
-              <input type="text" id="username" class="form-control" placeholder="Enter your username here" aria-label="Username" aria-describedby="basic-addon1" required>
-          </div>
+      <div class="row">
+        <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
+            <input type="password" id="verification" class="form-control" placeholder="Re-enter your password here" aria-label="Username" aria-describedby="basic-addon1" required>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
-              <input type="password" id="password" class="form-control" placeholder="Enter your password here" aria-label="Username" aria-describedby="basic-addon1" required>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 input-group mb-2">
-              <input type="password" id="verification" class="form-control" placeholder="Re-enter your password here" aria-label="Username" aria-describedby="basic-addon1" required>
-          </div>
-        </div>
-
-        <div class="row">
-            <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
-              <div id="loader"></div>
-            </div>
-        </div> 
-
-        <div class="row">
+      <div class="row">
           <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
-            <div id="response-msg" class="alert alert-danger" role="alert" style="width:100%; text-align: center"></div>
+            <div id="loader"></div>
           </div>
-        </div>
+      </div> 
 
-        <div class="row">
-            <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 mb-3">
-              <button class="btn btn-primary btn-lg active" type="submit" aria-pressed="true" style="width:100%">Sign Up</button>
-            </div>
-        </div>
-
-        <div class="row">
-          <div class="col">
-            <p class="lead">Already have an account? <a href="{{ url_for('login') }}">Log In</a></p>
-          </div>
-        </div>   
-        
-        <div id="dialog" title="Basic dialog">
-          <p></p>
+      <div class="row">
+        <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
+          <div id="response-msg" class="alert alert-danger" role="alert" style="width:100%; text-align: center"></div>
         </div>
       </div>
-    </form>
-  </div>
-</body>
 
+      <div class="row">
+          <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6 mb-3">
+            <button class="btn btn-primary btn-lg active" type="submit" aria-pressed="true" style="width:100%">Sign Up</button>
+          </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <p class="lead">Already have an account? <a href="{{ url_for('login') }}">Log In</a></p>
+        </div>
+      </div>   
+      
+    </div>
+  </form>
+</div>
 
 <script>
   $("#response-msg").hide();
@@ -194,19 +165,25 @@
               $('#password').addClass('is-valid');
               $('#verification').addClass('is-valid');
 
+              setTimeout(function(){
+                alert("Account \'" + username + "\' has been created.");
+                window.location.href = response;
+              }, 100);
+
+
               // shows a new modal box
-              $(function() {
-                $("#dialog").text("Account \'" + username + "\' has been created.\nClick OK to proceed.");
-                $("#dialog").dialog({title: "New User Creation",
-                                     show: "toggle", 
-                                     modal: true,
-                                     buttons: {
-                                        "OK": function () {
-                                            window.location.href = response
-                                            $(this).dialog("close");
-                                        },
-                                    }});
-              });
+              // $(function() {
+              //   $("#dialog").text();
+              //   $("#dialog").dialog({title: "New User Creation",
+              //                       show: "toggle", 
+              //                       modal: true,
+              //                       buttons: {
+              //                           "OK": function () {
+              //                               window.location.href = response
+              //                               $(this).dialog("close");
+              //                           },
+              //                       }});
+              // });
             }
 
             // if there is an error
@@ -247,3 +224,5 @@
     }
   }
 </script>
+
+{% include "footer.html" %}

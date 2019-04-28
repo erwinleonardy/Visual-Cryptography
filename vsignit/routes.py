@@ -16,28 +16,44 @@ from vsignit.models import UserType, User, Client_Data, Transaction
 @app.route('/', methods=['GET'])
 def index():
   if not current_user.is_authenticated:
-    return redirect(url_for('login'))
-
+    username = ""
+    authenticated = "False"
+    user_type = ""
+    
   else:
-      # get user type
-      usertype = User.query.filter_by(id=current_user.get_id()).first().user_type
+    result = User.query.filter_by(id=current_user.get_id()).first()
+    username = result.getUsername()
+    authenticated = "True"
 
-      # redirect page based on user type
-      if usertype == UserType.admin:
-        return redirect(url_for('bank_generate'))
-      elif usertype == UserType.user:
-        return redirect(url_for('client'))
-      else:
-        return redirect(url_for('login'))
+    if result.user_type == UserType.admin:
+      user_type = "Bank"
+    else:
+      user_type = "Client"
+
+  return render_template('learning-tool.html', authenticated=authenticated, username=username, user_type = user_type)
+  
+  # if not current_user.is_authenticated:
+  #   return redirect(url_for('login'))
+  # else:
+  #     # get user type
+  #     usertype = User.query.filter_by(id=current_user.get_id()).first().user_type
+
+  #     # redirect page based on user type
+  #     if usertype == UserType.admin:
+  #       return redirect(url_for('bank_generate'))
+  #     elif usertype == UserType.user:
+  #       return redirect(url_for('client'))
+  #     else:
+  #       return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
   if request.method == 'GET':
     if not current_user.is_authenticated:
-        try:
-          return render_template('login.html')
-        except Exception as e:
-          return str(e)
+      try:
+        return render_template('login.html', authenticated="False")
+      except Exception as e:
+        return str(e)
     else:
       return redirect(url_for('index'))
 
@@ -52,7 +68,7 @@ def register():
   if request.method == 'GET':
       if not current_user.is_authenticated:
         try:
-          return render_template('register.html')
+          return render_template('register.html', authenticated="False")
         except Exception as e:
           return str(e)
       else:

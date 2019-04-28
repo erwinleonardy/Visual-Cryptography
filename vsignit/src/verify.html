@@ -3,7 +3,7 @@
 {% if result.isAdmin() and result.getUsername() == transaction.getBankUsername() %}
 
   <!-- Nav Bar -->
-  {%  with page_type="Bank", username=result.getUsername(), active_page="reconstruct" %}
+  {%  with user_type="Bank", username=result.getUsername(), active_page="reconstruct" %}
     {% include "navbar.html" %}
   {% endwith %}
   

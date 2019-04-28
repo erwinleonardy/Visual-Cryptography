@@ -3,7 +3,7 @@
 {% if result.isAdmin() %}
 
   <!-- Nav Bar -->
-  {% with page_type="Bank", username=result.getUsername(), active_page="generate" %}
+  {% with user_type="Bank", username=result.getUsername(), active_page="generate" %}
     {% include "navbar.html" %}
   {% endwith %}
 
@@ -75,115 +75,114 @@
       </div>
     </form>
   </div>
-</body>
 
-<script>
-  $('#response-msg').hide();
-  $('#preview').hide();
-
-  // change the name of the input file when a file is uploaded
-  $(".custom-file-input").on("change", function() {
-      var fileName = $(this).val().split("\\").pop();
-      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-  });
-
-  // execute this when the form is submitted
-  $(generation).submit(function(e) 
-  {
-    e.preventDefault(); // avoid to execute the actual submit of the form.
-    
-    $('#preview').hide();
+  <script>
     $('#response-msg').hide();
-    document.getElementById("loader").style.display = "block";
+    $('#preview').hide();
 
-    encodeImageFileAsURL()
-  });
+    // change the name of the input file when a file is uploaded
+    $(".custom-file-input").on("change", function() {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
 
-  // function to get the image file
-  function encodeImageFileAsURL()
-  {
-    var filesSelected = document.getElementById("signature-upload").files;
-
-    // checks if the image and username are provided
-    if (filesSelected.length > 0) 
+    // execute this when the form is submitted
+    $(generation).submit(function(e) 
     {
-      var fileToLoad = filesSelected[0];
-      var fileReader = new FileReader();
+      e.preventDefault(); // avoid to execute the actual submit of the form.
+      
+      $('#preview').hide();
+      $('#response-msg').hide();
+      document.getElementById("loader").style.display = "block";
 
-      // only runs when the image provided is fully loaded
-      fileReader.onload = function(fileLoadedEvent) 
+      encodeImageFileAsURL()
+    });
+
+    // function to get the image file
+    function encodeImageFileAsURL()
+    {
+      var filesSelected = document.getElementById("signature-upload").files;
+
+      // checks if the image and username are provided
+      if (filesSelected.length > 0) 
       {
-        // base64 data of the original signature
-        srcData = fileLoadedEvent.target.result; 
-        
-        // store client's username and image (base64)
-        var fd = new FormData();
-        var client_username = document.getElementById('client_username').value
-        var imgsrc = document.getElementById("preview").src;
+        var fileToLoad = filesSelected[0];
+        var fileReader = new FileReader();
 
-        // send to server via AJAX
-        fd.append('clientUsername', client_username)
-        fd.append('file',srcData)
-        $.ajax({
-          type: 'post',
-          url: '/bank-generate',
-          data: fd,
-          mimeType:"multipart/form-data",
-          contentType: false,
-          cache: false,
-          processData: false,
-          success: function(response){
-            // when the image provided has the correct dimension
-            if(response != 0)
-            {
-              if (response == "No User")       
+        // only runs when the image provided is fully loaded
+        fileReader.onload = function(fileLoadedEvent) 
+        {
+          // base64 data of the original signature
+          srcData = fileLoadedEvent.target.result; 
+          
+          // store client's username and image (base64)
+          var fd = new FormData();
+          var client_username = document.getElementById('client_username').value
+          var imgsrc = document.getElementById("preview").src;
+
+          // send to server via AJAX
+          fd.append('clientUsername', client_username)
+          fd.append('file',srcData)
+          $.ajax({
+            type: 'post',
+            url: '/bank-generate',
+            data: fd,
+            mimeType:"multipart/form-data",
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(response){
+              // when the image provided has the correct dimension
+              if(response != 0)
               {
-                document.getElementById("loader").style.display = "none";
-                $('#signature-upload').removeClass('is-invalid');
-                $('#signature-upload').addClass('is-valid');
-                $('#client_username').addClass('is-invalid');
-                $('#response-msg').addClass('alert-danger');
-                $("#response-msg").text("The client " + client_username + " doesn't exist!");
-                $('#response-msg').toggle();
-              }       
+                if (response == "No User")       
+                {
+                  document.getElementById("loader").style.display = "none";
+                  $('#signature-upload').removeClass('is-invalid');
+                  $('#signature-upload').addClass('is-valid');
+                  $('#client_username').addClass('is-invalid');
+                  $('#response-msg').addClass('alert-danger');
+                  $("#response-msg").text("The client " + client_username + " doesn't exist!");
+                  $('#response-msg').toggle();
+                }       
+                
+                else
+                {
+                  // updates UI
+                  document.getElementById("loader").style.display = "none";
+                  $('#preview').show();
+                  $('#signature-upload').removeClass('is-invalid');
+                  $('#signature-upload').addClass('is-valid');
+                  $('#client_username').removeClass('is-invalid');
+                  $('#client_username').addClass('is-valid');
+                  $('#response-msg').removeClass('alert-danger');
+                  $('#response-msg').addClass('alert-success');
+                  $("#response-msg").text(response);
+                  $('#response-msg').toggle();
+                }
+              } 
               
+              // when the image provided has incorrect dimension
               else
               {
-                // updates UI
                 document.getElementById("loader").style.display = "none";
-                $('#preview').show();
-                $('#signature-upload').removeClass('is-invalid');
-                $('#signature-upload').addClass('is-valid');
                 $('#client_username').removeClass('is-invalid');
-                $('#client_username').addClass('is-valid');
-                $('#response-msg').removeClass('alert-danger');
-                $('#response-msg').addClass('alert-success');
-                $("#response-msg").text(response);
+                $('#signature-upload').addClass('is-invalid');
+                $('#response-msg').addClass('alert-danger');
+                $("#response-msg").text("The image should have the correct dimension (i.e. same width and height)!");
                 $('#response-msg').toggle();
               }
-            } 
-            
-            // when the image provided has incorrect dimension
-            else
-            {
-              document.getElementById("loader").style.display = "none";
-              $('#client_username').removeClass('is-invalid');
-              $('#signature-upload').addClass('is-invalid');
-              $('#response-msg').addClass('alert-danger');
-              $("#response-msg").text("The image should have the correct dimension (i.e. same width and height)!");
-              $('#response-msg').toggle();
-            }
-          },
+            },
 
-          error: function(jqXHR, textStatus, errorThrown) 
-          {}
-        });
+            error: function(jqXHR, textStatus, errorThrown) 
+            {}
+          });
+        }
+
+        fileReader.readAsDataURL(fileToLoad);
       }
-
-      fileReader.readAsDataURL(fileToLoad);
     }
-  }
-</script>
+  </script>
 
 {% else %}
   {% include "forbidden.html" %}

@@ -1,0 +1,54 @@
+{% include "header.html" %}
+
+<!-- Nav Bar -->
+{%  with username=username, user_type = user_type %}
+  {% include "navbar.html" %}
+{% endwith %}
+
+<!-- Content -->
+<div class="jumbotron">
+  <!-- Header -->
+  <div class="container">
+
+    <div class="row">
+      <div class="col">
+        <h1 class="display-4">Learning Tool</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <p class="lead">Use this panel to learn more about Visual Cryptography!</p>
+        <hr class="my-4">
+      </div>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <form id="verify" method="post" enctype="multipart/form-data" onsubmit="return false;">
+    <div class="container">
+
+      <!-- Loader -->
+      <div class="row">
+          <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
+            <div id="loader"></div>
+          </div>
+      </div>
+
+      
+    </div>
+  </form>
+  
+</div>
+
+<div class="row">
+  <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
+    <div id="loader"></div>
+  </div>
+</div> 
+
+<script>
+  
+</script>
+
+{% include "footer.html" %}

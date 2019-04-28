@@ -3,7 +3,7 @@
 {% if result.isAdmin() %}
 
   <!-- Nav Bar -->
-  {% with page_type="Bank", username=result.getUsername(), active_page="reconstruct" %}
+  {% with user_type="Bank", username=result.getUsername(), active_page="reconstruct" %}
     {% include "navbar.html" %}
   {% endwith %}
   
@@ -67,93 +67,92 @@
       </div>
     </form>
   </div>
-</body>
 
-<script>
-  // reads the transaction number from the hidden input value
-  $("button").click(function() {
-    var val = this.name.split("-")
-    var type = val[0];
-    var transactionNo = val[1];
+  <script>
+    // reads the transaction number from the hidden input value
+    $("button").click(function() {
+      var val = this.name.split("-")
+      var type = val[0];
+      var transactionNo = val[1];
 
-    // only process it if it is of type "Delete" or "Verify"
-    if (type == "Delete" || type == "Verify")
-    {
-      // if delete is clicked, give confirmation prompt
-      if (type == "Delete")
+      // only process it if it is of type "Delete" or "Verify"
+      if (type == "Delete" || type == "Verify")
       {
-        var res = confirm("Are you sure that you want to delete transaction number \'" + transactionNo + "\'?\n\nCAUTION: This action cannot be undone!");
+        // if delete is clicked, give confirmation prompt
+        if (type == "Delete")
+        {
+          var res = confirm("Are you sure that you want to delete transaction number \'" + transactionNo + "\'?\n\nCAUTION: This action cannot be undone!");
 
-        // cancel if user changes his mind
-        if (res == false) {
-          return;
-        } 
-      }
+          // cancel if user changes his mind
+          if (res == false) {
+            return;
+          } 
+        }
 
-      // if user selects verify
-      else
-      {
-        // changes to loading button
-        $(this)[0].innerHTML = "<span></span> Loading..."
-        $(this)[0].id = "LoadingBox"
-        button = $(this).find("span")[0]; 
-        button.role = "status";      
-        button.className = "spinner-border spinner-border-sm LoadingText"
-      }
-
-      // continues processing the transaction
-      forwardTransaction(transactionNo, type);
-    }
-  });
-
-  // loads this script when DOM is loaded
-  $(document).ready(function(){
-    // remove the 'Loading...' text when user goes back to the page
-    setInterval(function(){
-      if (window.performance && window.performance.navigation.type == window.performance.navigation.TYPE_BACK_FORWARD) {
-        document.getElementById('LoadingBox').innerHTML = "Verify";
-      }
-    }, 3000);
-        
-    // avoid submission of form
-    $(reconstruct).submit(function(e) 
-    {
-      e.preventDefault(); 
-    });
-  });
-
-  // forwards the transaction to the verification page
-  // if user choses to verify the transaction
-  function forwardTransaction (transactionNo, type)
-  {
-    var fd = new FormData();
-    fd.append('type', type)
-    fd.append('transactionNo', transactionNo)
-    $.ajax({
-      type: 'post',
-      url: '/bank-reconstruct',
-      data: fd,
-      mimeType:"multipart/form-data",
-      contentType: false,
-      cache: false,
-      processData: false,
-      success: function(response){
-        // reloads the page after deletion
-        if (response == "Delete")
-          window.location.reload();
-
-        // redirects users to the verification page
+        // if user selects verify
         else
-          window.location.href = response
-      },
+        {
+          // changes to loading button
+          $(this)[0].innerHTML = "<span></span> Loading..."
+          $(this)[0].id = "LoadingBox"
+          button = $(this).find("span")[0]; 
+          button.role = "status";      
+          button.className = "spinner-border spinner-border-sm LoadingText"
+        }
 
-      error: function(jqXHR, textStatus, errorThrown) 
-      {
-        alert(errorThrown)
+        // continues processing the transaction
+        forwardTransaction(transactionNo, type);
       }
     });
-  }
-</script>
+
+    // loads this script when DOM is loaded
+    $(document).ready(function(){
+      // remove the 'Loading...' text when user goes back to the page
+      setInterval(function(){
+        if (window.performance && window.performance.navigation.type == window.performance.navigation.TYPE_BACK_FORWARD) {
+          document.getElementById('LoadingBox').innerHTML = "Verify";
+        }
+      }, 3000);
+          
+      // avoid submission of form
+      $(reconstruct).submit(function(e) 
+      {
+        e.preventDefault(); 
+      });
+    });
+
+    // forwards the transaction to the verification page
+    // if user choses to verify the transaction
+    function forwardTransaction (transactionNo, type)
+    {
+      var fd = new FormData();
+      fd.append('type', type)
+      fd.append('transactionNo', transactionNo)
+      $.ajax({
+        type: 'post',
+        url: '/bank-reconstruct',
+        data: fd,
+        mimeType:"multipart/form-data",
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(response){
+          // reloads the page after deletion
+          if (response == "Delete")
+            window.location.reload();
+
+          // redirects users to the verification page
+          else
+            window.location.href = response
+        },
+
+        error: function(jqXHR, textStatus, errorThrown) 
+        {
+          alert(errorThrown)
+        }
+      });
+    }
+  </script>
 
 {% else %}
   {% include "forbidden.html" %}
