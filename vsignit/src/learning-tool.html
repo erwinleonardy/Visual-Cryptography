@@ -28,6 +28,9 @@
   <form id="verify" method="post" enctype="multipart/form-data" onsubmit="return false;">
     <div class="container">
 
+      <!-- Canvas -->
+      <canvas id="intro" width="1000" height="330" style="background-color:white";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+
       <!-- Loader -->
       <div class="row">
           <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
@@ -48,7 +51,179 @@
 </div> 
 
 <script>
+  // $(document).ready(function(){
+  //   var bankShareLoaded=false;
+  //   var clientShareLoaded=false;
+
+  //   $("#bank_share").on('load', function() {
+  //     bankShareLoaded=true;
+  //     tryToDraw();
+  //   });
+
+  //   $("#client_share").on('load', function() {
+  //     clientShareLoaded=true;
+  //     tryToDraw();
+  //   });
+
+  //   function tryToDraw()
+  //   {
+  //     if (bankShareLoaded && clientShareLoaded)
+  //     {
+  //       var bankShare = document.getElementById("bank_share");
+  //       var clientShare = document.getElementById("client_share");
+  //       bankShare.style.display = 'none';
+  //       clientShare.style.display = 'none';
+
+  //       var canvas = document.getElementById("intro");
+  //       var ctx = canvas.getContext("2d");
+        
+  //       ctx.drawImage(bankShare, canvas.width-300, 0, 300, 300);
+  //       ctx.drawImage(clientShare, 0, 0, 300, 300);
+  //     }
+  //   }
+  // });
+
+
+  $(document).ready(function()
+  {
+    document.getElementById("loader").style.display = "block";
+    var bankShareLoaded=false;
+    var clientShareLoaded=false;
+
+    var bankShare = new Image();
+    bankShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/jane_bank_share.png";
+
+    var clientShare = new Image();
+    clientShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/jane_client_share.png";
+
+    bankShare.onload = function() {
+      bankShareLoaded=true;
+      tryToDraw();
+    }
+
+    clientShare.onload = function() {
+      clientShareLoaded=true;
+      tryToDraw();
+    }
+
+    function tryToDraw()
+    {
+      if (bankShareLoaded && clientShareLoaded)
+      { 
+        var maxX = intro.width-315;
+        var minX = 15;
+
+        document.getElementById("loader").style.display = "none";
+        // ctx.drawImage(clientShare, 0, 0, 300, 300);
+
+        // Get a "handle" on the canvas to work with
+        theCanvas = document.getElementById("intro");
+
+        // define the centre point of the canvas
+        cX = Math.floor(theCanvas.width / 2);
+        cY = Math.floor(theCanvas.height / 2);
+
+        // Get a "context"
+        ctx= theCanvas.getContext("2d");
+
+        // draw the initial image
+        ctx.drawImage(bankShare, 15, 15, 300, 300);
+        ctx.drawImage(clientShare, maxX, 15, 300, 300);
+
+        // set up the font
+        ctx.font = "12px Helvetica";
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#8A8A8A';
+        ctx.globalAlpha = 1.0;
+
+        // Get the position of the mouse relative to the canvas
+        function getMousePos(canvasDom, mouseEvent) {
+          var rect = canvasDom.getBoundingClientRect();
+          return {
+            x: mouseEvent.clientX - rect.left,
+            y: mouseEvent.clientY - rect.top
+          };
+        }
+
+        // Here we get mouse coordinates and translate to a value
+        // Good old basic algebra from school
+        // Apparently the convention is to start at 0 degrees on the right and go backwards
+        // - someone should have told that to clock-makers
+        theCanvas.addEventListener("mousemove", function(e) {
+          var m = getMousePos(theCanvas, e);
+          if (m.x < cX) {
+            if (m.y < cY) pos = 180 + Math.floor(Math.atan((m.y - cY) / (cX - m.x)) * (180 / Math.PI));
+            else pos = 180 + -Math.floor(Math.atan((m.y - cY) / (m.x - cX)) * (180 / Math.PI));
+          } else {
+            if (m.y < cY) pos = - Math.floor(Math.atan((cY - m.y) / (cX - m.x)) * (180 / Math.PI)) ;
+            else pos = 360 + Math.floor(Math.atan((cY - m.y) / (m.x - cX)) * (180 / Math.PI));
+          }
+
+          // print the result
+          ctx.clearRect(0, 0, intro.width, intro.height);
+          // ctx.moveTo(cX, cY);
+          // ctx.fillStyle = "#ff0044";
+          // ctx.arc(cX, cY, 5, 0, 360, false);
+          // ctx.fill();
+          
+          // some colour just for the sake of it
+          // var gradient = ctx.createLinearGradient(0, 0, 150, 100);
+          // gradient.addColorStop(0, "rgb(255, 0, 128)");
+          // gradient.addColorStop(1, "rgb(105, 103, 255)");
+          // ctx.fillStyle = gradient;
+
+          // ctx.fillText("(X-coordinate: " + m.x + ")", cX, 30);
+          if (m.x > maxX)
+            m.x = maxX
+          else if (m.x < minX)
+            m.x = minX
+
+          ctx.drawImage(bankShare, 0+m.x, 15, 300, 300);
+          ctx.drawImage(clientShare, maxX, 15, 300, 300);
+        }, false);
+      }
+    }
+  });
   
+
+  // $(window).mousemove(function(event) {
+  //   var cWidth = $("#intro").width();    
+  //   moveXAmount = (event.pageX / $(window).width())*cWidth;    
+    
+  //   moveXAmount = moveXAmount - (cWidth/2);
+  //   console.log("Move amount: " + moveXAmount );
+  //   buildcanvas();
+  // });
+
+  // function buildcanvas() {
+  //   var introCanvas = document.getElementById('intro');
+
+  //   // define the centre point of the canvas
+  //   cX = Math.floor(theCanvas.width / 2);
+  //   cY = Math.floor(theCanvas.height / 2);
+
+  //   // Get a "context"
+  //   var ctx = introCanvas.getContext('2d');
+
+  //   make_pic(ctx);
+  // }
+
+  // function make_pic(ctx) {
+  //   ctx.clearRect(0, 0, 1000, 300);
+
+  //   // Mask for clipping
+  //   bankShare = document.getElementById("bank_share");
+  //   ctx.drawImage(bankShare, moveXAmount, 0);
+  //   ctx.save();
+
+  //   bankShareImg = document.getElementById("bank_share");
+  //   clientShareImg = document.getElementById("client_share");
+  //   ctx.globalCompositeOperation = "source-in";
+  //   ctx.drawImage(bankShareImg, 0+moveXAmount, 0, 300, 300);
+  //   // ctx.drawImage(clientShareImg, 700, 0, 300, 300);
+  //   ctx.restore();
+  // }
+
 </script>
 
 {% include "footer.html" %}
