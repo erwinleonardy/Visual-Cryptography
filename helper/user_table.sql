@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 20, 2019 at 08:42 AM
+-- Generation Time: Apr 30, 2019 at 08:21 AM
 -- Server version: 8.0.15
 -- PHP Version: 7.1.23
 
@@ -46,12 +46,13 @@ CREATE TABLE IF NOT EXISTS `user_table` (
 --
 
 INSERT INTO `user_table` (`user_id`, `user_type`, `email`, `username`, `password`) VALUES
-(1, 'admin', 'veleseb@max-mail.info', 'DBS', 'pbkdf2:sha256:150000$3DaWGCwB$90db741fbaa5420fad5cee64646562e74d355d553e09488adc881a0ca4babae1'),
-(2, 'user', 'rusocevupo@direct-mail.info', 'janedoe', 'pbkdf2:sha256:150000$kouFGPTV$f7890d5acbb3ec18c83f3af4fbe6cfc1daa21d7976986dc8d04879dd4f91c237'),
-(3, 'user', 'rusocevupo@direct-mail.info', 'johndoe', 'pbkdf2:sha256:150000$8SdvwIgg$76228fa362efeddcc71e20744d44b69002cc29b2263e3c232772c8241d03bc9b'),
-(4, 'user', 'rusocevupo@direct-mail.info', 'timapple', 'pbkdf2:sha256:150000$7mOYt08J$fc0307caf5bdb16f1933c1e4244b9d27fc7cb5c3cca54d46639283f9ef08cc37'),
-(5, 'admin', 'veleseb@max-mail.info', 'HSBC', 'pbkdf2:sha256:150000$Dj5kYxxr$fb25ef376b2d2ff36269e9dcd8eaed15f80dedf884345f146abea7421c306480'),
-(7, 'user', 'rusocevupo@direct-mail.info', 'donaldtrump', 'pbkdf2:sha256:150000$uloLEq3t$5fc7cc6cfbc624f8e1602e1e3e18488c254d42328c1b615eedc265cdbd510010');
+(1, 'admin', 'gafusoyici@stattech.info', 'DBS', 'pbkdf2:sha256:150000$3DaWGCwB$90db741fbaa5420fad5cee64646562e74d355d553e09488adc881a0ca4babae1'),
+(2, 'user', 'gafusoyici@stattech.info', 'janedoe', 'pbkdf2:sha256:150000$kouFGPTV$f7890d5acbb3ec18c83f3af4fbe6cfc1daa21d7976986dc8d04879dd4f91c237'),
+(3, 'user', 'gafusoyici@stattech.info', 'johndoe', 'pbkdf2:sha256:150000$8SdvwIgg$76228fa362efeddcc71e20744d44b69002cc29b2263e3c232772c8241d03bc9b'),
+(4, 'user', 'gafusoyici@stattech.info', 'timapple', 'pbkdf2:sha256:150000$7mOYt08J$fc0307caf5bdb16f1933c1e4244b9d27fc7cb5c3cca54d46639283f9ef08cc37'),
+(5, 'admin', 'gafusoyici@stattech.info', 'HSBC', 'pbkdf2:sha256:150000$Dj5kYxxr$fb25ef376b2d2ff36269e9dcd8eaed15f80dedf884345f146abea7421c306480'),
+(7, 'user', 'gafusoyici@stattech.info', 'donaldtrump', 'pbkdf2:sha256:150000$uloLEq3t$5fc7cc6cfbc624f8e1602e1e3e18488c254d42328c1b615eedc265cdbd510010'),
+(8, 'user', 'gafusoyici@stattech.info', 'amandatanlijin', 'pbkdf2:sha256:150000$FP6nqYAX$360fef67bec483fa51eee4d3a463b29a1eae767f70aa996e11f19679b1b09d84');
 
 --
 -- Indexes for dumped tables
@@ -72,7 +73,7 @@ ALTER TABLE `user_table`
 -- AUTO_INCREMENT for table `user_table`
 --
 ALTER TABLE `user_table`
-  MODIFY `user_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `user_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

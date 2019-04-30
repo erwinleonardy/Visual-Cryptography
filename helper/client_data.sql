@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 17, 2019 at 03:57 PM
+-- Generation Time: Apr 30, 2019 at 08:22 AM
 -- Server version: 8.0.15
 -- PHP Version: 7.1.23
 
@@ -44,9 +44,11 @@ CREATE TABLE IF NOT EXISTS `client_data` (
 --
 
 INSERT INTO `client_data` (`client_user_id`, `bank_user_id`, `client_share_path`) VALUES
-(2, 5, './vsignit/output/client/janedoe_HSBC_client_share.png'),
+(2, 1, './vsignit/output/client/janedoe_DBS_client_share.png'),
 (3, 1, './vsignit/output/client/johndoe_DBS_client_share.png'),
-(3, 5, './vsignit/output/client/johndoe_HSBC_client_share.png');
+(4, 1, './vsignit/output/client/timapple_DBS_client_share.png'),
+(7, 1, './vsignit/output/client/donaldtrump_DBS_client_share.png'),
+(8, 1, './vsignit/output/client/amandatanlijin_DBS_client_share.png');
 
 --
 -- Indexes for dumped tables
