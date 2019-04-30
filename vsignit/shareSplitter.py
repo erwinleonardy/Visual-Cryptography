@@ -88,7 +88,7 @@ class ShareSplitter():
       existingBank.bank_share_path = bank_share_path
       existingClient.client_share_path = client_share_path 
       db.session.commit()     
-      return "You have just overwritted \'" + username + "\' client and bank shares!"
+      return "You have just overwritten \'" + username + "\' client and bank shares!"
 
     # else, creates a new record
     else:     
