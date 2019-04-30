@@ -59,7 +59,7 @@ class Driver():
     outfile = ShareReconstuctor.reconstruct_shares(transactionNo, clientCheque, bankShare)
     
     # if error occurs, it will return None
-    if outfile == None:
+    if outfile == "":
       return ""
 
     # else, proceed

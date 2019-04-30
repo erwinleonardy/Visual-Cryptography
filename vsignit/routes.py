@@ -190,10 +190,19 @@ def bank_reconstruct_verify():
         transactionNo = request.args.get('transID')
         transaction = Transaction.query.filter_by(transactionNo=transactionNo).first()
 
-        # reconstruct the share and sends the base64 to the client
-        recon_cheque, clean1, recon = Driver.reconstruct_shares (transaction)
+        try:
+          # if user enters without entering transactionID
+          if transactionNo == None:
+            raise ValueError
 
-        return render_template('verify.html', result=result, transaction=transaction, recon_cheque=recon_cheque, clean1=clean1, recon=recon)
+          else:
+            # reconstruct the share and sends the base64 to the client
+            recon_cheque, clean1, recon = Driver.reconstruct_shares (transaction)
+            return render_template('verify.html', result=result, transaction=transaction, recon_cheque=recon_cheque, clean1=clean1, recon=recon)
+        
+        # if there is something wrong
+        except ValueError:
+          return render_template('verify.html', result=None)
     except Exception as e:
         return str(e)
 

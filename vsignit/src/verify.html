@@ -1,6 +1,10 @@
 {% include "header.html" %}
 
-{% if result.isAdmin() and result.getUsername() == transaction.getBankUsername() %}
+{% if result == None %}
+
+  {% include "error.html" %}
+
+{% elif result.isAdmin() and result.getUsername() == transaction.getBankUsername() %}
 
   <!-- Nav Bar -->
   {%  with user_type="Bank", username=result.getUsername(), active_page="reconstruct" %}
@@ -84,7 +88,7 @@
               </tr>
 
               <!-- Back Buttons -->
-              <tr>
+              <tr align="center">
                 <td colspan="2" style="text-align: center; display:inline-block;">
                   <p class="lead">
                     Oops! Fret not! Click <a id="back" href="https://www.a.com">here</a> to go back!</p>

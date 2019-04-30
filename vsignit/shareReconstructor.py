@@ -63,6 +63,9 @@ class ShareReconstuctor():
     signWidth = int(bankWidth / 2)
     doubSignSize = signWidth * 2
 
+    if clientCheque == None:
+      return ""
+
     # extract the shares area
     clientShare = clientCheque.crop((signX, signY, signX+(doubSignSize), signY+(doubSignSize)))
     clientShare.thumbnail((doubSignSize, doubSignSize), Image.ANTIALIAS)
