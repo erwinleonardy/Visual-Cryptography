@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 30, 2019 at 08:22 AM
+-- Generation Time: Apr 30, 2019 at 12:59 PM
 -- Server version: 8.0.15
 -- PHP Version: 7.1.23
 
@@ -24,12 +24,14 @@ SET time_zone = "+00:00";
 
 -- --------------------------------------------------------
 
+--
+-- Drop existing table
+--
 DROP TABLE IF EXISTS `vsignit`.`transaction`;
 
 --
 -- Table structure for table `transaction`
 --
-
 CREATE TABLE IF NOT EXISTS `transaction` (
   `transaction_number` varchar(70) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `client_user_id` int(11) NOT NULL,
@@ -43,25 +45,22 @@ CREATE TABLE IF NOT EXISTS `transaction` (
 --
 
 INSERT INTO `transaction` (`transaction_number`, `client_user_id`, `bank_user_id`, `timestamp`, `filepath`) VALUES
-('071901a75c789e8cc99063b5e2e121325e111ebe', 2, 1, '2019-04-30 08:17:49', './vsignit/output/cheque/cheque_071901a75c789e8cc99063b5e2e121325e111ebe.png'),
-('1c8f0ba827b04a4784f78a0dc06fdcae07a11bf0', 4, 1, '2019-04-30 08:18:04', './vsignit/output/cheque/cheque_1c8f0ba827b04a4784f78a0dc06fdcae07a11bf0.png'),
-('429f8fe8eec9fb0eb4633a733bc2612a841dd762', 4, 1, '2019-04-30 08:18:02', './vsignit/output/cheque/cheque_429f8fe8eec9fb0eb4633a733bc2612a841dd762.png'),
-('46da2aea669476571c4bd0321e5e192fb37810d0', 3, 1, '2019-04-30 08:16:28', './vsignit/output/cheque/cheque_46da2aea669476571c4bd0321e5e192fb37810d0.png'),
-('4c8bf7a490ec3e53f144b54e558d9314d33f7aa9', 2, 1, '2019-04-30 08:17:47', './vsignit/output/cheque/cheque_4c8bf7a490ec3e53f144b54e558d9314d33f7aa9.png'),
-('643b048ecbb988fd96bc707126aa072fceb23d0d', 3, 1, '2019-04-30 08:16:27', './vsignit/output/cheque/cheque_643b048ecbb988fd96bc707126aa072fceb23d0d.png'),
-('76c5b2e1c84a80ecd9801761eb4d22d53995b6c5', 2, 1, '2019-04-30 08:17:46', './vsignit/output/cheque/cheque_76c5b2e1c84a80ecd9801761eb4d22d53995b6c5.png'),
-('84c4e0514d377d26acc5718a16166984da6a866e', 7, 1, '2019-04-30 08:18:16', './vsignit/output/cheque/cheque_84c4e0514d377d26acc5718a16166984da6a866e.png'),
-('8d67912fc0d3866a0a50a29c4637647ec9a30672', 4, 1, '2019-04-30 08:18:03', './vsignit/output/cheque/cheque_8d67912fc0d3866a0a50a29c4637647ec9a30672.png'),
-('92bc297d32ecd229594f94405e1050d4e30937c1', 2, 1, '2019-04-30 08:17:48', './vsignit/output/cheque/cheque_92bc297d32ecd229594f94405e1050d4e30937c1.png'),
-('a42eeb40b92937cb8b7395e4a7f5c7aa1b711eef', 4, 1, '2019-04-30 08:18:46', './vsignit/output/cheque/cheque_a42eeb40b92937cb8b7395e4a7f5c7aa1b711eef.png'),
-('a71dfd682218aad260bc81af1af674a92cd500f2', 7, 1, '2019-04-30 08:18:18', './vsignit/output/cheque/cheque_a71dfd682218aad260bc81af1af674a92cd500f2.png'),
-('c7c4c7764a26f2bf949fd4a74259365e2ad599c9', 3, 1, '2019-04-30 08:17:37', './vsignit/output/cheque/cheque_c7c4c7764a26f2bf949fd4a74259365e2ad599c9.png'),
-('c7ecca24b745180d1ead1e4b06e616a1b66d04d9', 3, 1, '2019-04-30 08:18:29', './vsignit/output/cheque/cheque_c7ecca24b745180d1ead1e4b06e616a1b66d04d9.png'),
-('d63faf3e3cf213551a67b0af1f56320d0043c88e', 4, 1, '2019-04-30 08:18:01', './vsignit/output/cheque/cheque_d63faf3e3cf213551a67b0af1f56320d0043c88e.png'),
-('d6c3b9c1ec36ab36228c1de1bef963a18a28d437', 3, 1, '2019-04-30 08:16:24', './vsignit/output/cheque/cheque_d6c3b9c1ec36ab36228c1de1bef963a18a28d437.png'),
-('dea7e3900900b698a1b18575f329cb70c90b85d9', 7, 1, '2019-04-30 08:18:17', './vsignit/output/cheque/cheque_dea7e3900900b698a1b18575f329cb70c90b85d9.png'),
-('ea0ca8c98d13c76c6430b5c7bb84107a4f121751', 8, 1, '2019-04-28 02:19:35', './vsignit/output/cheque/cheque_ea0ca8c98d13c76c6430b5c7bb84107a4f121751.png'),
-('ff911663da76f57ee466337bff10209006ecaf86', 2, 1, '2019-04-30 08:18:37', './vsignit/output/cheque/cheque_ff911663da76f57ee466337bff10209006ecaf86.png');
+('0047961963c07b968991533486d86b343b5faea9', 2, 1, '2019-04-30 12:47:44', './vsignit/output/cheque/cheque_0047961963c07b968991533486d86b343b5faea9.png'),
+('0a13843c5d0a150db110be8693805848df5b5622', 7, 1, '2019-04-30 12:55:13', './vsignit/output/cheque/cheque_0a13843c5d0a150db110be8693805848df5b5622.png'),
+('2bd9663e58bf16ab278007d91c236e8dee25c6eb', 9, 1, '2019-04-30 12:57:41', './vsignit/output/cheque/cheque_2bd9663e58bf16ab278007d91c236e8dee25c6eb.png'),
+('357f44c3613a6bce9157dd55f81961a2545c156c', 3, 1, '2019-04-30 12:55:36', './vsignit/output/cheque/cheque_357f44c3613a6bce9157dd55f81961a2545c156c.png'),
+('3d47c907455649b455bf092e72bebe3c20f1370d', 3, 1, '2019-04-30 12:56:57', './vsignit/output/cheque/cheque_3d47c907455649b455bf092e72bebe3c20f1370d.png'),
+('457e51a867cd90e14f6d3c8378446c8e2439d3f2', 4, 1, '2019-04-30 12:55:24', './vsignit/output/cheque/cheque_457e51a867cd90e14f6d3c8378446c8e2439d3f2.png'),
+('688beaad2f4de77d45cbdc8c0fe8e6a25824d5c4', 8, 1, '2019-04-30 12:56:09', './vsignit/output/cheque/cheque_688beaad2f4de77d45cbdc8c0fe8e6a25824d5c4.png'),
+('69b22639b0cb83fc8bccadbac22259e422dcb138', 9, 1, '2019-04-30 12:57:42', './vsignit/output/cheque/cheque_69b22639b0cb83fc8bccadbac22259e422dcb138.png'),
+('8a3bf86b54bc49cae99a8774c2a76bec0941bb74', 3, 1, '2019-04-30 12:47:32', './vsignit/output/cheque/cheque_8a3bf86b54bc49cae99a8774c2a76bec0941bb74.png'),
+('9bd080d0c94e598d3b824d5b03104c3068bb18db', 2, 1, '2019-04-30 12:57:08', './vsignit/output/cheque/cheque_9bd080d0c94e598d3b824d5b03104c3068bb18db.png'),
+('9f232bda2604b382d4e1f15addeac682246363b9', 3, 1, '2019-04-30 12:49:26', './vsignit/output/cheque/cheque_9f232bda2604b382d4e1f15addeac682246363b9.png'),
+('b5db831efec0692f3e670f413e46117eb10823e7', 3, 1, '2019-04-30 12:56:58', './vsignit/output/cheque/cheque_b5db831efec0692f3e670f413e46117eb10823e7.png'),
+('d54fc0d14c09355c6d3478b627171f4e3c0a3d69', 3, 1, '2019-04-30 12:49:25', './vsignit/output/cheque/cheque_d54fc0d14c09355c6d3478b627171f4e3c0a3d69.png'),
+('d83e25225d9228cf81a19b300e53dbf2284e9899', 2, 1, '2019-04-30 12:47:42', './vsignit/output/cheque/cheque_d83e25225d9228cf81a19b300e53dbf2284e9899.png'),
+('e3a1fee61195d75491796640e09c8cc81ea0ad11', 8, 1, '2019-04-30 12:56:10', './vsignit/output/cheque/cheque_e3a1fee61195d75491796640e09c8cc81ea0ad11.png'),
+('f027ff6d29718ead2801dbaef56cb6aa705c71b3', 7, 1, '2019-04-30 12:55:11', './vsignit/output/cheque/cheque_f027ff6d29718ead2801dbaef56cb6aa705c71b3.png');
 
 --
 -- Indexes for dumped tables

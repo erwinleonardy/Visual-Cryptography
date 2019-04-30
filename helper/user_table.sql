@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 30, 2019 at 08:21 AM
+-- Generation Time: Apr 30, 2019 at 12:59 PM
 -- Server version: 8.0.15
 -- PHP Version: 7.1.23
 
@@ -32,7 +32,6 @@ DROP TABLE IF EXISTS `vsignit`.`user_table`;
 --
 -- Table structure for table `user_table`
 --
-
 CREATE TABLE IF NOT EXISTS `user_table` (
   `user_id` int(11) UNSIGNED NOT NULL,
   `user_type` enum('admin','user') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
@@ -52,7 +51,8 @@ INSERT INTO `user_table` (`user_id`, `user_type`, `email`, `username`, `password
 (4, 'user', 'gafusoyici@stattech.info', 'timapple', 'pbkdf2:sha256:150000$7mOYt08J$fc0307caf5bdb16f1933c1e4244b9d27fc7cb5c3cca54d46639283f9ef08cc37'),
 (5, 'admin', 'gafusoyici@stattech.info', 'HSBC', 'pbkdf2:sha256:150000$Dj5kYxxr$fb25ef376b2d2ff36269e9dcd8eaed15f80dedf884345f146abea7421c306480'),
 (7, 'user', 'gafusoyici@stattech.info', 'donaldtrump', 'pbkdf2:sha256:150000$uloLEq3t$5fc7cc6cfbc624f8e1602e1e3e18488c254d42328c1b615eedc265cdbd510010'),
-(8, 'user', 'gafusoyici@stattech.info', 'amandatanlijin', 'pbkdf2:sha256:150000$FP6nqYAX$360fef67bec483fa51eee4d3a463b29a1eae767f70aa996e11f19679b1b09d84');
+(8, 'user', 'gafusoyici@stattech.info', 'matthewyeo', 'pbkdf2:sha256:150000$V9YwLwB4$158c7d584b6b13cb807ae1bf0a92eae9de5f2d88ee5b2548027a696a9b5b88b1'),
+(9, 'user', 'gafusoyici@stattech.info', 'mohammedali', 'pbkdf2:sha256:150000$31Af1YXM$dd8d06b2b29988b7f5fc8bb004c1610f4f9346c641da0ebda5ad443a64eeb2fe');
 
 --
 -- Indexes for dumped tables
@@ -73,7 +73,7 @@ ALTER TABLE `user_table`
 -- AUTO_INCREMENT for table `user_table`
 --
 ALTER TABLE `user_table`
-  MODIFY `user_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `user_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

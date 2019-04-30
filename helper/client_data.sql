@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 30, 2019 at 08:22 AM
+-- Generation Time: Apr 30, 2019 at 12:59 PM
 -- Server version: 8.0.15
 -- PHP Version: 7.1.23
 
@@ -32,7 +32,6 @@ DROP TABLE IF EXISTS `vsignit`.`client_data`;
 --
 -- Table structure for table `client_data`
 --
-
 CREATE TABLE IF NOT EXISTS `client_data` (
   `client_user_id` int(11) NOT NULL,
   `bank_user_id` int(11) NOT NULL,
@@ -48,7 +47,8 @@ INSERT INTO `client_data` (`client_user_id`, `bank_user_id`, `client_share_path`
 (3, 1, './vsignit/output/client/johndoe_DBS_client_share.png'),
 (4, 1, './vsignit/output/client/timapple_DBS_client_share.png'),
 (7, 1, './vsignit/output/client/donaldtrump_DBS_client_share.png'),
-(8, 1, './vsignit/output/client/amandatanlijin_DBS_client_share.png');
+(8, 1, './vsignit/output/client/matthewyeo_DBS_client_share.png'),
+(9, 1, './vsignit/output/client/mohammedali_DBS_client_share.png');
 
 --
 -- Indexes for dumped tables
