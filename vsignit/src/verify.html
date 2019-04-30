@@ -50,19 +50,25 @@
               <!-- Reconstructed signature and Cleaned Signature -->
               <tr align="center" id="add_pictures">
                 <td style="display:inline-block; text-align: center; margin:5px">
+                  <p class="lead">Reconstructed Share</p>
                   <div id="pic1" style="padding-bottom: 10px; width:200px; height:200px; margin:0px auto">
                     <img id="recon_preview" width="100%" height="100%"/>
                     <p class="font-weight-normal textBox"></p>
                   </div>
-                  <p class="lead">Reconstructed Share</p>
                 </td>
 
                 <td style="display:inline-block; text-align: center; margin:5px">
+                  <p class="lead">Cleaning Phase I</p>
                   <div id="pic2" style="padding-bottom: 10px; width:200px; height:200px; margin:0px auto">
                     <img id="clean1_preview" width="100%" height="100%"/>
                     <p class="font-weight-normal textBox"></p>
                   </div>
-                  <p class="lead">Cleaning Phase I</p>
+                </td>
+              </tr>
+
+              <tr align="center" id="add_desc">
+                <td colspan="2" style="display:inline-block; text-align: center; margin:5px; padding-top:5px;">
+                  <p class="lead"> Cleaning Phase II + Cheque </p>
                 </td>
               </tr>
 
@@ -75,13 +81,12 @@
                       <p class="font-weight-normal textBox">Click to enlarge</p>
                     </div>
                   <!-- </a> -->
-                  <p class="lead"> Cleaning Phase II + Cheque </p>
                 </td>
               </tr>
   
               <!-- Submit Buttons -->
               <tr align="center" style="margin:0px auto">
-                <td colspan="2" style="padding-bottom:30px; text-align: center; display:inline-block;">
+                <td colspan="2" style="padding-bottom:20px; text-align: center; display:inline-block;">
                   <button type="submit" class="btn-lg btn-primary" style="margin-right:20px" name="accept-{{ transaction.getTranscationNo() }}">Accept</button>
                   <button type="submit" class="btn-lg btn-danger" name="reject-{{ transaction.getTranscationNo() }}">Reject</button>
                 </td>
@@ -91,7 +96,7 @@
               <tr align="center">
                 <td colspan="2" style="text-align: center; display:inline-block;">
                   <p class="lead">
-                    Oops! Fret not! Click <a id="back" href="https://www.a.com">here</a> to go back!</p>
+                    Oops! Clicked here by accident. Fret not! Click <a id="back" href="https://www.a.com">here</a> to go back!</p>
                 </td>
               </tr>
               
@@ -156,6 +161,8 @@
   window.onload = function()
   {
     $("#add_pictures").hide();
+    $("#add_desc").hide();
+
     // extracts encoded pics
     recon_cheque = "data:image/png;base64,{{ recon_cheque }}";
     clean1 = "data:image/png;base64,{{ clean1 }}";
@@ -211,7 +218,8 @@
     });
 
     $("#morePics").click(function() {
-      $("#add_pictures").fadeToggle(1000, "linear");
+      $("#add_pictures").fadeToggle(700, "linear");
+      $("#add_desc").fadeToggle(700, "linear");
     });
   }
 
