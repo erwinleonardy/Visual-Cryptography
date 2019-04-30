@@ -15,36 +15,26 @@ from vsignit.models import UserType, User, Client_Data, Transaction
 
 @app.route('/', methods=['GET'])
 def index():
-  if not current_user.is_authenticated:
-    username = ""
-    authenticated = "False"
-    user_type = ""
-    
-  else:
-    result = User.query.filter_by(id=current_user.get_id()).first()
-    username = result.getUsername()
-    authenticated = "True"
-
-    if result.user_type == UserType.admin:
-      user_type = "Bank"
-    else:
-      user_type = "Client"
-
-  return render_template('learning-tool.html', authenticated=authenticated, username=username, user_type = user_type)
-  
   # if not current_user.is_authenticated:
-  #   return redirect(url_for('login'))
-  # else:
-  #     # get user type
-  #     usertype = User.query.filter_by(id=current_user.get_id()).first().user_type
+  #   username = ""
+  #   authenticated = "False"
+  #   user_type = ""
+    
+  # else:    
+  
+  if not current_user.is_authenticated:
+    return redirect(url_for('login'))
+  else:
+      # get user type
+      usertype = User.query.filter_by(id=current_user.get_id()).first().user_type
 
-  #     # redirect page based on user type
-  #     if usertype == UserType.admin:
-  #       return redirect(url_for('bank_generate'))
-  #     elif usertype == UserType.user:
-  #       return redirect(url_for('client'))
-  #     else:
-  #       return redirect(url_for('login'))
+      # redirect page based on user type
+      if usertype == UserType.admin:
+        return redirect(url_for('bank_generate'))
+      elif usertype == UserType.user:
+        return redirect(url_for('client'))
+      else:
+        return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -81,6 +71,25 @@ def register():
     verification = request.form['verification']
 
     return Driver.register (username, email, password, verification)
+
+@app.route('/learning', methods=['GET', 'POST'])
+def learning():
+  if not current_user.is_authenticated:
+    username = ""
+    authenticated = "False"
+    user_type = ""
+
+  else:
+    result = User.query.filter_by(id=current_user.get_id()).first()
+    username = result.getUsername()
+    authenticated = "True"
+
+    if result.user_type == UserType.admin:
+      user_type = "Bank"
+    else:
+      user_type = "Client"
+
+  return render_template('learning-tool.html', authenticated=authenticated, username=username, user_type = user_type)
 
 @app.route('/logout')
 def logout():
