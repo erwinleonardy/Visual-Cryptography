@@ -87,6 +87,15 @@
           if (res == false) {
             return;
           } 
+          else
+          {
+            // changes to loading button
+            $(this)[0].innerHTML = "<span></span> Loading..."
+            $(this)[0].id = "deleteLoadingBox"
+            button = $(this).find("span")[0]; 
+            button.role = "status";      
+            button.className = "spinner-border spinner-border-sm LoadingText"
+          }
         }
 
         // if user selects verify
@@ -94,7 +103,7 @@
         {
           // changes to loading button
           $(this)[0].innerHTML = "<span></span> Loading..."
-          $(this)[0].id = "LoadingBox"
+          $(this)[0].id = "verifyLoadingBox"
           button = $(this).find("span")[0]; 
           button.role = "status";      
           button.className = "spinner-border spinner-border-sm LoadingText"
@@ -110,7 +119,8 @@
       // remove the 'Loading...' text when user goes back to the page
       setInterval(function(){
         if (window.performance && window.performance.navigation.type == window.performance.navigation.TYPE_BACK_FORWARD) {
-          document.getElementById('LoadingBox').innerHTML = "Verify";
+          document.getElementById('verifyLoadingBox').innerHTML = "Verify";
+          document.getElementById('deleteLoadingBox').innerHTML = "Delete";
         }
       }, 3000);
           
