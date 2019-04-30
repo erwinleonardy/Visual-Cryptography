@@ -43,9 +43,9 @@ class ShareReconstuctor():
       raise ValueError
     os.remove(chequeFilepath)
 
-  # Function removes the transaction record and temp. reconstructed images from the database
+  # Function removes and temp. reconstructed images from the database
   @staticmethod
-  def delete_transaction(transaction):
+  def delete_transactionImages(transaction):
     reconCheque = "./vsignit/output/tmp/recon_cheque_" + transaction.getTranscationNo() + ".png"
     reconFilepath = "./vsignit/output/tmp/recon_" + transaction.getTranscationNo() + ".png"
     clean1Filepath = "./vsignit/output/tmp/clean1_" + transaction.getTranscationNo() + ".png"
@@ -60,6 +60,9 @@ class ShareReconstuctor():
     if os.path.isfile(clean2Filepath):
       os.remove(clean2Filepath)
 
+  # Function removes the transaction record from the database
+  @staticmethod
+  def delete_transaction(transaction):
     db.session.delete(transaction)
     db.session.commit()
 
@@ -176,5 +179,8 @@ class ShareReconstuctor():
 
     with open("./vsignit/output/tmp/recon_" + transaction_no + ".png", "rb") as data:
       recon = base64.b64encode(data.read())
+
+    # delete the temp files from the database
+    ShareReconstuctor.delete_transactionImages(transaction)
 
     return recon_cheque.decode("utf-8"), clean1.decode("utf-8"), recon.decode("utf-8")

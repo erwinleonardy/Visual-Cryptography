@@ -100,7 +100,8 @@ class Driver():
     Common.transaction_email(transaction.getTranscationNo(), transaction.getClientId(), transaction.getBankId(), 'reject')
 
     # delete the share from the DB and remove the image
-    ShareReconstuctor.delete_transaction (transaction)
+    ShareReconstuctor.delete_transaction(transaction)
+    ShareReconstuctor.delete_transactionImages(transaction)
 
   # Client Page Driver Function
   @staticmethod
