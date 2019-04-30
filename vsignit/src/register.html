@@ -159,7 +159,9 @@
               $('#password').removeClass('is-invalid');
               $('#verification').removeClass('is-invalid');
               $('#response-msg').removeClass('alert-danger');
-
+              $('#email_input').removeClass('is-invalid');
+      
+              $('#email_input').addClass('is-valid');
               $('#response-msg').addClass('alert-success');
               $('#username').addClass('is-valid');
               $('#password').addClass('is-valid');
@@ -195,9 +197,23 @@
                   $('#username').removeClass('is-invalid');
                   $('#password').removeClass('is-valid');
                   $('#verification').removeClass('is-valid');
+                  $('#email_input').removeClass('is-valid');
 
                   $('#password').addClass('is-invalid');
                   $('#verification').addClass('is-invalid');
+                }
+
+                // when email is duplicated
+                else if (response == "This email has been used to register a vSignIt account before!")
+                {
+                  $('#username').removeClass('is-valid');
+                  $('#password').removeClass('is-valid');
+                  $('#verification').removeClass('is-valid');
+                  $('#email_input').removeClass('is-valid');
+                  $('#password').removeClass('is-invalid');
+                  $('#verification').removeClass('is-invalid');
+
+                  $('#email_input').addClass('is-invalid');
                 }
 
                 // other errors
@@ -206,6 +222,7 @@
                   $('#username').removeClass('is-valid');
                   $('#password').removeClass('is-invalid');
                   $('#verification').removeClass('is-invalid');
+                  $('#email_input').removeClass('is-valid');
 
                   $('#username').addClass('is-invalid');
                 }

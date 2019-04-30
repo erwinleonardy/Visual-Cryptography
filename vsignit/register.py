@@ -17,6 +17,8 @@ class Register():
     # else if the password matches and the username doesn't exist
     if password != verification:
       return "Both of the password doesn't match!"
+    elif (Common.email_exists(email) != None):
+      return "This email has been used to register a vSignIt account before!"
     elif (Common.user_exists(username) == None):
       newUser = User(username, UserType.admin, email, generate_password_hash(password))
       db.session.add(newUser)

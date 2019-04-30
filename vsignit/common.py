@@ -117,12 +117,17 @@ class Common():
 
   # this function checks if the client's
   # username given by the bank exists
+  # return: None if doesn't exist
   @staticmethod
   def user_exists(username):
-    if User.query.filter_by(username=username).first() == None:
-      return None
-    else:
-      return "OK"
+    return None if User.query.filter_by(username=username).first() == None else "OK"
+
+  # this function checks if the client's
+  # email given by the client exists
+  # return: None if doesn't exist
+  @staticmethod
+  def email_exists(email):
+    return None if User.query.filter_by(email=email).first() == None else "OK"
 
   # get the banks this particular client subscribed
   @staticmethod
