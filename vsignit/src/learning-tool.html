@@ -85,7 +85,7 @@
       </table>
       
       <h5>How does Visual Steganography work?</h5>
-      <p class="lead">With this technique, we are going to sub-divide each pixel into (2x2) subpixels. When both of the images are overlayed, we can represent the black pixels with 4 black sub-pixels and the white one with 3 black sub-pixels.</p>
+      <p class="lead">With this technique, we are going to sub-divide each pixel into (2x2) subpixels; these pixels are randomly generated and it has to conform to the following rules: when both of the images are overlayed, we can represent the <b>black pixels with 4 black sub-pixels</b> and <b>white with 3 black sub-pixels.</b></p>
 
       <table class="table table-striped">
         <tr>
@@ -146,7 +146,7 @@
         </tr>
 
         <tr>
-          <td colspan="8">^ THERE WILL BE ANIMATION LIKE THE ONE ON TOP HERE ^</td>
+          <td colspan="8">TRY IT OUT: Slide to the bottom to see what happens upon overlaying the two shares!</td>
         </tr>
       </table>
     </div>
@@ -161,109 +161,524 @@
 </div> 
 
 <script>
+  var three_black_1 = new Image();
+  var three_black_2 = new Image();
+  var three_black_3 = new Image();
+  var two_black_1 = new Image();
+  var two_black_2 = new Image();
+  var two_black_3 = new Image();
+  var three_black_4 = new Image();
+  
+  var bankShare = new Image();
+  var clientShare = new Image();
+  var reconShare = new Image();
+
+  var bankShareLoaded=false, clientShareLoaded=false, reconShareLoaded=false;
 
   $(document).ready(function()
   {
     document.getElementById("loader").style.display = "block";
-    var bankShareLoaded=false;
-    var clientShareLoaded=false;
-    var reconShareLoaded=false;
-
-    var bankShare = new Image();
+   
+    three_black_1.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat5.png";
+    three_black_2.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat4.png";
+    three_black_3.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat6.png";
+    three_black_4.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat7.png";
+    two_black_1.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat3.png";
+    two_black_2.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat1.png";
+    two_black_3.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat2.png";
+    
     bankShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/bank_share.png";
-
-    var clientShare = new Image();
     clientShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/client_share.png";
-
-    var reconShare = new Image();
     reconShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/recon_share.png";
+  }); 
 
-    bankShare.onload = function() {
-      bankShareLoaded=true;
-      tryToDraw();
-    }
+  // wait until the shares are loaded before proceeding
+  bankShare.onload = function() {
+    bankShareLoaded=true;
+    tryToDrawRecon();
+  }
 
-    clientShare.onload = function() {
-      clientShareLoaded=true;
-      tryToDraw();
-    }
+  clientShare.onload = function() {
+    clientShareLoaded=true;
+    tryToDrawRecon();
+  }
 
-    reconShare.onload = function() {
-      reconShareLoaded=true;
-      tryToDraw();
-    }
+  reconShare.onload = function() {
+    reconShareLoaded=true;
+    tryToDrawRecon();
+  } 
 
-    function tryToDraw()
-    {
-      if (bankShareLoaded && clientShareLoaded && reconShareLoaded)
-      { 
-        var maxX = intro.width-315;
-        var minX = 15;
+  // try to draw the cheque canvas
+  function tryToDrawRecon()
+  {
+    // draw the 8 different permutations to generate black/white share
+    tryToDrawShares();
 
-        document.getElementById("loader").style.display = "none";
-        // ctx.drawImage(clientShare, 0, 0, 300, 300);
+    // loads the cheque animation from the database
+    if (bankShareLoaded && clientShareLoaded && reconShareLoaded)
+    { 
+      var maxX = intro.width-315;
+      var minX = 15;
 
-        // Get a "handle" on the canvas to work with
-        theCanvas = document.getElementById("intro");
+      document.getElementById("loader").style.display = "none";
+      // ctx.drawImage(clientShare, 0, 0, 300, 300);
 
-        // define the centre point of the canvas
-        cX = Math.floor(theCanvas.width / 2);
-        cY = Math.floor(theCanvas.height / 2);
+      // Get a "handle" on the canvas to work with
+      theCanvas = document.getElementById("intro");
 
-        // Get a "context"
-        ctx= theCanvas.getContext("2d");
+      // define the centre point of the canvas
+      cX = Math.floor(theCanvas.width / 2);
+      cY = Math.floor(theCanvas.height / 2);
 
-        // draw the initial image
-        ctx.drawImage(bankShare, 15, 15, 300, 300);
-        ctx.drawImage(clientShare, maxX, 15, 300, 300);
+      // Get a "context"
+      ctx= theCanvas.getContext("2d");
 
-        // set up the font
-        ctx.font = "12px Helvetica";
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#8A8A8A';
-        ctx.globalAlpha = 1.0;
+      // draw the initial image
+      ctx.drawImage(bankShare, 15, 15, 300, 300);
+      ctx.drawImage(clientShare, maxX, 15, 300, 300);
+      ctx.globalAlpha = 1.0;
 
-        // Get the position of the mouse relative to the canvas
-        function getMousePos(canvasDom, mouseEvent) {
-          var rect = canvasDom.getBoundingClientRect();
-          return {
-            x: mouseEvent.clientX - rect.left,
-            y: mouseEvent.clientY - rect.top
-          };
+      // Get the position of the mouse relative to the canvas
+      function getMousePos(canvasDom, mouseEvent) {
+        var rect = canvasDom.getBoundingClientRect();
+        return {
+          x: mouseEvent.clientX - rect.left,
+          y: mouseEvent.clientY - rect.top
+        };
+      }
+
+      // Here we get mouse coordinates and translate to a value
+      // Good old basic algebra from school
+      // Apparently the convention is to start at 0 degrees on the right and go backwards
+      // - someone should have told that to clock-makers
+      theCanvas.addEventListener("mousemove", function(e) {
+        var m = getMousePos(theCanvas, e);
+        if (m.x < cX) {
+          if (m.y < cY) pos = 180 + Math.floor(Math.atan((m.y - cY) / (cX - m.x)) * (180 / Math.PI));
+          else pos = 180 + -Math.floor(Math.atan((m.y - cY) / (m.x - cX)) * (180 / Math.PI));
+        } else {
+          if (m.y < cY) pos = - Math.floor(Math.atan((cY - m.y) / (cX - m.x)) * (180 / Math.PI)) ;
+          else pos = 360 + Math.floor(Math.atan((cY - m.y) / (m.x - cX)) * (180 / Math.PI));
         }
 
-        // Here we get mouse coordinates and translate to a value
-        // Good old basic algebra from school
-        // Apparently the convention is to start at 0 degrees on the right and go backwards
-        // - someone should have told that to clock-makers
-        theCanvas.addEventListener("mousemove", function(e) {
-          var m = getMousePos(theCanvas, e);
-          if (m.x < cX) {
-            if (m.y < cY) pos = 180 + Math.floor(Math.atan((m.y - cY) / (cX - m.x)) * (180 / Math.PI));
-            else pos = 180 + -Math.floor(Math.atan((m.y - cY) / (m.x - cX)) * (180 / Math.PI));
-          } else {
-            if (m.y < cY) pos = - Math.floor(Math.atan((cY - m.y) / (cX - m.x)) * (180 / Math.PI)) ;
-            else pos = 360 + Math.floor(Math.atan((cY - m.y) / (m.x - cX)) * (180 / Math.PI));
-          }
+        // print the result
+        ctx.clearRect(0, 0, intro.width, intro.height);
+      
+        // replace image when it is perfectly overlayed
+        // and prevent pictures from going out of canvas
+        if (m.x >= maxX)
+        {
+          m.x = maxX;
+          ctx.drawImage(reconShare, maxX, 15, 300, 300);
+          return;
+        }
+        else if (m.x < minX)
+          m.x = minX;
 
-          // print the result
-          ctx.clearRect(0, 0, intro.width, intro.height);
-        
-          // replace image when 
-          if (m.x >= maxX)
-          {
-            m.x = maxX;
-            ctx.drawImage(reconShare, maxX, 15, 300, 300);
-            return;
-          }
-          else if (m.x < minX)
-            m.x = minX;
-
-          ctx.drawImage(bankShare, 0+m.x, 15, 300, 300);
-          ctx.drawImage(clientShare, maxX, 15, 300, 300);
-        }, false);
-      }
+        ctx.drawImage(bankShare, 0+m.x, 15, 300, 300);
+        ctx.drawImage(clientShare, maxX, 15, 300, 300);
+      }, false);
     }
+  }
+
+  var maxY = B1W2_Black.height-100;
+  var minY = 10;
+
+  // define the centre point of the canvas
+  cX = Math.floor(B1W2_Black.width / 2);
+  cY = Math.floor(B1W2_Black.height / 2);
+
+  // draw the 8 different permutations to generate black/white share
+  function tryToDrawShares()
+  {
+    /*
+    * B1W2_Black
+    */
+    // Get a "handle" on the canvas to work with
+    B1B2_Black_Canvas = document.getElementById("B1B2_Black"); 
+    
+    // Get a "context"
+    ctx2= B1B2_Black_Canvas.getContext("2d");
+
+    // draw the initial image
+    ctx2.drawImage(three_black_1, 0, 0, 100, 100);
+    ctx2.drawImage(three_black_2, 0, maxY, 100, 100);
+    ctx2.globalAlpha = 1.0;
+
+    // Get the position of the mouse relative to the canvas
+    function getMousePos(canvasDom, mouseEvent) {
+      var rect = canvasDom.getBoundingClientRect();
+      return {
+        x: mouseEvent.clientX - rect.left,
+        y: mouseEvent.clientY - rect.top
+      };
+    }
+
+    // add mouse move listener to this canvas
+    B1B2_Black_Canvas.addEventListener("mousemove", function(e) {
+      var m = getMousePos(B1B2_Black_Canvas, e);
+      if (m.x < cX) {
+        if (m.y < cY) pos = 180 + Math.floor(Math.atan((m.y - cY) / (cX - m.x)) * (180 / Math.PI));
+        else pos = 180 + -Math.floor(Math.atan((m.y - cY) / (m.x - cX)) * (180 / Math.PI));
+      } else {
+        if (m.y < cY) pos = - Math.floor(Math.atan((cY - m.y) / (cX - m.x)) * (180 / Math.PI)) ;
+        else pos = 360 + Math.floor(Math.atan((cY - m.y) / (m.x - cX)) * (180 / Math.PI));
+      }
+
+      // print the result
+      ctx2.clearRect(0, 0, B1B2_Black_Canvas.width, B1B2_Black_Canvas.height);
+    
+      // prevent pictures from going out of canvas
+      if (m.y >= maxY)
+        m.y = maxY;
+      else if (m.y < minY)
+        m.y = 0;
+
+      ctx2.drawImage(three_black_1, 0, 0+m.y, 100, 100);
+      ctx2.drawImage(three_black_2, 0, maxY, 100, 100);
+    }, false); // end of B1B2_Black_Canvas.addEventListener("mousemove", function(e){...});
+
+    /*
+    * B1W2_Black
+    */
+
+    // Get a "handle" on the canvas to work with
+    B1W2_Black_Canvas = document.getElementById("B1W2_Black");
+      
+    // Get a "context"
+    ctx3= B1W2_Black_Canvas.getContext("2d");
+
+    // draw the initial image
+    ctx3.drawImage(three_black_1, 0, 0, 100, 100);
+    ctx3.drawImage(two_black_1, 0, maxY, 100, 100);
+    ctx3.globalAlpha = 1.0;
+
+    // Get the position of the mouse relative to the canvas
+    function getMousePos(canvasDom, mouseEvent) {
+      var rect = canvasDom.getBoundingClientRect();
+      return {
+        x: mouseEvent.clientX - rect.left,
+        y: mouseEvent.clientY - rect.top
+      };
+    }
+
+    // add mouse move listener to this canvas
+    B1W2_Black_Canvas.addEventListener("mousemove", function(e) {
+      var m = getMousePos(B1W2_Black_Canvas, e);
+      if (m.x < cX) {
+        if (m.y < cY) pos = 180 + Math.floor(Math.atan((m.y - cY) / (cX - m.x)) * (180 / Math.PI));
+        else pos = 180 + -Math.floor(Math.atan((m.y - cY) / (m.x - cX)) * (180 / Math.PI));
+      } else {
+        if (m.y < cY) pos = - Math.floor(Math.atan((cY - m.y) / (cX - m.x)) * (180 / Math.PI)) ;
+        else pos = 360 + Math.floor(Math.atan((cY - m.y) / (m.x - cX)) * (180 / Math.PI));
+      }
+
+      // print the result
+      ctx3.clearRect(0, 0, B1W2_Black_Canvas.width, B1W2_Black_Canvas.height);
+    
+      // prevent pictures from going out of canvas
+      if (m.y >= maxY)
+        m.y = maxY;
+      else if (m.y < minY)
+        m.y = 0;
+
+      ctx3.drawImage(three_black_1, 0, 0+m.y, 100, 100);
+      ctx3.drawImage(two_black_1, 0, maxY, 100, 100);
+    }, false); // end of B1W2_Black_Canvas.addEventListener("mousemove", function(e){...});
+
+    /*
+    * W1B2_Black
+    */
+
+    // Get a "handle" on the canvas to work with
+    W1B2_Black_Canvas = document.getElementById("W1B2_Black");
+      
+    // Get a "context"
+    ctx4= W1B2_Black_Canvas.getContext("2d");
+
+    // draw the initial image
+    ctx4.drawImage(two_black_2, 0, 0, 100, 100);
+    ctx4.drawImage(three_black_3, 0, maxY, 100, 100);
+    ctx4.globalAlpha = 1.0;
+
+    // Get the position of the mouse relative to the canvas
+    function getMousePos(canvasDom, mouseEvent) {
+      var rect = canvasDom.getBoundingClientRect();
+      return {
+        x: mouseEvent.clientX - rect.left,
+        y: mouseEvent.clientY - rect.top
+      };
+    }
+
+    // add mouse move listener to this canvas
+    W1B2_Black_Canvas.addEventListener("mousemove", function(e) {
+      var m = getMousePos(W1B2_Black_Canvas, e);
+      if (m.x < cX) {
+        if (m.y < cY) pos = 180 + Math.floor(Math.atan((m.y - cY) / (cX - m.x)) * (180 / Math.PI));
+        else pos = 180 + -Math.floor(Math.atan((m.y - cY) / (m.x - cX)) * (180 / Math.PI));
+      } else {
+        if (m.y < cY) pos = - Math.floor(Math.atan((cY - m.y) / (cX - m.x)) * (180 / Math.PI)) ;
+        else pos = 360 + Math.floor(Math.atan((cY - m.y) / (m.x - cX)) * (180 / Math.PI));
+      }
+
+      // print the result
+      ctx4.clearRect(0, 0, W1B2_Black_Canvas.width, W1B2_Black_Canvas.height);
+    
+      // prevent pictures from going out of canvas
+      if (m.y >= maxY)
+        m.y = maxY;
+      else if (m.y < minY)
+        m.y = 0;
+
+      ctx4.drawImage(two_black_2, 0, 0+m.y, 100, 100);
+      ctx4.drawImage(three_black_3, 0, maxY, 100, 100);
+    }, false); // end of W1B2_Black_Canvas.addEventListener("mousemove", function(e){...});
+
+    /*
+    * W1W2_Black
+    */
+
+    // Get a "handle" on the canvas to work with
+    W1W2_Black_Canvas = document.getElementById("W1W2_Black");
+      
+    // Get a "context"
+    ctx5= W1W2_Black_Canvas.getContext("2d");
+
+    // draw the initial image
+    ctx5.drawImage(two_black_2, 0, 0, 100, 100);
+    ctx5.drawImage(two_black_3, 0, maxY, 100, 100);
+    ctx5.globalAlpha = 1.0;
+
+    // Get the position of the mouse relative to the canvas
+    function getMousePos(canvasDom, mouseEvent) {
+      var rect = canvasDom.getBoundingClientRect();
+      return {
+        x: mouseEvent.clientX - rect.left,
+        y: mouseEvent.clientY - rect.top
+      };
+    }
+
+    // add mouse move listener to this canvas
+    W1W2_Black_Canvas.addEventListener("mousemove", function(e) {
+      var m = getMousePos(W1W2_Black_Canvas, e);
+      if (m.x < cX) {
+        if (m.y < cY) pos = 180 + Math.floor(Math.atan((m.y - cY) / (cX - m.x)) * (180 / Math.PI));
+        else pos = 180 + -Math.floor(Math.atan((m.y - cY) / (m.x - cX)) * (180 / Math.PI));
+      } else {
+        if (m.y < cY) pos = - Math.floor(Math.atan((cY - m.y) / (cX - m.x)) * (180 / Math.PI)) ;
+        else pos = 360 + Math.floor(Math.atan((cY - m.y) / (m.x - cX)) * (180 / Math.PI));
+      }
+
+      // print the result
+      ctx5.clearRect(0, 0, W1W2_Black_Canvas.width, W1W2_Black_Canvas.height);
+    
+      // prevent pictures from going out of canvas
+      if (m.y >= maxY)
+        m.y = maxY;
+      else if (m.y < minY)
+        m.y = 0;
+
+      ctx5.drawImage(two_black_2, 0, 0+m.y, 100, 100);
+      ctx5.drawImage(two_black_3, 0, maxY, 100, 100);
+    }, false); // end of W1W2_Black_Canvas.addEventListener("mousemove", function(e){...});
+
+    /*
+    * B1B2_White
+    */
+
+    // Get a "handle" on the canvas to work with
+    B1B2_White_Canvas = document.getElementById("B1B2_White");
+      
+    // Get a "context"
+    ctx6= B1B2_White_Canvas.getContext("2d");
+
+    // draw the initial image
+    ctx6.drawImage(three_black_4, 0, 0, 100, 100);
+    ctx6.drawImage(three_black_4, 0, maxY, 100, 100);
+    ctx6.globalAlpha = 1.0;
+
+    // Get the position of the mouse relative to the canvas
+    function getMousePos(canvasDom, mouseEvent) {
+      var rect = canvasDom.getBoundingClientRect();
+      return {
+        x: mouseEvent.clientX - rect.left,
+        y: mouseEvent.clientY - rect.top
+      };
+    }
+
+    // add mouse move listener to this canvas
+    B1B2_White_Canvas.addEventListener("mousemove", function(e) {
+      var m = getMousePos(B1B2_White_Canvas, e);
+      if (m.x < cX) {
+        if (m.y < cY) pos = 180 + Math.floor(Math.atan((m.y - cY) / (cX - m.x)) * (180 / Math.PI));
+        else pos = 180 + -Math.floor(Math.atan((m.y - cY) / (m.x - cX)) * (180 / Math.PI));
+      } else {
+        if (m.y < cY) pos = - Math.floor(Math.atan((cY - m.y) / (cX - m.x)) * (180 / Math.PI)) ;
+        else pos = 360 + Math.floor(Math.atan((cY - m.y) / (m.x - cX)) * (180 / Math.PI));
+      }
+
+      // print the result
+      ctx6.clearRect(0, 0, B1B2_White_Canvas.width, B1B2_White_Canvas.height);
+    
+      // prevent pictures from going out of canvas
+      if (m.y >= maxY)
+        m.y = maxY;
+      else if (m.y < minY)
+        m.y = 0;
+
+      ctx6.drawImage(three_black_4, 0, 0+m.y, 100, 100);
+      ctx6.drawImage(three_black_4, 0, maxY, 100, 100);
+    }, false); // end of B1B2_White_Canvas.addEventListener("mousemove", function(e){...});
+
+    /*
+    * B1W2_White
+    */
+
+    // Get a "handle" on the canvas to work with
+    B1W2_White_Canvas = document.getElementById("B1W2_White");
+      
+    // Get a "context"
+    ctx7= B1W2_White_Canvas.getContext("2d");
+
+    // draw the initial image
+    ctx7.drawImage(three_black_4, 0, 0, 100, 100);
+    ctx7.drawImage(two_black_2, 0, maxY, 100, 100);
+    ctx7.globalAlpha = 1.0;
+
+    // Get the position of the mouse relative to the canvas
+    function getMousePos(canvasDom, mouseEvent) {
+      var rect = canvasDom.getBoundingClientRect();
+      return {
+        x: mouseEvent.clientX - rect.left,
+        y: mouseEvent.clientY - rect.top
+      };
+    }
+
+    // add mouse move listener to this canvas
+    B1W2_White_Canvas.addEventListener("mousemove", function(e) {
+      var m = getMousePos(B1W2_White_Canvas, e);
+      if (m.x < cX) {
+        if (m.y < cY) pos = 180 + Math.floor(Math.atan((m.y - cY) / (cX - m.x)) * (180 / Math.PI));
+        else pos = 180 + -Math.floor(Math.atan((m.y - cY) / (m.x - cX)) * (180 / Math.PI));
+      } else {
+        if (m.y < cY) pos = - Math.floor(Math.atan((cY - m.y) / (cX - m.x)) * (180 / Math.PI)) ;
+        else pos = 360 + Math.floor(Math.atan((cY - m.y) / (m.x - cX)) * (180 / Math.PI));
+      }
+
+      // print the result
+      ctx7.clearRect(0, 0, B1W2_White_Canvas.width, B1W2_White_Canvas.height);
+    
+      // prevent pictures from going out of canvas
+      if (m.y >= maxY)
+        m.y = maxY;
+      else if (m.y < minY)
+        m.y = 0;
+
+      ctx7.drawImage(three_black_4, 0, 0+m.y, 100, 100);
+      ctx7.drawImage(two_black_2, 0, maxY, 100, 100);
+    }, false); // end of B1W2_White_Canvas.addEventListener("mousemove", function(e){...});
+
+    /*
+    * W1B2_White
+    */
+
+    // Get a "handle" on the canvas to work with
+    W1B2_White_Canvas = document.getElementById("W1B2_White");
+      
+    // Get a "context"
+    ctx8= W1B2_White_Canvas.getContext("2d");
+
+    // draw the initial image
+    ctx8.drawImage(two_black_2, 0, 0, 100, 100);
+    ctx8.drawImage(three_black_4, 0, maxY, 100, 100);
+    ctx8.globalAlpha = 1.0;
+
+    // Get the position of the mouse relative to the canvas
+    function getMousePos(canvasDom, mouseEvent) {
+      var rect = canvasDom.getBoundingClientRect();
+      return {
+        x: mouseEvent.clientX - rect.left,
+        y: mouseEvent.clientY - rect.top
+      };
+    }
+
+    // add mouse move listener to this canvas
+    W1B2_White_Canvas.addEventListener("mousemove", function(e) {
+      var m = getMousePos(W1B2_White_Canvas, e);
+      if (m.x < cX) {
+        if (m.y < cY) pos = 180 + Math.floor(Math.atan((m.y - cY) / (cX - m.x)) * (180 / Math.PI));
+        else pos = 180 + -Math.floor(Math.atan((m.y - cY) / (m.x - cX)) * (180 / Math.PI));
+      } else {
+        if (m.y < cY) pos = - Math.floor(Math.atan((cY - m.y) / (cX - m.x)) * (180 / Math.PI)) ;
+        else pos = 360 + Math.floor(Math.atan((cY - m.y) / (m.x - cX)) * (180 / Math.PI));
+      }
+
+      // print the result
+      ctx8.clearRect(0, 0, W1B2_White_Canvas.width, W1B2_White_Canvas.height);
+    
+      // prevent pictures from going out of canvas
+      if (m.y >= maxY)
+        m.y = maxY;
+      else if (m.y < minY)
+        m.y = 0;
+
+      ctx8.drawImage(two_black_2, 0, 0+m.y, 100, 100);
+      ctx8.drawImage(three_black_4, 0, maxY, 100, 100);
+    }, false); // end of W1B2_White_Canvas.addEventListener("mousemove", function(e){...});
+
+    /*
+    * W1W2_White
+    */
+
+    // Get a "handle" on the canvas to work with
+    W1W2_White_Canvas = document.getElementById("W1W2_White");
+      
+    // Get a "context"
+    ctx9= W1W2_White_Canvas.getContext("2d");
+
+    // draw the initial image
+    ctx9.drawImage(two_black_2, 0, 0, 100, 100);
+    ctx9.drawImage(two_black_1, 0, maxY, 100, 100);
+    ctx9.globalAlpha = 1.0;
+
+    // Get the position of the mouse relative to the canvas
+    function getMousePos(canvasDom, mouseEvent) {
+      var rect = canvasDom.getBoundingClientRect();
+      return {
+        x: mouseEvent.clientX - rect.left,
+        y: mouseEvent.clientY - rect.top
+      };
+    }
+
+    // add mouse move listener to this canvas
+    W1W2_White_Canvas.addEventListener("mousemove", function(e) {
+      var m = getMousePos(W1W2_White_Canvas, e);
+      if (m.x < cX) {
+        if (m.y < cY) pos = 180 + Math.floor(Math.atan((m.y - cY) / (cX - m.x)) * (180 / Math.PI));
+        else pos = 180 + -Math.floor(Math.atan((m.y - cY) / (m.x - cX)) * (180 / Math.PI));
+      } else {
+        if (m.y < cY) pos = - Math.floor(Math.atan((cY - m.y) / (cX - m.x)) * (180 / Math.PI)) ;
+        else pos = 360 + Math.floor(Math.atan((cY - m.y) / (m.x - cX)) * (180 / Math.PI));
+      }
+
+      // print the result
+      ctx9.clearRect(0, 0, W1W2_White_Canvas.width, W1W2_White_Canvas.height);
+    
+      // prevent pictures from going out of canvas
+      if (m.y >= maxY)
+        m.y = maxY;
+      else if (m.y < minY)
+        m.y = 0;
+
+      ctx9.drawImage(two_black_2, 0, 0+m.y, 100, 100);
+      ctx9.drawImage(two_black_1, 0, maxY, 100, 100);
+    }, false); // end of W1W2_White_Canvas.addEventListener("mousemove", function(e){...});
+
+  }; // end of window.addEventListener('load', function(){...})
+
+  $(window).on("load", function() {
+    console.log("IN!!!");
+    tryToDrawShares();
   });
 
 </script>
