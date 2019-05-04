@@ -62,9 +62,9 @@
       <p class="lead">This awesome technique should be attributed to two of the great Mathematicians: <b>Moni Naor</b> and <b>Adi Shamir</b>. They came out with a technique that requires the share of both parties to exists in order to decrypt the image.</p>
       <table class="table table-borderless">
         <tr width="100%">
-          <td><img src="{{ url_for('static', filename='img/learning/left.png') }}" alt=""></td>
+          <td><img src="{{ url_for('static', filename='img/learning/left.png') }}" alt="left"></td>
           <td width="30%" class="align-middle">The basis of this technique is that it would overlay two semi-transparent layers on top of each other.</td>
-          <td><img src="{{ url_for('static', filename='img/learning/right.png') }}" alt=""></td>
+          <td><img src="{{ url_for('static', filename='img/learning/right.png') }}" alt="right"></td>
         </tr>
 
         <tr width="100%">
@@ -72,7 +72,7 @@
         </tr>
 
         <tr width="100%">
-          <td colspan="3"><img src="{{ url_for('static', filename='img/learning/merge2.png') }}" alt=""></td>
+          <td colspan="3"><img src="{{ url_for('static', filename='img/learning/merge.png') }}" alt="merged"></td>
         </tr>
 
         <tr width="100%">
@@ -80,12 +80,75 @@
         </tr>
 
         <tr width="100%">
-          <td colspan="3"><img src="{{ url_for('static', filename='img/learning/result.png') }}" alt=""></td>
+          <td colspan="3"><img src="{{ url_for('static', filename='img/learning/result.png') }}" alt="result"></td>
         </tr>
       </table>
+      
+      <h5>How does Visual Steganography work?</h5>
+      <p class="lead">With this technique, we are going to sub-divide each pixel into (2x2) subpixels. When both of the images are overlayed, we can represent the black pixels with 4 black sub-pixels and the white one with 3 black sub-pixels.</p>
 
-      <!-- <h5>How does the Visual Steganography work?</h5>
-      <p class="lead"></p> -->
+      <table class="table table-striped">
+        <tr>
+          <td colspan="4">Black</td>
+          <td colspan="4">White</td>
+        </tr>
+        <tr>
+          <td colspan="4"><img src="{{ url_for('static', filename='img/learning/pattern/pat8.png') }}" alt="black"></td>
+          <td colspan="4"><img src="{{ url_for('static', filename='img/learning/pattern/pat9.png') }}" alt="white"></td>
+        </tr>
+
+        <tr>
+          <td colspan="8">After Expansion</td>
+        </tr>
+        <tr>
+          <td colspan="4"><img src="{{ url_for('static', filename='img/learning/pattern/pat8-opaque.png') }}" alt="4black"></td>
+          <td colspan="4"><img src="{{ url_for('static', filename='img/learning/pattern/pat7-opaque.png') }}" alt="3black"></td>
+        </tr>
+
+        <tr>
+          <td>B1B2</td>
+          <td>B1W2</td>
+          <td>W1B2</td>
+          <td>W1W2</td>
+          <td>B1B2</td>
+          <td>B1W2</td>
+          <td>W1B2</td>
+          <td>W1W2</td>
+        </tr>
+        <tr>
+          <!-- Black -->
+          <td>
+            <canvas id="B1B2_Black" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+          </td>
+          <td>
+            <canvas id="B1W2_Black" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+          </td>
+          <td>
+            <canvas id="W1B2_Black" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+          </td>
+          <td>
+            <canvas id="W1W2_Black" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+          </td>
+
+          <!-- White -->
+          <td>
+            <canvas id="B1B2_White" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+          </td>
+          <td>
+            <canvas id="B1W2_White" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+          </td>
+          <td>
+            <canvas id="W1B2_White" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+          </td>
+          <td>
+            <canvas id="W1W2_White" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="8">^ THERE WILL BE ANIMATION LIKE THE ONE ON TOP HERE ^</td>
+        </tr>
+      </table>
     </div>
   </form>
   
@@ -98,38 +161,6 @@
 </div> 
 
 <script>
-  // $(document).ready(function(){
-  //   var bankShareLoaded=false;
-  //   var clientShareLoaded=false;
-
-  //   $("#bank_share").on('load', function() {
-  //     bankShareLoaded=true;
-  //     tryToDraw();
-  //   });
-
-  //   $("#client_share").on('load', function() {
-  //     clientShareLoaded=true;
-  //     tryToDraw();
-  //   });
-
-  //   function tryToDraw()
-  //   {
-  //     if (bankShareLoaded && clientShareLoaded)
-  //     {
-  //       var bankShare = document.getElementById("bank_share");
-  //       var clientShare = document.getElementById("client_share");
-  //       bankShare.style.display = 'none';
-  //       clientShare.style.display = 'none';
-
-  //       var canvas = document.getElementById("intro");
-  //       var ctx = canvas.getContext("2d");
-        
-  //       ctx.drawImage(bankShare, canvas.width-300, 0, 300, 300);
-  //       ctx.drawImage(clientShare, 0, 0, 300, 300);
-  //     }
-  //   }
-  // });
-
 
   $(document).ready(function()
   {
@@ -217,18 +248,8 @@
 
           // print the result
           ctx.clearRect(0, 0, intro.width, intro.height);
-          // ctx.moveTo(cX, cY);
-          // ctx.fillStyle = "#ff0044";
-          // ctx.arc(cX, cY, 5, 0, 360, false);
-          // ctx.fill();
-          
-          // some colour just for the sake of it
-          // var gradient = ctx.createLinearGradient(0, 0, 150, 100);
-          // gradient.addColorStop(0, "rgb(255, 0, 128)");
-          // gradient.addColorStop(1, "rgb(105, 103, 255)");
-          // ctx.fillStyle = gradient;
-
-          // ctx.fillText("(X-coordinate: " + m.x + ")", cX, 30);
+        
+          // replace image when 
           if (m.x >= maxX)
           {
             m.x = maxX;
@@ -244,45 +265,6 @@
       }
     }
   });
-  
-
-  // $(window).mousemove(function(event) {
-  //   var cWidth = $("#intro").width();    
-  //   moveXAmount = (event.pageX / $(window).width())*cWidth;    
-    
-  //   moveXAmount = moveXAmount - (cWidth/2);
-  //   console.log("Move amount: " + moveXAmount );
-  //   buildcanvas();
-  // });
-
-  // function buildcanvas() {
-  //   var introCanvas = document.getElementById('intro');
-
-  //   // define the centre point of the canvas
-  //   cX = Math.floor(theCanvas.width / 2);
-  //   cY = Math.floor(theCanvas.height / 2);
-
-  //   // Get a "context"
-  //   var ctx = introCanvas.getContext('2d');
-
-  //   make_pic(ctx);
-  // }
-
-  // function make_pic(ctx) {
-  //   ctx.clearRect(0, 0, 1000, 300);
-
-  //   // Mask for clipping
-  //   bankShare = document.getElementById("bank_share");
-  //   ctx.drawImage(bankShare, moveXAmount, 0);
-  //   ctx.save();
-
-  //   bankShareImg = document.getElementById("bank_share");
-  //   clientShareImg = document.getElementById("client_share");
-  //   ctx.globalCompositeOperation = "source-in";
-  //   ctx.drawImage(bankShareImg, 0+moveXAmount, 0, 300, 300);
-  //   // ctx.drawImage(clientShareImg, 700, 0, 300, 300);
-  //   ctx.restore();
-  // }
 
 </script>
 
