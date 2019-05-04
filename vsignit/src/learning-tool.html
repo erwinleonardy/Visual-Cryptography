@@ -109,13 +109,13 @@
     var reconShareLoaded=false;
 
     var bankShare = new Image();
-    bankShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/trump_bank_share.png";
+    bankShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/bank_share.png";
 
     var clientShare = new Image();
-    clientShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/trump_client_share.png";
+    clientShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/client_share.png";
 
-    var reconShare = new Image();
-    reconShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/trump_recon_share.png";
+    // var reconShare = new Image();
+    // reconShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/trump_recon_share.png";
 
     bankShare.onload = function() {
       bankShareLoaded=true;
@@ -202,7 +202,7 @@
           if (m.x >= maxX)
           {
             m.x = maxX;
-            ctx.drawImage(reconShare, maxX, 15, 300, 300);
+            // ctx.drawImage(reconShare, maxX, 15, 300, 300);
             return;
           }
           else if (m.x < minX)
