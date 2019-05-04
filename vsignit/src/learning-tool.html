@@ -161,6 +161,8 @@
 </div> 
 
 <script>
+  document.getElementById("loader").style.display = "block";
+
   var three_black_1 = new Image();
   var three_black_2 = new Image();
   var three_black_3 = new Image();
@@ -173,113 +175,17 @@
   var clientShare = new Image();
   var reconShare = new Image();
 
-  var bankShareLoaded=false, clientShareLoaded=false, reconShareLoaded=false;
-
-  $(document).ready(function()
-  {
-    document.getElementById("loader").style.display = "block";
-   
-    three_black_1.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat5.png";
-    three_black_2.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat4.png";
-    three_black_3.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat6.png";
-    three_black_4.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat7.png";
-    two_black_1.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat3.png";
-    two_black_2.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat1.png";
-    two_black_3.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat2.png";
-    
-    bankShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/bank_share.png";
-    clientShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/client_share.png";
-    reconShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/recon_share.png";
-  }); 
-
-  // wait until the shares are loaded before proceeding
-  bankShare.onload = function() {
-    bankShareLoaded=true;
-    tryToDrawRecon();
-  }
-
-  clientShare.onload = function() {
-    clientShareLoaded=true;
-    tryToDrawRecon();
-  }
-
-  reconShare.onload = function() {
-    reconShareLoaded=true;
-    tryToDrawRecon();
-  } 
-
-  // try to draw the cheque canvas
-  function tryToDrawRecon()
-  {
-    // draw the 8 different permutations to generate black/white share
-    tryToDrawShares();
-
-    // loads the cheque animation from the database
-    if (bankShareLoaded && clientShareLoaded && reconShareLoaded)
-    { 
-      var maxX = intro.width-315;
-      var minX = 15;
-
-      document.getElementById("loader").style.display = "none";
-      // ctx.drawImage(clientShare, 0, 0, 300, 300);
-
-      // Get a "handle" on the canvas to work with
-      theCanvas = document.getElementById("intro");
-
-      // define the centre point of the canvas
-      cX = Math.floor(theCanvas.width / 2);
-      cY = Math.floor(theCanvas.height / 2);
-
-      // Get a "context"
-      ctx= theCanvas.getContext("2d");
-
-      // draw the initial image
-      ctx.drawImage(bankShare, 15, 15, 300, 300);
-      ctx.drawImage(clientShare, maxX, 15, 300, 300);
-      ctx.globalAlpha = 1.0;
-
-      // Get the position of the mouse relative to the canvas
-      function getMousePos(canvasDom, mouseEvent) {
-        var rect = canvasDom.getBoundingClientRect();
-        return {
-          x: mouseEvent.clientX - rect.left,
-          y: mouseEvent.clientY - rect.top
-        };
-      }
-
-      // Here we get mouse coordinates and translate to a value
-      // Good old basic algebra from school
-      // Apparently the convention is to start at 0 degrees on the right and go backwards
-      // - someone should have told that to clock-makers
-      theCanvas.addEventListener("mousemove", function(e) {
-        var m = getMousePos(theCanvas, e);
-        if (m.x < cX) {
-          if (m.y < cY) pos = 180 + Math.floor(Math.atan((m.y - cY) / (cX - m.x)) * (180 / Math.PI));
-          else pos = 180 + -Math.floor(Math.atan((m.y - cY) / (m.x - cX)) * (180 / Math.PI));
-        } else {
-          if (m.y < cY) pos = - Math.floor(Math.atan((cY - m.y) / (cX - m.x)) * (180 / Math.PI)) ;
-          else pos = 360 + Math.floor(Math.atan((cY - m.y) / (m.x - cX)) * (180 / Math.PI));
-        }
-
-        // print the result
-        ctx.clearRect(0, 0, intro.width, intro.height);
-      
-        // replace image when it is perfectly overlayed
-        // and prevent pictures from going out of canvas
-        if (m.x >= maxX)
-        {
-          m.x = maxX;
-          ctx.drawImage(reconShare, maxX, 15, 300, 300);
-          return;
-        }
-        else if (m.x < minX)
-          m.x = minX;
-
-        ctx.drawImage(bankShare, 0+m.x, 15, 300, 300);
-        ctx.drawImage(clientShare, maxX, 15, 300, 300);
-      }, false);
-    }
-  }
+  three_black_1.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat5.png";
+  three_black_2.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat4.png";
+  three_black_3.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat6.png";
+  three_black_4.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat7.png";
+  two_black_1.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat3.png";
+  two_black_2.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat1.png";
+  two_black_3.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat2.png";
+  
+  bankShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/bank_share.png";
+  clientShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/client_share.png";
+  reconShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/recon_share.png";
 
   var maxY = B1W2_Black.height-100;
   var minY = 10;
@@ -287,6 +193,71 @@
   // define the centre point of the canvas
   cX = Math.floor(B1W2_Black.width / 2);
   cY = Math.floor(B1W2_Black.height / 2);
+
+  // try to draw the cheque canvas
+  function tryToDrawRecon()
+  {
+    // loads the cheque animation from the database
+    var maxX = intro.width-315;
+    var minX = 15;
+    // ctx.drawImage(clientShare, 0, 0, 300, 300);
+
+    // Get a "handle" on the canvas to work with
+    theCanvas = document.getElementById("intro");
+
+    // define the centre point of the canvas
+    cX = Math.floor(theCanvas.width / 2);
+    cY = Math.floor(theCanvas.height / 2);
+
+    // Get a "context"
+    ctx= theCanvas.getContext("2d");
+
+    // draw the initial image
+    ctx.drawImage(bankShare, 15, 15, 300, 300);
+    ctx.drawImage(clientShare, maxX, 15, 300, 300);
+    ctx.globalAlpha = 1.0;
+
+    // Get the position of the mouse relative to the canvas
+    function getMousePos(canvasDom, mouseEvent) {
+      var rect = canvasDom.getBoundingClientRect();
+      return {
+        x: mouseEvent.clientX - rect.left,
+        y: mouseEvent.clientY - rect.top
+      };
+    }
+
+    // Here we get mouse coordinates and translate to a value
+    // Good old basic algebra from school
+    // Apparently the convention is to start at 0 degrees on the right and go backwards
+    // - someone should have told that to clock-makers
+    theCanvas.addEventListener("mousemove", function(e) {
+      var m = getMousePos(theCanvas, e);
+      if (m.x < cX) {
+        if (m.y < cY) pos = 180 + Math.floor(Math.atan((m.y - cY) / (cX - m.x)) * (180 / Math.PI));
+        else pos = 180 + -Math.floor(Math.atan((m.y - cY) / (m.x - cX)) * (180 / Math.PI));
+      } else {
+        if (m.y < cY) pos = - Math.floor(Math.atan((cY - m.y) / (cX - m.x)) * (180 / Math.PI)) ;
+        else pos = 360 + Math.floor(Math.atan((cY - m.y) / (m.x - cX)) * (180 / Math.PI));
+      }
+
+      // print the result
+      ctx.clearRect(0, 0, intro.width, intro.height);
+    
+      // replace image when it is perfectly overlayed
+      // and prevent pictures from going out of canvas
+      if (m.x >= maxX)
+      {
+        m.x = maxX;
+        ctx.drawImage(reconShare, maxX, 15, 300, 300);
+        return;
+      }
+      else if (m.x < minX)
+        m.x = minX;
+
+      ctx.drawImage(bankShare, 0+m.x, 15, 300, 300);
+      ctx.drawImage(clientShare, maxX, 15, 300, 300);
+    }, false);
+  }
 
   // draw the 8 different permutations to generate black/white share
   function tryToDrawShares()
@@ -677,8 +648,9 @@
   }; // end of window.addEventListener('load', function(){...})
 
   $(window).on("load", function() {
-    console.log("IN!!!");
+    tryToDrawRecon();
     tryToDrawShares();
+    document.getElementById("loader").style.display = "none";
   });
 
 </script>
