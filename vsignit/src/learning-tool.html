@@ -106,7 +106,7 @@
     document.getElementById("loader").style.display = "block";
     var bankShareLoaded=false;
     var clientShareLoaded=false;
-    var reconShareLoaded=false;
+    // var reconShareLoaded=false;
 
     var bankShare = new Image();
     bankShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/bank_share.png";
@@ -127,10 +127,10 @@
       tryToDraw();
     }
 
-    reconShare.onload = function() {
-      reconShareLoaded=true;
-      tryToDraw();
-    }
+    // reconShare.onload = function() {
+    //   reconShareLoaded=true;
+    //   tryToDraw();
+    // }
 
     function tryToDraw()
     {
