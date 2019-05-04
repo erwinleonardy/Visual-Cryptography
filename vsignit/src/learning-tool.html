@@ -4,7 +4,7 @@
 #loader {
   top: -100% !important;
   left: 100% !important;
-  margin: -220px 0 0 -75px !important;
+  margin: -250px 0 0 -75px !important;
 }
 </style>
 
@@ -39,11 +39,14 @@
       <h5>What is Visual Cryptography?</h5>
       <p class="lead">Visual Cryptography is a technique that allows information (images, text, diagrams..) to be encrypted using an encoding system that can be decrypted by the eyes. No computer is required to decode.</p>
 
+      <h5>What is Visual Steganography?</h5>
+      <p class="lead">Steganography is a technique to conceal text, images, videos in a seemingly innocuous file. It makes use of unused pixels in regular computer files in order to hide another hidden text or image.</p>
+
       <h5>Demonstration</h5>
       <p class="lead">Don't take our words at face value! Try it out yourself! <b>Slide to the right</b> to see what happens!</p>
 
       <!-- Canvas -->
-      <canvas id="intro" width="1100" height="330" style="background-color:white; margin-bottom:30px";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+      <canvas id="intro" width="1110" height="330" style="background-color:white; margin-bottom:30px";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
       
       <!-- Loader -->
       <div class="row">
@@ -52,10 +55,37 @@
         </div>
       </div>
 
-      <h5>Why Visual Cryptography?</h5>
-      <p class="lead">As opposed to other forms of cryptography, visual cryptography requires the participation of the user. Decryption of the shares provide information that is only perceived visually, thus deterring automated attacks. It is akin to One Time Pad (OTP) that provides perfect secrecy, this is due to the incomplete information the attacker has to break the cipher.</p>
+      <h5>Why Visual Steganography (Visual Cryptography + Steganography)?</h5>
+      <p class="lead">As opposed to other forms of cryptography, visual cryptography requires the participation of the user. Decryption of the shares provide information that is only perceived visually, thus deterring automated attacks. It is akin to One Time Pad (OTP) that provides perfect secrecy, this is due to the incomplete information the attacker has to break the cipher. The Steganography technique we used allows us to make the secret less obvious and hence enhance the overall security even further.</p>
 
+      <h5>How does it work?</h5>
+      <p class="lead">This awesome technique should be attributed to two of the great Mathematicians: <b>Moni Naor</b> and <b>Adi Shamir</b>. They came out with a technique that requires the share of both parties to exists in order to decrypt the image.</p>
+      <table class="table table-borderless">
+        <tr width="100%">
+          <td><img src="{{ url_for('static', filename='img/learning/left.png') }}" alt=""></td>
+          <td width="30%" class="align-middle">The basis of this technique is that it would overlay two semi-transparent layers on top of each other.</td>
+          <td><img src="{{ url_for('static', filename='img/learning/right.png') }}" alt=""></td>
+        </tr>
 
+        <tr width="100%">
+          <td colspan="3" style="padding-left:80; padding-right:80px">Overlaying (mathematically equivalent to Binary OR operation) both of the shares creates addition interference to the light passing through it.</td>
+        </tr>
+
+        <tr width="100%">
+          <td colspan="3"><img src="{{ url_for('static', filename='img/learning/merge2.png') }}" alt=""></td>
+        </tr>
+
+        <tr width="100%">
+          <td colspan="3" style="padding-left:80; padding-right:80px">When both of the shares are properly overlayed on top of each other, it will divulge the secret image as shown below.</td>
+        </tr>
+
+        <tr width="100%">
+          <td colspan="3"><img src="{{ url_for('static', filename='img/learning/result.png') }}" alt=""></td>
+        </tr>
+      </table>
+
+      <!-- <h5>How does the Visual Steganography work?</h5>
+      <p class="lead"></p> -->
     </div>
   </form>
   
