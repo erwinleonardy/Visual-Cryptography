@@ -4,7 +4,7 @@
 #loader {
   top: -100% !important;
   left: 100% !important;
-  margin: -250px 0 0 -75px !important;
+  margin: -350px 0 0 -60px !important;
 }
 </style>
 
@@ -43,10 +43,13 @@
       <p class="lead">Steganography is a technique to conceal text, images, videos in a seemingly innocuous file. It makes use of unused pixels in regular computer files in order to hide another hidden text or image.</p>
 
       <h5>Demonstration</h5>
-      <p class="lead">Don't take our words at face value! Try it out yourself! <b>Slide to the right</b> to see what happens!</p>
-
+      <p class="lead"></p>
+     
       <!-- Canvas -->
-      <canvas id="intro" width="1110" height="330" style="background-color:white; margin-bottom:30px";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+      <canvas id="intro" width="1110" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+      <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6" style="padding: 0px !important; margin: 0px !important; max-width:1110px">
+        <div id="response-msg" class="alert alert-info" role="alert" style="width:100%; text-align: center">Don't take our words at face value! <b>Slide to the right</b> to see what happens!</div>
+      </div>
       
       <!-- Loader -->
       <div class="row">
@@ -87,7 +90,7 @@
       <h5>How does Visual Steganography work?</h5>
       <p class="lead">With this technique, we are going to sub-divide each pixel into (2x2) subpixels; these pixels are randomly generated and it has to conform to the following rules: when both of the images are overlayed, we can represent the <b>black pixels with 4 black sub-pixels</b> and <b>white with 3 black sub-pixels.</b></p>
 
-      <table class="table table-striped">
+      <table class="table table-striped" style="margin:0px !important">
         <tr>
           <td colspan="4">Black</td>
           <td colspan="4">White</td>
@@ -144,20 +147,23 @@
             <canvas id="W1W2_White" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
           </td>
         </tr>
-
-        <tr>
-          <td colspan="8">TRY IT OUT: Slide to the bottom to see what happens upon overlaying the two shares!</td>
-        </tr>
       </table>
+
+      <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6" style="padding: 0px !important; margin: 0px !important; max-width:1110px">
+        <div id="response-msg" class="alert alert-info" role="alert" style="width:100%; text-align: center">TRY IT OUT: <b>Slide to the bottom</b> to see what happens upon overlaying the two shares!</div>
+      </div>
 
       <h5>How does the cleaning algorithm work?</h5>
       <p class="lead">As you can see from the interactive animation above, only shares with 4 sub-pixels would be interpreted as black, any lesser than that (3 sub-pixels) would be interpreted as white colour.</p>
      
-      <div id="recon_clean_containter" style="max-width: 400px;">
+      <div id="recon_clean_containter" style="max-width: 400px; padding: 0px !important;" class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
         <img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/recon_share.png">
         <img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/recon_clean.png">
       </div>
-      <p class="lead">TRY IT OUT: Slide to see our cleaning algorithm in action!</p>
+
+      <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6" style="padding: 0px !important; max-width:400px">
+        <div id="response-msg" class="alert alert-info" role="alert" style="width:100%; text-align: center">TRY IT OUT : Slide to see our magic in action!</div>
+      </div>
 
     </div>
   </form>
