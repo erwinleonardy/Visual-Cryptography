@@ -4,7 +4,7 @@
 #loader {
   top: -100% !important;
   left: 100% !important;
-  margin: -350px 0 0 -60px !important;
+  margin: -300px 0 0 -60px !important;
 }
 </style>
 
@@ -57,6 +57,8 @@
           <div id="loader"></div>
         </div>
       </div>
+
+      <hr class="my-4">
 
       <h5>Why Visual Steganography (Visual Cryptography + Steganography)?</h5>
       <p class="lead">As opposed to other forms of cryptography, visual cryptography requires the participation of the user. Decryption of the shares provide information that is only perceived visually, thus deterring automated attacks. It is akin to One Time Pad (OTP) that provides perfect secrecy, this is due to the incomplete information the attacker has to break the cipher. The Steganography technique we used allows us to make the secret less obvious and hence enhance the overall security even further.</p>
@@ -154,7 +156,7 @@
       </div>
 
       <h5>How does the cleaning algorithm work?</h5>
-      <p class="lead">As you can see from the interactive animation above, only shares with 4 sub-pixels would be interpreted as black, any lesser than that (3 sub-pixels) would be interpreted as white colour.</p>
+      <p class="lead">As you can see from the interactive animation above, only shares with 4 sub-pixels would be interpreted as black, any lesser than that (3 sub-pixels) would be interpreted as white colour. This step would convert those (2x2) subpixels into one pixel based on the algorithm ussed above.</p>
      
       <div id="recon_clean_containter" style="max-width: 400px; padding: 0px !important;" class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
         <img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/recon_share.png">
@@ -162,8 +164,11 @@
       </div>
 
       <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6" style="padding: 0px !important; max-width:400px">
-        <div id="response-msg" class="alert alert-info" role="alert" style="width:100%; text-align: center">TRY IT OUT : Slide to see our magic in action!</div>
+        <div id="response-msg" class="alert alert-info" role="alert" style="width:100%; text-align: center">TRY IT OUT : <b>Move the slider</b> to see the magic!</div>
       </div>
+
+      <!-- <h5>Do you think you can answer these questions?</h5>
+      <canvas id="quiz" width="500px" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas> -->
 
     </div>
   </form>
