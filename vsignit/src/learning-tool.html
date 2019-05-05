@@ -151,10 +151,19 @@
       </table>
 
       <h5>How does the cleaning algorithm work?</h5>
-      <p class="lead">As you can see from the interactive animation above, only shares with 4 sub-pixels would be interpreted as black, any lesser than that (3 sub-pixels) would be interpreted as white colour. Hover over the picture to see how it works!</b></p>
+      <p class="lead">As you can see from the interactive animation above, only shares with 4 sub-pixels would be interpreted as black, any lesser than that (3 sub-pixels) would be interpreted as white colour.</p>
+     
+      <div id="recon_clean_containter" style="max-width: 400px;">
+        <img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/recon_share.png">
+        <img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/recon_clean.png">
+      </div>
+      <p class="lead">TRY IT OUT: Slide to see our cleaning algorithm in action!</p>
 
     </div>
   </form>
+
+  <br><br>
+  <p class="lead" style="text-align: center">&copy; vSignIt 2019</p>
   
 </div>
 
@@ -342,6 +351,7 @@
   $(window).on("load", function() {
     tryToDrawRecon();
     tryToDrawShares();
+    $("#recon_clean_containter").twentytwenty();
     document.getElementById("loader").style.display = "none";
   });
 
