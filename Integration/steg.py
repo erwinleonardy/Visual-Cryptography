@@ -1,14 +1,12 @@
-import random
-from PIL import Image
+import random, secrets
+from PIL import Image, ImageDraw, ImageFont
 
 # -- preset colors --
 B = 0
 W = 255
 
 # -- File names -- 
-hidden_name = 'img/kim.png'
-source1_name = 'img/whitebox.png'
-source2_name = 'img/triangle.png'
+hidden_name = 'img/ali.png'
 share1_name = 'share1.png'
 share2_name = 'share2.png'
 
@@ -35,6 +33,21 @@ def convertToBlack(img):
 def openImage(filename):
   img = Image.open(filename)
   img = convertToBlack(img)
+  return img
+
+# create source images
+def createSource(size):
+  choice = (W, B)
+  color = random.choice(choice)
+
+  img = Image.new('1', size, color)
+  font = ImageFont.truetype("font/BebasNeue-Regular.ttf", 110)
+  word = secrets.token_urlsafe(3)
+  wordSize = font.getsize(word)
+  cords = ((img.width - wordSize[0])//2,(img.height - wordSize[1])//2)
+
+  draw = ImageDraw.Draw(img)
+  draw.text(cords, word, (255 - color), font)
   return img
 
 # open shares safely
@@ -178,7 +191,7 @@ def shareSplitter(hidden, source1, source2):
 # cleans reconstructed image to remove random noise
 def cleanSecret(secret):
   clean = Image.new('RGBA', secret.size)
- 
+
   for x in range(0, secret.width, 2):
     for y in range(0, secret.height, 2):
       sum = secret.getpixel((x, y)) + secret.getpixel((x + 1, y)) + \
@@ -205,8 +218,10 @@ if __name__ == "__main__":
   # [Opening Files]
   hidden = openImage(hidden_name)
   hidden.show() # 1ST image to open is the cleaned original image
-  source1 = openImage(source1_name)
-  source2 = openImage(source2_name)
+  source1 = createSource(hidden.size)
+  source2 = createSource(hidden.size)
+  source1.show()
+  source2.show()
 
   # [Generating Shares Phase]
   share1, share2 = shareSplitter(hidden, source1, source2)
