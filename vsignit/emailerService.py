@@ -1,5 +1,5 @@
 # Filename: emailerService.py
-# Author: Amit Hundal, Harpreet Kang 
+# Author: Amit Hundal, Harpreet Kang
 # Descrption: Defines functions to send asynchronous emails
 
 import inspect

@@ -4,7 +4,7 @@
 
 import os, time, datetime, base64, hashlib
 
-from vsignit.common import Common, signX, signY
+from vsignit.common import Common, signCords
 from vsignit.models import Transaction
 from vsignit import db
 
@@ -31,10 +31,10 @@ class Client:
   # Function pastes the source pic on top of the destination pic
   @staticmethod
   def signcheque(client_share, client_cheque, filepath, client_username):
-    client_cheque.paste (client_share,(signX, signY))   
+    client_cheque.paste(client_share, signCords) 
 
     # save the file temporarily
-    Common.save_image (client_cheque, filepath)      
+    Common.save_image(client_cheque, filepath)
 
     # export the image to base64 format
     os.makedirs(os.path.dirname(filepath), exist_ok=True)

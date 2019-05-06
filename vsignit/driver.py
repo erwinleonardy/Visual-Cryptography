@@ -7,10 +7,10 @@ import PIL.ImageOps, re, time, base64, sys, os
 from flask import url_for
 from PIL import Image
 
-from vsignit.shareReconstructor import ShareReconstuctor
+from vsignit.shareReconstructor import ShareReconstructor
 from vsignit.shareSplitter import ShareSplitter
 from vsignit.register import Register
-from vsignit.common import Common
+from vsignit.common import Common, imageSize
 from vsignit.client import Client
 from vsignit.login import Login
 
@@ -31,17 +31,11 @@ class Driver():
   # Share Splitter Driver Function
   @staticmethod
   def create_shares(image, username):
-    # checks if the username exists
-    if Common.user_exists(username) == None:
-      return "No User"
-
-    # resize the image
-    image = ShareSplitter.resize(image)
-
     # split into two shares
-    outfile1, outfile2 = ShareSplitter.create_shares(image)
+    splitter = ShareSplitter()
+    outfile1, outfile2 = splitter.createShares(image)
 
-    # send the shares to the 
+    # send the shares to the database
     encoded_str = ShareSplitter.store_shares(outfile1, outfile2, username)
 
     return encoded_str
@@ -49,28 +43,21 @@ class Driver():
   # Share Reconstruction Driver Function
   @staticmethod
   def reconstruct_shares(transaction):
+    
     # retrieves the client cheque
-    transactionNo, clientCheque = ShareReconstuctor.get_client_cheque(transaction)
-
+    transactionNo, clientCheque = ShareReconstructor.get_client_cheque(transaction)
+    
     # retrieves the bankShare
-    bankShare = ShareReconstuctor.get_bank_share(transaction)
+    bankShare = ShareReconstructor.get_bank_share(transaction)
     
     # reconstruct the shares based on the client cheque and bank share given
-    outfile = ShareReconstuctor.reconstruct_shares(transactionNo, clientCheque, bankShare)
-    
-    # if error occurs, it will return None
-    if outfile == "":
+    if clientCheque == None:
       return ""
-
-    # else, proceed
-    else:
-      # pass through 2 cleaning processes
-      outfile = ShareReconstuctor.remove_noise(transactionNo, outfile)
-
-      # send the reconstructed shares to the client
-      recon_cheque, clean1, recon = ShareReconstuctor.get_reconstructed(transaction, clientCheque, outfile)
-
-      return recon_cheque, clean1, recon
+    
+    reconstructor = ShareReconstructor()
+    recon_cheque, clean1, recon = reconstructor.reconstructCheque(bankShare, clientCheque, transactionNo)
+ 
+    return recon_cheque, clean1, recon
 
   # Function triggered during verification process
   # Success : Send successful email and delete transaction
@@ -94,14 +81,14 @@ class Driver():
   @staticmethod
   def transaction_deletion(transaction):
     # delete existing image
-    ShareReconstuctor.delete_cheque (transaction)
+    ShareReconstructor.delete_cheque (transaction)
 
     # send rejection email
     Common.transaction_email(transaction.getTranscationNo(), transaction.getClientId(), transaction.getBankId(), 'reject')
 
     # delete the share from the DB and remove the image
-    ShareReconstuctor.delete_transaction(transaction)
-    ShareReconstuctor.delete_transactionImages(transaction)
+    ShareReconstructor.delete_transaction(transaction)
+    ShareReconstructor.delete_transactionImages(transaction.getTranscationNo())
 
   # Client Page Driver Function
   @staticmethod

@@ -2,68 +2,166 @@
 # Author: Erwin Leonardy
 # Descrption: This file contains all of the necessary functions to split the shares
 
-import PIL.ImageOps, random, base64, os
+import PIL.ImageOps, random, base64, os, secrets
 from sqlalchemy.exc import IntegrityError
 from flask_login import current_user
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 from vsignit.models import User, UserType, Client_Data, Bank_Data
 from vsignit.emailerService import EmailerService
-from vsignit.common import Common
+from vsignit.common import Common, imageSize, B, W
 from vsignit import db
 
 class ShareSplitter():
-  # Function resizes to the desired dimension (200 x 200)
-  @staticmethod
-  def resize(image):
-    return image.resize((200, 200))
+  def __init__(self):
+    pass
 
-  # Function split image into two shares using (2,2) Basic VC Scheme
-  @staticmethod
-  def create_shares(image):
-    pattern = ((0,0,255,255), (255,255,0,0), (0,255,255,0), (255,0,0,255), (255,0,255,0), (0,255,0,255))
-
-      # 1 -> 8bit B/W
-    share1 = Image.new("1", [dimension * 2 for dimension in image.size])
-    share2 = Image.new("1", [dimension * 2 for dimension in image.size])
+  # If both source1, source2 pixels are black
+  def b1b2(self, hiddenColor):
+    setA = ((W,B,B,B), (B,W,B,B), (B,B,W,B), (B,B,B,W))
+    share1Pixel = random.choice(setA)
     
-    # horizontal axis
-    for x in range(0, image.size[0], 2):
-      # vertical axis
-      for y in range(0, image.size[1], 2):
-        # checks if it is black / white
-        sourcepixel = image.getpixel((x, y))
-        assert sourcepixel in (0, 255)  # prints error if assert fails
-        pat = random.choice(pattern)
+    # IF secret pixel is black: set share pixels with 3 black pixels each, 
+    # such that when they overlap they form a set of 4 black pixels
+    # ELIF secret pixel is white: set both share pixels with 3 of the same black pixels
+    if (hiddenColor == B):
+      share2Pixel = share1Pixel
+      # as long as the set of 4 subpixels are not the same, condition is met
+      while (share1Pixel == share2Pixel):
+        share2Pixel = random.choice(setA)
+    elif (hiddenColor == W):
+      share2Pixel = share1Pixel
 
-        # always get one share
-        share1.putpixel((x * 2, y * 2), pat[0])
-        share1.putpixel((x * 2 + 1, y * 2), pat[1])
-        share1.putpixel((x * 2, y * 2 + 1), pat[2])
-        share1.putpixel((x * 2 + 1, y * 2 + 1), pat[3])
-    
-        # if it is black
-        # pick a complimentary pair
-        # i.e.
-        # X O   O X
-        # O X   X O
-        if sourcepixel == 0:
-          share2.putpixel((x * 2, y * 2), 255 - pat[0])
-          share2.putpixel((x * 2 + 1, y * 2), 255 - pat[1])
-          share2.putpixel((x * 2, y * 2 + 1), 255 - pat[2])
-          share2.putpixel((x * 2 + 1, y * 2 + 1), 255 - pat[3])
-        
-        # if it is white
-        # pick the same pairs
-        # i.e.
-        # X O   X O
-        # O X   O X
-        elif sourcepixel == 255:
-          share2.putpixel((x * 2, y * 2), pat[0])
-          share2.putpixel((x * 2 + 1, y * 2), pat[1])
-          share2.putpixel((x * 2, y * 2 + 1), pat[2])
-          share2.putpixel((x * 2 + 1, y * 2 + 1), pat[3])
+    return (share1Pixel, share2Pixel)
+
+  # If one source pixel is black, and the other white
+  def b1w2(self, hiddenColor):
+    # IF secret pixel is black: source with black pixel will have 3 black pixels
+    # while source with white pixel will have 2 black pixels, when overlapped they should
+    # form a set of 4 black pixels
+    # ELIF secret pixel is white: same as black, but when overlapped they should form a set
+    # of 3 black pixels
+    if (hiddenColor == B):
+      share1Pixel = [B,B,B,B]
+      share2Pixel = [W,W,W,W]
+
+      blackOne = random.randint(0,3)
+      share1Pixel[blackOne] = W # remove 1 random black pixel from share1
+      blackTwo = blackOne
+      while (blackTwo == blackOne):
+        blackTwo = random.randint(0,3)
+
+      share2Pixel[blackOne] = B # set overlapping black pixel
+      share2Pixel[blackTwo] = B # set black pixel to meet condition
+
+      share1Pixel = tuple(share1Pixel)
+      share2Pixel = tuple(share2Pixel)
+    elif (hiddenColor == W):
+      setA = ((W,B,B,B), (B,W,B,B), (B,B,W,B), (B,B,B,W))
+      share1Pixel = random.choice(setA)
+      share2Pixel = list(share1Pixel)
+      i_B = 0 # location of black pixel to remove
+      for i in range(len(share2Pixel)):
+        if (share2Pixel[i] == B):
+          i_B = i
+
+      share2Pixel[i_B] = W # remove a black pixel
+      share2Pixel = tuple(share2Pixel)
+
+    return (share1Pixel, share2Pixel)
+
+  # If both source1, source2 pixels are white
+  def w1w2(self, hiddenColor):
+    setA = ((W,W,B,B), (B,B,W,W), (W,B,W,B), (B,W,B,W), (W,B,B,W), (B,W,W,B))
+    share1Pixel = random.choice(setA)
+
+    # IF secret pixel is black: both shares will have 2 black subpixels each, such that when
+    # overlapped they form 4 black pixels
+    # ELIF secret pixel is white: same as above, but when overlapped they should form a set
+    # of 3 black pixels
+    if (hiddenColor == B):
+      share2Pixel = [B,B,B,B]
+      # share2Pixels are opposite of share1Pixels
+      for i in range(len(share1Pixel)):
+        if (share1Pixel[i] == B):
+          share2Pixel[i] = W
       
+      share2Pixel = tuple(share2Pixel)
+    elif (hiddenColor == W):
+      share2Pixel = list(share1Pixel)
+      i_B = 0 
+      i_W = 0
+      for i in range(len(share2Pixel)):
+        if (share2Pixel[i] == B):
+          i_B = i
+        else:
+          i_W = i
+
+      share2Pixel[i_B] = W # a black pixel is replaced
+      share2Pixel[i_W] = B # a white pixel is replaced
+      share2Pixel = tuple(share2Pixel)
+
+    return (share1Pixel, share2Pixel)
+
+  # based on the pixel colors from hidden, source1, source2,
+  # set the subpixels of the two new shares
+  def setSharePixels(self, hidden, source1, source2, share1, share2, cords):
+    # get pixel color for the following, each either black or white
+    hiddenPxl = hidden.getpixel(cords)
+    source1Pxl = source1.getpixel(cords)
+    source2Pxl = source2.getpixel(cords)
+
+    # 4 possible combinations of source1, source2 pixel color,
+    # each case results in a different set of subpixels in shares
+    if (source1Pxl == B and source2Pxl == B):
+      subPixels = self.b1b2(hiddenPxl)
+    elif (source1Pxl == B and source2Pxl == W):
+      subPixels = self.b1w2(hiddenPxl)
+    elif (source1Pxl == W and source2Pxl == B):
+      subPixels = self.b1w2(hiddenPxl)
+      share1, share2 = share2, share1
+    elif (source1Pxl == W and source2Pxl == W):
+      subPixels = self.w1w2(hiddenPxl)
+
+    subCords = (cords[0] * 2, cords[1] * 2)
+    Common.placePixels(share1, subPixels[0], subCords)
+    Common.placePixels(share2, subPixels[1], subCords)
+
+  # create source images
+  def createSource(self, size):
+    choice = (W, B)
+    color = random.choice(choice)
+
+    img = Image.new('1', size, color)
+    font = ImageFont.truetype("vsignit/font/BebasNeue-Regular.ttf", 110)
+    word = secrets.token_urlsafe(3)
+    wordSize = font.getsize(word)
+    cords = ((img.width - wordSize[0])//2,(img.height - wordSize[1])//2)
+
+    draw = ImageDraw.Draw(img)
+    draw.text(cords, word, (255 - color), font)
+    return img
+
+  # creates two new shares based on three images provided
+  def createShares(self, hidden):
+    # resize image to fit on cheque after reconstruction
+    if (hidden.size != imageSize):
+      hidden = Common.resize(hidden)
+      
+    # create source images to base shares off
+    source1 = self.createSource(hidden.size)
+    source2 = self.createSource(hidden.size)
+
+    # create new images for manipulation
+    share1 = Image.new('1', (source1.width*2, source1.height*2))
+    share2 = Image.new('1', (source1.width*2, source1.height*2))
+
+    # x is horizontal, y is vertical; start from (0,0) 
+    for x in range(hidden.width):
+      for y in range(hidden.height):
+        cords = (x, y) # pixel coordinates
+        self.setSharePixels(hidden, source1, source2, share1, share2, cords)
+
     return share1, share2
 
   # Function sends client/bank shares to respective emails
@@ -98,21 +196,3 @@ class ShareSplitter():
       db.session.add(newClientData)
       db.session.commit()
       return "Bank share and user shares have been created and stored!"
-
-    # email share to the client
-    # emailer = EmailerService()
-    # emailer.sendShare(email, client_sharename)
-
-    # convert the image into base64
-    # with open(bank_share_path, "rb") as image_file:
-    #     encoded_string = base64.b64encode(image_file.read())
-
-    # delete the temp files
-    # os.remove(bank_sharename)
-    # os.remove(client_sharename)
-
-    # send back bank share to the bank using AJAX
-
-    # image1 = open_image ("cheque.jpg", 0)
-    # image1.paste(outfile1, (signX, signY))       
-    # save_image (image1, "cheque/share1")  

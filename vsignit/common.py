@@ -10,25 +10,65 @@ from PIL import Image
 from vsignit.models import User, Client_Data, Transaction
 from vsignit.emailerService import EmailerService
 
-signX = 1740
-signY = 750
-signWidth = 200                 # 200 x 200 pixels
-doubSignSize = signWidth * 2
-reconDist = signWidth - 85
+B = 0
+W = 255
+signCords = (1750, 750)
+imageSize = (200, 200)
+shareSize = (imageSize[0] * 2, imageSize[1] * 2)
 
 class Common():
-  # Function Opens an Image
+  # Function resizes to the desired dimension (200 x 200)
   @staticmethod
-  def open_image(path, bw):
+  def resize(image):
+    return image.resize(imageSize)
+
+  # converts a normal image to pure black.white pixels
+  # RGB converted to B/W based on which color they are closer to
+  @staticmethod
+  def convertSecretToBlack(img):
+    img = img.convert('RGB')
+    image = Image.new('1', img.size)
+
+    # replace all pixels with either black or white pixels
+    # if RGB values are closer to white, replace with white, else black
+    for x in range(img.width):
+      for y in range(img.height):
+        tup = img.getpixel((x,y))
+        if (tup[0] > 175 and tup[1] > 175 and tup[1] > 175):
+          image.putpixel((x,y), W)
+        else:
+          image.putpixel((x,y), B)
+
+    return image
+
+  # Open a normal image from filepath
+  @staticmethod
+  def openSecret(filename):
     try:
-      image = Image.open(path)
-
-      if bw == 1:
-        image = image.convert('1')  # convert image to black and white
-      return image
-
+      img = Image.open(filename)
+      img = Common.convertSecretToBlack(img)
+      return img
     except IOError:
       return None
+
+  # open shares safely
+  @staticmethod
+  def openImage(filename):
+    try:
+      img = Image.open(filename)
+      return img
+    except IOError:
+      return None
+
+  # sets the subpixels within shares
+  @staticmethod
+  def placePixels(share, tup, cords):
+    x, y = cords[0], cords[1]
+
+    share.putpixel((x, y), tup[0])
+    share.putpixel((x + 1, y), tup[1])
+    share.putpixel((x, y + 1), tup[2])
+    share.putpixel((x + 1, y + 1), tup[3])
 
   # Function Saves Image
   @staticmethod
@@ -49,9 +89,9 @@ class Common():
 
     else:
       try:
-        image.resize((signWidth, signWidth))
+        image.resize(imageSize)
         img_w, img_h = image.size
-        background = Image.new('1', (signWidth, signWidth), 255)
+        background = Image.new('1', imageSize, 255)
         bg_w, bg_h = background.size
         offset = ((bg_w - img_w) // 2, (bg_h - img_h) // 2)
         background.paste(image, offset)

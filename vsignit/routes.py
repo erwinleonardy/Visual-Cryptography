@@ -113,7 +113,7 @@ def bank_generate():
 
       except Exception as e:
         return str(e)
-
+  #shareshare
   elif request.method == 'POST':      
     # convert the base64 image to an image
     base64_data = re.sub('^data:image/.+;base64,', '', request.form['file'])
@@ -127,11 +127,16 @@ def bank_generate():
       fh.write(byte_data)
 
     # generate two shares and send one of the shares to the server
-    image = Common.open_image (filepath, 1)
+    image = Common.openSecret(filepath)
 
     # checks if the image dimension is valid
     if Common.validate_resize_image(image) != None:
-      bank_share = Driver.create_shares(image, username)
+      # checks if the username exists
+      if Common.user_exists(username) == None:
+        bank_share = "No User"
+      else:
+        bank_share = Driver.create_shares(image, username)
+
       os.remove("./vsignit/output/tmp/" + username + "_imageToSave.png")
       return bank_share
 
@@ -198,7 +203,8 @@ def bank_reconstruct_verify():
           # if user enters without entering transactionID
           if transactionNo == None:
             raise ValueError
-
+            
+          #shareshare
           else:
             # reconstruct the share and sends the base64 to the client
             recon_cheque, clean1, recon = Driver.reconstruct_shares (transaction)
@@ -222,8 +228,7 @@ def bank_reconstruct_verify():
     Driver.transaction_deletion (transaction)
         
     return url_for('bank_reconstruct')
-            
-    
+
 @app.route('/client', methods=['GET', 'POST'])
 def client():
   if request.method == 'GET':
@@ -243,9 +248,9 @@ def client():
         return render_template('client.html', result=result, usernames=usernames, clientName=result.getUsername())
     except Exception as e:
         return str(e)
-
+  #shareshare
   elif request.method == 'POST':
-    # retrieve the client's share from the databse
+    # retrieve the client's share from the database
     clientUsername = User.query.filter_by(id=current_user.get_id()).first().getUsername()
     bankUsername = request.form['bankName']
 
@@ -264,8 +269,8 @@ def client():
       fh.write(byte_data1)
 
     # get the clientCheque and clientShare that we are going to overlay
-    clientCheque = Common.open_image (filepath, 1)
-    clientShare = Common.open_image (clientSharePath, 1)
+    clientCheque = Common.openImage(filepath)
+    clientShare = Common.openImage(clientSharePath)
 
     # paste the client share on top of the blank share given by the client
     resultStr = Driver.client_signcheque (clientShare, clientCheque, clientID, bankID)

@@ -5,18 +5,20 @@
 import PIL.ImageOps, base64, os
 from PIL import Image
 
-from vsignit.common import signX, signY, signWidth, doubSignSize, reconDist
+from vsignit.common import Common, signCords, B, W #signX, signY, signWidth, doubSignSize, reconDist
 from vsignit.models import Transaction, Bank_Data
-from vsignit.common import Common
 from vsignit import db
 
-class ShareReconstuctor():
+class ShareReconstructor():
+  def __init__(self):
+    pass
+
   # Function gets the client cheque from the database
   @staticmethod
   def get_client_cheque(transaction):
     transaction_no = transaction.getTranscationNo()
     chequePath = transaction.getFilePath()
-    return transaction_no, Common.open_image(chequePath, 1)
+    return transaction_no, Common.openImage(chequePath)
 
   # Function gets the bank share from the database
   @staticmethod
@@ -25,14 +27,7 @@ class ShareReconstuctor():
     clientID = transaction.getClientId()
 
     bankSharePath = Bank_Data.query.filter_by(bank_userid=bankID, client_userid=clientID).first().getBankSharePath()
-    return Common.open_image(bankSharePath, 1)
-
-  # Function overlays the picture and preserves its transparency
-  @staticmethod
-  def overlay_pic(transaction_no, sourcepath, dest):
-    source = Image.open(sourcepath)
-    dest.paste(source, (signX+reconDist, signY+(reconDist*2)), mask=source)       
-    Common.save_image (dest, "./vsignit/output/tmp/recon_cheque_" + transaction_no + ".png")   
+    return Common.openImage(bankSharePath)
 
   # Function removes the cheque image which bears the transaction number given
   @staticmethod
@@ -42,14 +37,14 @@ class ShareReconstuctor():
     if not os.path.isfile(chequeFilepath):
       raise ValueError
     os.remove(chequeFilepath)
-
+  
   # Function removes and temp. reconstructed images from the database
   @staticmethod
-  def delete_transactionImages(transaction):
-    reconCheque = "./vsignit/output/tmp/recon_cheque_" + transaction.getTranscationNo() + ".png"
-    reconFilepath = "./vsignit/output/tmp/recon_" + transaction.getTranscationNo() + ".png"
-    clean1Filepath = "./vsignit/output/tmp/clean1_" + transaction.getTranscationNo() + ".png"
-    clean2Filepath = "./vsignit/output/tmp/clean2_" + transaction.getTranscationNo() + ".png"
+  def delete_transactionImages(transaction_no):
+    reconCheque = "./vsignit/output/tmp/recon_cheque_" + transaction_no + ".png"
+    reconFilepath = "./vsignit/output/tmp/recon_" + transaction_no + ".png"
+    clean1Filepath = "./vsignit/output/tmp/clean1_" + transaction_no + ".png"
+    clean2Filepath = "./vsignit/output/tmp/clean2_" + transaction_no + ".png"
 
     if os.path.isfile(reconCheque):
       os.remove(reconCheque)
@@ -66,121 +61,69 @@ class ShareReconstuctor():
     db.session.delete(transaction)
     db.session.commit()
 
-  # Function reconstructs the image using two of the shares
-  @staticmethod
-  def reconstruct_shares(transaction_no, clientCheque, bankShare):
-    bankWidth, bankHeight = bankShare.size
-    signWidth = int(bankWidth / 2)
-    doubSignSize = signWidth * 2
+  # cleans reconstructed image to remove random noise
+  def cleanSecret(self, secret):
+    clean = Image.new('RGBA', secret.size)
 
-    if clientCheque == None:
-      return ""
+    for x in range(0, secret.width, 2):
+      for y in range(0, secret.height, 2):
+        sum = secret.getpixel((x, y)) + secret.getpixel((x + 1, y)) + \
+                secret.getpixel((x, y + 1)) + secret.getpixel((x + 1, y + 1))
+        if (sum > 0):
+          alpha = ((W,W,W,0), (W,W,W,0), (W,W,W,0), (W,W,W,0))
+        else:
+          alpha = ((B,B,B,255), (B,B,B,255), (B,B,B,255), (B,B,B,255))
+          
+        Common.placePixels(clean, alpha, (x, y))
 
-    # extract the shares area
-    clientShare = clientCheque.crop((signX, signY, signX+(doubSignSize), signY+(doubSignSize)))
-    clientShare.thumbnail((doubSignSize, doubSignSize), Image.ANTIALIAS)
+    return clean
+
+  def reconstructShares(self, bankShare, clientShare, transaction_no):
+    bankShare.paste(clientShare, mask = bankShare)
+    Common.save_image(bankShare, "./vsignit/output/tmp/recon_" + transaction_no + ".png")
+
+    secret = self.cleanSecret(bankShare)
+    Common.save_image(secret, "./vsignit/output/tmp/clean1_" + transaction_no + ".png")
+    Common.save_image (secret, "./vsignit/output/tmp/clean2_" + transaction_no + ".png")
+    return secret, bankShare
+
+  def resetCheque(self, cheque, size, crop):
+    white = Image.new('1', size, W)
+    cheque.paste(white, crop)
+
+  def reconstructCheque(self, bankShare, cheque, transaction_no):
+    cropRegion = (signCords[0], signCords[1], signCords[0] + bankShare.width, signCords[1] + bankShare.height)
+    clientShare = cheque.crop(cropRegion)
     clientShare = clientShare.convert('1')
-    clientWidth, clientHeight = clientShare.size
 
     # checks if both of the shares have the same dimension
-    if (bankWidth == clientWidth and bankHeight == clientHeight): 
-        try:
-            # reconstruct the shares
-            outfile = Image.new('1', clientShare.size)
+    if (clientShare.size != bankShare.size):
+      return ""
 
-            for x in range(clientShare.size[0]):
-                for y in range(clientShare.size[1]): 
-                    outfile.putpixel((x,y), min(clientShare.getpixel((x, y)), bankShare.getpixel((x, y))))
+    try:
+      secret, clean1 = self.reconstructShares(bankShare, clientShare, transaction_no)
+    except Exception:
+      return ""
 
-            Common.save_image (outfile, "./vsignit/output/tmp/recon_" + transaction_no + ".png")    
-
-            return outfile
-        
-        except IndexError:
-            return ""
-
-    # if no, return null (error)
-    else:
-        return ""
-
-  # Function resizes the reconstructed image and clean the noise
-  @staticmethod
-  def remove_noise(transaction_no, inputImg):
-    outfile = Image.new("1", [int(dimension / 2) for dimension in inputImg.size], 255)
-    length, width = inputImg.size
-
-    # Cleaning (Phase 1)
-    # only writes black iff
-    # the (2x2) block is black
-    # i.e.
-    # B B
-    # B B
-    for yIn, yOut in zip(range(0,width,2), range(width)):
-        for xIn, xOut in zip(range(0,length,2), range(length)):
-            if (inputImg.getpixel((xIn, yIn)) != 255 and
-                inputImg.getpixel((xIn + 1, yIn)) != 255 and
-                inputImg.getpixel((xIn, yIn + 1)) != 255 and
-                inputImg.getpixel((xIn + 1, yIn + 1)) != 255):
-                outfile.putpixel((xOut, yOut), 0)
-
-    Common.save_image (outfile, "./vsignit/output/tmp/clean1_" + transaction_no + ".png")
-
-    # Cleaning (Phase 2)
-    # only writes black iff
-    # the block has following pattern
-    # i.e.
-    # W B  =>  W W
-    # B B      W W
-    result = outfile
-    for y in range (0,result.size[0], 2):
-        for x in range (0, result.size[1], 2):
-            if (outfile.getpixel((x,y)) == 255 and
-                outfile.getpixel((x + 1, y)) == 0 and
-                outfile.getpixel((x, y + 1)) == 0 and
-                outfile.getpixel((x + 1, y + 1)) == 0):
-                result.putpixel((x + 1, y), 255)
-                result.putpixel((x, y + 1), 255)
-                result.putpixel((x + 1, y + 1), 255)
-    
-    # create transparent layer to be pasted on cheque
-    image_trans = Image.new("RGBA", (result.size[0], result.size[1]), (255,255,255,0))
-
-    for y in range (0,result.size[0]):
-        for x in range (0, result.size[1]):
-            if (outfile.getpixel((x,y)) == 0):
-                image_trans.putpixel((x,y), (0,0,0,255))
-
-    Common.save_image (image_trans, "./vsignit/output/tmp/clean2_" + transaction_no + ".png")
-
-    return outfile
-
-  # Function will allow the bank's share to be downloaded
-  @staticmethod
-  def get_reconstructed(transaction, clientCheque, outfile):
-    # replace the area with white color
-    for x in range(signX, signX+(doubSignSize)):
-        for y in range(signY, signY+(doubSignSize)):
-            clientCheque.putpixel((x, y), 255)
-
-    # place the clean shares to it
-    transaction_no = transaction.getTranscationNo()
-    ShareReconstuctor.overlay_pic(transaction_no, "./vsignit/output/tmp/clean2_" + transaction_no + ".png", clientCheque)
+    self.resetCheque(cheque, clientShare.size, cropRegion)
+    cheque.paste(secret, signCords, secret)
+    Common.save_image(cheque, "./vsignit/output/tmp/recon_cheque_" + transaction_no + ".png")
 
     # send back all of the images back in BASE64 format
-    bankUsername = transaction.getBankUsername()
-    clientUsername = transaction.getClientUsername()
+    # bankUsername = transaction.getBankUsername()
+    # clientUsername = transaction.getClientUsername()
 
     with open("./vsignit/output/tmp/recon_cheque_" + transaction_no + ".png", "rb") as data:
-      recon_cheque = base64.b64encode(data.read())
+      cheque = base64.b64encode(data.read())
     # data += ",".encode('utf-8')
 
     with open("./vsignit/output/tmp/clean1_" + transaction_no + ".png", "rb") as data:
       clean1 = base64.b64encode(data.read())
 
     with open("./vsignit/output/tmp/recon_" + transaction_no + ".png", "rb") as data:
-      recon = base64.b64encode(data.read())
+      secret = base64.b64encode(data.read())
 
     # delete the temp files from the database
-    ShareReconstuctor.delete_transactionImages(transaction)
-
-    return recon_cheque.decode("utf-8"), clean1.decode("utf-8"), recon.decode("utf-8")
+    ShareReconstructor.delete_transactionImages(transaction_no)
+    
+    return cheque.decode("utf-8"), clean1.decode("utf-8"), secret.decode("utf-8")
