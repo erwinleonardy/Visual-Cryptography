@@ -6,6 +6,54 @@
   left: 100% !important;
   margin: -300px 0 0 -60px !important;
 }
+
+.question{
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+.answers {
+  margin-bottom: 20px;
+  text-align: left;
+  display: inline-block;
+}
+.answers label{
+  display: block;
+  margin-bottom: 10px;
+}
+/* button{
+  font-family: 'Work Sans', sans-serif;
+  font-size: 22px;
+  background-color: #279;
+  color: #fff;
+  border: 0px;
+  border-radius: 3px;
+  padding: 20px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+button:hover{
+  background-color: #38a;
+} */
+
+.slide{
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.active-slide{
+  opacity: 1;
+  z-index: 2;
+}
+.quiz-container{
+  background-color: white;
+  width: 400px;
+  position: relative;
+  height: 430px;
+}
 </style>
 
 <!-- Nav Bar -->
@@ -32,146 +80,158 @@
     </div>
   </div>
 
-  <!-- Form -->
-  <form id="verify" method="post" enctype="multipart/form-data" onsubmit="return false;">
-    <div class="container">
+  <div class="container">
 
-      <h5>What is Visual Cryptography?</h5>
-      <p class="lead">Visual Cryptography is a technique that allows information (images, text, diagrams..) to be encrypted using an encoding system that can be decrypted by the eyes. No computer is required to decode.</p>
+    <h5>What is Visual Cryptography?</h5>
+    <p class="lead">Visual Cryptography is a technique that allows information (images, text, diagrams..) to be encrypted using an encoding system that can be decrypted by the eyes. No computer is required to decode.</p>
 
-      <h5>What is Visual Steganography?</h5>
-      <p class="lead">Steganography is a technique to conceal text, images, videos in a seemingly innocuous file. It makes use of unused pixels in regular computer files in order to hide another hidden text or image.</p>
+    <h5>What is Visual Steganography?</h5>
+    <p class="lead">Steganography is a technique to conceal text, images, videos in a seemingly innocuous file. It makes use of unused pixels in regular computer files in order to hide another hidden text or image.</p>
 
-      <h5>Demonstration</h5>
-      <p class="lead"></p>
-     
-      <!-- Canvas -->
-      <canvas id="intro" width="1110" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
-      <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6" style="padding: 0px !important; margin: 0px !important; max-width:1110px">
-        <div id="response-msg" class="alert alert-info" role="alert" style="width:100%; text-align: center">Don't take our words at face value! <b>Slide to the right</b> to see what happens!</div>
-      </div>
-      
-      <!-- Loader -->
-      <div class="row">
-        <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
-          <div id="loader"></div>
-        </div>
-      </div>
-
-      <hr class="my-4">
-
-      <h5>Why Visual Steganography (Visual Cryptography + Steganography)?</h5>
-      <p class="lead">As opposed to other forms of cryptography, visual cryptography requires the participation of the user. Decryption of the shares provide information that is only perceived visually, thus deterring automated attacks. It is akin to One Time Pad (OTP) that provides perfect secrecy, this is due to the incomplete information the attacker has to break the cipher. The Steganography technique we used allows us to make the secret less obvious and hence enhance the overall security even further.</p>
-
-      <h5>How does it work?</h5>
-      <p class="lead">This awesome technique should be attributed to two of the great Mathematicians: <b>Moni Naor</b> and <b>Adi Shamir</b>. They came out with a technique that requires the share of both parties to exists in order to decrypt the image.</p>
-      <table class="table table-borderless">
-        <tr width="100%">
-          <td><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/left.png" alt="left"></td>
-          <td width="30%" class="align-middle">The basis of this technique is that it would overlay two semi-transparent layers on top of each other.</td>
-          <td><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/right.png" alt="right"></td>
-        </tr>
-
-        <tr width="100%">
-          <td colspan="3" style="padding-left:80; padding-right:80px">Overlaying (mathematically equivalent to Binary OR operation) both of the shares creates addition interference to the light passing through it.</td>
-        </tr>
-
-        <tr width="100%">
-          <td colspan="3"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/merge.png" alt="merged"></td>
-        </tr>
-
-        <tr width="100%">
-          <td colspan="3" style="padding-left:80; padding-right:80px">When both of the shares are properly overlayed on top of each other, it will divulge the secret image as shown below.</td>
-        </tr>
-
-        <tr width="100%">
-          <td colspan="3"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/result.png" alt="result"></td>
-        </tr>
-      </table>
-      
-      <h5>How does Visual Steganography work?</h5>
-      <p class="lead">With this technique, we are going to sub-divide each pixel into (2x2) subpixels; these pixels are randomly generated and it has to conform to the following rules: when both of the images are overlayed, we can represent the <b>black pixels with 4 black sub-pixels</b> and <b>white with 3 black sub-pixels.</b></p>
-
-      <table class="table table-striped" style="margin:0px !important">
-        <tr>
-          <td colspan="4">Black</td>
-          <td colspan="4">White</td>
-        </tr>
-        <tr>
-          <td colspan="4"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat8.png" alt="black"></td>
-          <td colspan="4"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat9.png" alt="white"></td>
-        </tr>
-
-        <tr>
-          <td colspan="8">After Expansion</td>
-        </tr>
-        <tr>
-          <td colspan="4"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat8-Opaque.png" alt="4black"></td>
-          <td colspan="4"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat7-Opaque.png" alt="3black"></td>
-        </tr>
-
-        <tr>
-          <td>B1B2</td>
-          <td>B1W2</td>
-          <td>W1B2</td>
-          <td>W1W2</td>
-          <td>B1B2</td>
-          <td>B1W2</td>
-          <td>W1B2</td>
-          <td>W1W2</td>
-        </tr>
-        <tr>
-          <!-- Black -->
-          <td>
-            <canvas id="B1B2_Black" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
-          </td>
-          <td>
-            <canvas id="B1W2_Black" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
-          </td>
-          <td>
-            <canvas id="W1B2_Black" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
-          </td>
-          <td>
-            <canvas id="W1W2_Black" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
-          </td>
-
-          <!-- White -->
-          <td>
-            <canvas id="B1B2_White" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
-          </td>
-          <td>
-            <canvas id="B1W2_White" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
-          </td>
-          <td>
-            <canvas id="W1B2_White" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
-          </td>
-          <td>
-            <canvas id="W1W2_White" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
-          </td>
-        </tr>
-      </table>
-
-      <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6" style="padding: 0px !important; margin: 0px !important; max-width:1110px">
-        <div id="response-msg" class="alert alert-info" role="alert" style="width:100%; text-align: center">TRY IT OUT: <b>Slide to the bottom</b> to see what happens upon overlaying the two shares!</div>
-      </div>
-
-      <h5>How does the cleaning algorithm work?</h5>
-      <p class="lead">As you can see from the interactive animation above, only shares with 4 sub-pixels would be interpreted as black, any lesser than that (3 sub-pixels) would be interpreted as white colour. This step would convert those (2x2) subpixels into one pixel based on the algorithm ussed above.</p>
-     
-      <div id="recon_clean_containter" style="max-width: 400px; padding: 0px !important;" class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
-        <img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/recon_share.png">
-        <img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/recon_clean.png">
-      </div>
-
-      <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6" style="padding: 0px !important; max-width:400px">
-        <div id="response-msg" class="alert alert-info" role="alert" style="width:100%; text-align: center">TRY IT OUT : <b>Move the slider</b> to see the magic!</div>
-      </div>
-
-      <!-- <h5>Do you think you can answer these questions?</h5>
-      <canvas id="quiz" width="500px" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas> -->
-
+    <h5>Demonstration</h5>
+    <p class="lead"></p>
+    
+    <!-- Canvas -->
+    <canvas id="intro" width="1110" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+    <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6" style="padding: 0px !important; margin: 0px !important; max-width:1110px">
+      <div id="response-msg" class="alert alert-info" role="alert" style="width:100%; text-align: center">Don't take our words at face value! <b>Slide to the right</b> to see what happens!</div>
     </div>
-  </form>
+    
+    <!-- Loader -->
+    <div class="row">
+      <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
+        <div id="loader"></div>
+      </div>
+    </div>
+
+    <hr class="my-4">
+
+    <h5>Why Visual Steganography (Visual Cryptography + Steganography)?</h5>
+    <p class="lead">As opposed to other forms of cryptography, visual cryptography requires the participation of the user. Decryption of the shares provide information that is only perceived visually, thus deterring automated attacks. It is akin to One Time Pad (OTP) that provides perfect secrecy, this is due to the incomplete information the attacker has to break the cipher. The Steganography technique we used allows us to make the secret less obvious and hence enhance the overall security even further.</p>
+
+    <h5>How does it work?</h5>
+    <p class="lead">This awesome technique should be attributed to two of the great Mathematicians: <b>Moni Naor</b> and <b>Adi Shamir</b>. They came out with a technique that requires the share of both parties to exists in order to decrypt the image.</p>
+    <table class="table table-borderless">
+      <tr width="100%">
+        <td><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/left.png" alt="left"></td>
+        <td width="30%" class="align-middle">The basis of this technique is that it would overlay two semi-transparent layers on top of each other.</td>
+        <td><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/right.png" alt="right"></td>
+      </tr>
+
+      <tr width="100%">
+        <td colspan="3" style="padding-left:80; padding-right:80px">Overlaying (mathematically equivalent to Binary OR operation) both of the shares creates addition interference to the light passing through it.</td>
+      </tr>
+
+      <tr width="100%">
+        <td colspan="3"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/merge.png" alt="merged"></td>
+      </tr>
+
+      <tr width="100%">
+        <td colspan="3" style="padding-left:80; padding-right:80px">When both of the shares are properly overlayed on top of each other, it will divulge the secret image as shown below.</td>
+      </tr>
+
+      <tr width="100%">
+        <td colspan="3"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/result.png" alt="result"></td>
+      </tr>
+    </table>
+    
+    <h5>How does Visual Steganography work?</h5>
+    <p class="lead">With this technique, we are going to sub-divide each pixel into (2x2) subpixels; these pixels are randomly generated and it has to conform to the following rules: when both of the images are overlayed, we can represent the <b>black pixels with 4 black sub-pixels</b> and <b>white with 3 black sub-pixels.</b></p>
+
+    <table class="table table-striped" style="margin:0px !important">
+      <tr>
+        <td colspan="4">Black</td>
+        <td colspan="4">White</td>
+      </tr>
+      <tr>
+        <td colspan="4"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat8.png" alt="black"></td>
+        <td colspan="4"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat9.png" alt="white"></td>
+      </tr>
+
+      <tr>
+        <td colspan="8">After Expansion</td>
+      </tr>
+      <tr>
+        <td colspan="4"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat8-Opaque.png" alt="4black"></td>
+        <td colspan="4"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat7-Opaque.png" alt="3black"></td>
+      </tr>
+
+      <tr>
+        <td>B1B2</td>
+        <td>B1W2</td>
+        <td>W1B2</td>
+        <td>W1W2</td>
+        <td>B1B2</td>
+        <td>B1W2</td>
+        <td>W1B2</td>
+        <td>W1W2</td>
+      </tr>
+      <tr>
+        <!-- Black -->
+        <td>
+          <canvas id="B1B2_Black" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+        </td>
+        <td>
+          <canvas id="B1W2_Black" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+        </td>
+        <td>
+          <canvas id="W1B2_Black" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+        </td>
+        <td>
+          <canvas id="W1W2_Black" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+        </td>
+
+        <!-- White -->
+        <td>
+          <canvas id="B1B2_White" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+        </td>
+        <td>
+          <canvas id="B1W2_White" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+        </td>
+        <td>
+          <canvas id="W1B2_White" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+        </td>
+        <td>
+          <canvas id="W1W2_White" width="100%" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+        </td>
+      </tr>
+    </table>
+
+    <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6" style="padding: 0px !important; margin: 0px !important; max-width:1110px">
+      <div id="response-msg" class="alert alert-info" role="alert" style="width:100%; text-align: center">TRY IT OUT: <b>Slide to the bottom</b> to see what happens upon overlaying the two shares!</div>
+    </div>
+
+    <h5>How does the cleaning algorithm work?</h5>
+    <p class="lead">As you can see from the interactive animation above, only shares with 4 sub-pixels would be interpreted as black, any lesser than that (3 sub-pixels) would be interpreted as white colour. This step would convert those (2x2) subpixels into one pixel based on the algorithm used above.</p>
+    
+    <div id="recon_clean_containter" style="max-width: 400px; padding: 0px !important;" class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
+      <img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/recon_share.png">
+      <img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/recon_clean.png">
+    </div>
+
+    <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6" style="padding: 0px !important; max-width:400px">
+      <div id="response-msg" class="alert alert-info" role="alert" style="width:100%; text-align: center">TRY IT OUT : <b>Move the slider</b> to see the magic!</div>
+    </div>
+
+    <div class="quiz-container">
+      <h5 style="text-align: center">Test your understanding here!</h5>
+      <p id="results" style="text-align: center;">Points : 0 out of 8</p>
+      <div id="quiz" style="padding-top:100px"></div>
+      <div id="navigation" style="margin-top:185px" align="center">
+        <button class="btn btn-secondary" id="previous">
+          <i class="fas fa-chevron-left fa-lg"></i>
+        </button>
+        <!-- <button class="btn btn-success" id="next">Next Question</button> -->
+        <button class="btn btn-primary" id="submit" style="display: inline-block">Submit Quiz</button>
+        <button class="btn btn-secondary" id="next">
+          <i class="fas fa-chevron-right fa-lg"></i>
+        </button>
+
+        <p id="questionNo" style="text-align: right; margin-top:5px; margin-right: 10px">#1 out of 8</p>
+        <div id="results"></div>
+      </div>
+    </div>
+  </div>
 
   <br><br>
   <p class="lead" style="text-align: center">&copy; vSignIt 2019</p>
@@ -215,6 +275,10 @@
   var maxY = B1W2_Black.height-100;
   var minX = 15;
   var minY = 10;
+
+  const quizContainer = document.getElementById('quiz');
+  const resultsContainer = document.getElementById('results');
+  const submitButton = document.getElementById('submit');
 
   // try to draw the cheque canvas
   function tryToDrawRecon()
@@ -358,12 +422,242 @@
     } // end of function addNewListener (ctx, Canvas, img1, img2){...}
   }; // end of window.addEventListener('load', function(){...})
 
+  var myQuestions = [
+    {
+      question: "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/question/Question1.png",
+      answers: {
+        a: "Black",
+        b: "White",
+        c: "No answer, obviously",
+        d: "Both of them are correct"
+      },
+      correctAnswer: "a"
+    },
+    {
+      question: "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/question/Question5.png",
+      answers: {
+        a: "No answer, obviously",
+        b: "White",
+        c: "Black",
+        d: "Both of them are correct"
+      },
+      correctAnswer: "b"
+    },
+    {
+      question: "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/question/Question6.png",
+      answers: {
+        a: "Black",
+        b: "Both of them are correct",
+        c: "White",
+        d: "No answer, obviously",
+      },
+      correctAnswer: "c"
+    },
+    {
+      question: "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/question/Question2.png",
+      answers: {
+        a: "White",
+        b: "Black",
+        c: "No answer, obviously",
+        d: "Both of them are correct"
+      },
+      correctAnswer: "b"
+    },
+    {
+      question: "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/question/Question3.png",
+      answers: {
+        a: "White",
+        b: "No answer, obviously",
+        c: "Black",
+        d: "Both of them are correct"
+      },
+      correctAnswer: "c"
+    },
+    {
+      question: "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/question/Question7.png",
+      answers: { 
+        a: "Black",
+        b: "No answer, obviously",
+        c: "Both of them are correct",
+        d: "White"
+      },
+      correctAnswer: "d"
+    },
+    {
+      question: "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/question/Question4.png",
+      answers: {
+        a: "Black",
+        b: "White",
+        c: "No answer, obviously", 
+        d: "Both of them are correct"
+      },
+      correctAnswer: "a"
+    },
+    {
+      question: "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/question/Question8.png",
+      answers: {
+        a: "White",
+        b: "Black",
+        c: "No answer, obviously",
+        d: "Both of them are correct"
+      },
+      correctAnswer: "a"
+    }
+  ];
+
+  function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+  }
+
+  function buildQuiz() 
+  {
+    var shuffledQuestions = shuffle(myQuestions);
+
+    // we'll need a place to store the HTML output
+    const output = [];
+
+    // for each question...
+    myQuestions.forEach(
+      (currentQuestion, questionNumber) => {
+
+        // we'll want to store the list of answer choices
+        const answers = [];
+
+        // and for each available answer...
+        for(letter in currentQuestion.answers){
+
+          // ...add an HTML radio button
+          answers.push(
+            `<label>
+              <input type="radio" name="question${questionNumber}" value="${letter}">
+              ${letter} :
+              ${currentQuestion.answers[letter]}
+            </label>`
+          );
+        }
+
+        // add this question and its answers to the output
+        output.push(
+          `<div class="slide" style="margin-top:30px;">
+             <div class="question" style="margin-bottom:-20px;"><img src="${currentQuestion.question}"></div>
+             <div class="answers" style="padding-left: 20px"> ${answers.join('')} </div>
+           </div>`
+        );
+      }
+    );
+
+    // finally combine our output list into one string of HTML and put it on the page
+    quizContainer.innerHTML = output.join('');
+  }
+
+  function showResults()
+  {
+    // gather answer containers from our quiz
+    const answerContainers = quizContainer.querySelectorAll('.answers');
+
+    // keep track of user's answers
+    let numCorrect = 0;
+
+    // for each question...
+    myQuestions.forEach( (currentQuestion, questionNumber) => {
+
+      // find selected answer
+      const answerContainer = answerContainers[questionNumber];
+      const selector = 'input[name=question'+questionNumber+']:checked';
+      const userAnswer = (answerContainer.querySelector(selector) || {}).value;
+
+      // if answer is correct
+      if(userAnswer===currentQuestion.correctAnswer){
+        // add to the number of correct answers
+        numCorrect++;
+
+        // color the answers green
+        answerContainers[questionNumber].style.color = 'lightgreen';
+      }
+      // if answer is wrong or blank
+      else{
+        // color the answers red
+        answerContainers[questionNumber].style.color = 'red';
+      }
+    });
+
+    // show alert message
+    if (numCorrect > 5)
+      alert('Congrats! You got ' + numCorrect + ' out of ' + myQuestions.length + ' correct!');
+    else
+      alert('Auch! Try Again! You only got ' + numCorrect + ' out of ' + myQuestions.length + ' correct!');
+
+    // show number of correct answers out of total
+    resultsContainer.innerHTML = 'Points : ' + numCorrect + ' out of ' + myQuestions.length;
+  }
+
   // execute the function iff all of the images have been successfully loaded 
   $(window).on("load", function() {
     tryToDrawRecon();
     tryToDrawShares();
+
     $("#recon_clean_containter").twentytwenty();
+
+    buildQuiz();
+
+     // pagination
+    const previousButton = document.getElementById("previous");
+    const nextButton = document.getElementById("next");
+    const slides = document.querySelectorAll(".slide");
+    let currentSlide = 0;
+
+    showSlide(0);
+
+    submitButton.addEventListener('click', showResults);
+    previousButton.addEventListener("click", showPreviousSlide);
+    nextButton.addEventListener("click", showNextSlide);
+   
     document.getElementById("loader").style.display = "none";
+
+    function showSlide(n) {
+      slides[currentSlide].classList.remove('active-slide');
+      slides[n].classList.add('active-slide');
+      currentSlide = n;
+      if(currentSlide===0){
+        previousButton.style.display = 'none';
+      }
+      else{
+        previousButton.style.display = 'inline-block';
+      }
+      if(currentSlide===slides.length-1){
+        nextButton.style.display = 'none';
+        // submitButton.style.display = 'inline-block';
+      }
+      else{
+        nextButton.style.display = 'inline-block';
+        // submitButton.style.display = 'none';
+      }
+    }
+
+    function showNextSlide() {
+      showSlide(currentSlide + 1);
+      document.getElementById('questionNo').innerHTML = "#" + (currentSlide+1) + " out of " + myQuestions.length;
+    }
+
+    function showPreviousSlide() {
+      showSlide(currentSlide - 1);
+      document.getElementById('questionNo').innerHTML = "#" + (currentSlide+1) + " out of " + myQuestions.length;
+    }
   });
 
 </script>
