@@ -112,7 +112,11 @@
             $('#password').addClass('is-valid');
             $("#response-msg").text("Login successful!");
             $('#response-msg').toggle();
-            window.location.href = response
+
+            // wait until animation completed before redirect
+            setTimeout(function() {
+              window.location.href = response
+            }, 1000);
           }
 
           else 
