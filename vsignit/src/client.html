@@ -86,6 +86,13 @@
     $("#response-msg").hide();
     $("#preview").hide();
 
+    // prevents user from hitting the back button
+    // (only works in safari)
+    // chrome doesn't need this feature anyway!
+    window.location.hash="no-back-button";
+    window.location.hash="Again-no-back-button";
+    window.onhashchange=function(){window.location.hash="no-back-button";}
+
     // change the name of the input file when a file is uploaded
     $(".custom-file-input").on("change", function() {
         var fileName = $(this).val().split("\\").pop();
