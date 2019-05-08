@@ -2,9 +2,9 @@
 
 <style>
 #loader {
-  top: -100% !important;
-  left: 100% !important;
-  margin: -300px 0 0 -60px !important;
+  position: relative;
+  left: 0%;
+  margin: -170px 0 0 -60px;
 }
 
 .question{
@@ -98,19 +98,19 @@
       <div class="card-header">
         <h5>Demonstration</h5>
       </div>
-      <div class="card-body">
+      <div class="card-body" width="100%" style="object-fit: cover;">
          <!-- Canvas -->
-        <canvas id="intro" width="1070" height="330" style="background-color:white;";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+        <canvas id="intro" style="width: 100%; height: 50%; display: block; padding: 0px";>Your browser doesn't support the HTML5 Canvas, please consifer updating or changing your browser for a better experience.</canvas>
+        
+        <!-- Loader -->
+        <div class="row">
+          <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6" style="position: absolute; left: 50%;">
+            <div id="loader"></div>
+          </div>
+        </div>
       </div>
       <div style="padding: 0px !important; margin: 0px !important; width:100%;">
         <div id="response-msg" class="alert alert-info" role="alert" style="width:100%; text-align: center; margin-bottom: 0px">TRY IT OUT : Don't take our words at face value! <b>Slide to the right</b> to see what happens!</div>
-      </div>
-    </div>
-    
-    <!-- Loader -->
-    <div class="row">
-      <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
-        <div id="loader"></div>
       </div>
     </div>
 
@@ -121,11 +121,11 @@
 
     <h5>How does it work?</h5>
     <p class="lead">This awesome technique should be attributed to two of the great Mathematicians: <b>Moni Naor</b> and <b>Adi Shamir</b>. They came out with a technique that requires the share of both parties to exists in order to decrypt the image.</p>
-    <table class="table table-borderless">
+    <table class="table table-borderless table-responsive">
       <tr width="100%">
-        <td><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/left.png" alt="left"></td>
+        <td><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/left.png" width="85%" alt="left"></td>
         <td width="30%" class="align-middle">The basis of this technique is that it would overlay two semi-transparent layers on top of each other.</td>
-        <td><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/right.png" alt="right"></td>
+        <td><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/right.png" width="85%" alt="right"></td>
       </tr>
 
       <tr width="100%">
@@ -133,7 +133,7 @@
       </tr>
 
       <tr width="100%">
-        <td colspan="3"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/merge.png" alt="merged"></td>
+        <td colspan="3"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/merge.png" width="45%" alt="merged"></td>
       </tr>
 
       <tr width="100%">
@@ -141,7 +141,7 @@
       </tr>
 
       <tr width="100%">
-        <td colspan="3"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/result.png" alt="result"></td>
+        <td colspan="3"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/result.png" width="25%" alt="result"></td>
       </tr>
     </table>
     
@@ -149,23 +149,23 @@
     <p class="lead">With this technique, we are going to sub-divide each pixel into (2x2) subpixels; these pixels are randomly generated and it has to conform to the following rules: when both of the images are overlayed, we can represent the <b>black pixels with 4 black sub-pixels</b> and <b>white with 3 black sub-pixels.</b></p>
 
     <div class="card">
-      <div class="card-body" style="padding: 0px;">
+      <div class="card-body table-responsive"  width="100%" style="padding: 0px; object-fit: cover;" >
         <table class="table table-striped" style="margin:0px !important">
           <tr>
             <td colspan="4">Black</td>
             <td colspan="4">White</td>
           </tr>
           <tr>
-            <td colspan="4"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat8.png" alt="black" style="border: 3px grey solid"></td>
-            <td colspan="4"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat9.png" alt="white" style="border: 3px grey solid"></td>
+            <td colspan="4"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat8.png" width="20%" alt="black" style="border: 3px grey solid"></td>
+            <td colspan="4"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat9.png" width="20%" alt="white" style="border: 3px grey solid"></td>
           </tr>
 
           <tr>
             <td colspan="8">After Expansion</td>
           </tr>
           <tr>
-            <td colspan="4"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat8-Opaque.png" alt="4black"></td>
-            <td colspan="4"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat7-Opaque.png" alt="3black"></td>
+            <td colspan="4"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat8-Opaque.png" width="20%" alt="4black"></td>
+            <td colspan="4"><img src="https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/pattern/Pat7-Opaque.png" width="20%" alt="3black"></td>
           </tr>
 
           <tr>
@@ -256,12 +256,6 @@
   
 </div>
 
-<div class="row">
-  <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
-    <div id="loader"></div>
-  </div>
-</div> 
-
 <script>
   document.getElementById("loader").style.display = "block";
 
@@ -289,9 +283,7 @@
   clientShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/client_share.png";
   reconShare.src = "https://raw.githubusercontent.com/erwinleonardy/VSignIt/master/img/public/recon_share.png";
 
-  var maxX = intro.width-315;
   var maxY = B1W2_Black.height-100;
-  var minX = 15;
   var minY = 10;
 
   const quizContainer = document.getElementById('quiz');
@@ -301,8 +293,19 @@
   // try to draw the cheque canvas
   function tryToDrawRecon()
   {
+    // makes the website responsive
+    if ($(window).width() < 900)
+      document.getElementById("intro").style.height = "25%";
+    else
+      document.getElementById("intro").style.height = "45%";
+
     // Get a "handle" on the canvas to work with
     theCanvas = document.getElementById("intro");
+    theCanvas.width = window.innerWidth;
+    theCanvas.height = window.innerHeight * 0.5;
+
+    var maxX = theCanvas.width - (theCanvas.width * 0.35);
+    var minX = 60;
 
     // define the centre point of the canvas
     cX = Math.floor(theCanvas.width / 2);
@@ -312,8 +315,10 @@
     ctx= theCanvas.getContext("2d");
 
     // draw the initial image
-    ctx.drawImage(bankShare, 15, 15, 300, 300);
-    ctx.drawImage(clientShare, maxX, 15, 300, 300);
+    canvasWidth = document.getElementById('intro').style.width;
+    canvasHeight = document.getElementById('intro').style.height;
+    ctx.drawImage(bankShare, minX, 15, theCanvas.width * 0.3, theCanvas.height);
+    ctx.drawImage(clientShare, maxX, 15, theCanvas.width * 0.3, theCanvas.height);
     ctx.globalAlpha = 1.0;
 
     // Get the position of the mouse relative to the canvas
@@ -330,6 +335,10 @@
     // Apparently the convention is to start at 0 degrees on the right and go backwards
     // - someone should have told that to clock-makers
     theCanvas.addEventListener("mousemove", function(e) {
+      theCanvas.width = window.innerWidth;
+      theCanvas.height = window.innerHeight * 0.5;
+      maxX = theCanvas.width - (theCanvas.width * 0.35);
+
       var m = getMousePos(theCanvas, e);
       if (m.x < cX) {
         if (m.y < cY) pos = 180 + Math.floor(Math.atan((m.y - cY) / (cX - m.x)) * (180 / Math.PI));
@@ -347,15 +356,33 @@
       if (m.x >= maxX)
       {
         m.x = maxX;
-        ctx.drawImage(reconShare, maxX, 15, 300, 300);
+        ctx.drawImage(reconShare, maxX, 15, theCanvas.width * 0.3, theCanvas.height);
         return;
       }
       else if (m.x < minX)
         m.x = minX;
 
-      ctx.drawImage(bankShare, 0+m.x, 15, 300, 300);
-      ctx.drawImage(clientShare, maxX, 15, 300, 300);
+      ctx.drawImage(bankShare, 0+m.x, 15, theCanvas.width * 0.3, theCanvas.height);
+      ctx.drawImage(clientShare, maxX, 15, theCanvas.width * 0.3, theCanvas.height);
     }, false);
+
+    // resize the canvas to fill browser window dynamically
+    window.addEventListener('resize', resizeCanvas, false);
+
+    // make the canvas responsive
+    function resizeCanvas() {
+      if ($(window).width() < 900)
+        document.getElementById("intro").style.height = "25%";
+      else
+        document.getElementById("intro").style.height = "45%";
+
+      theCanvas.width = window.innerWidth;
+      theCanvas.height = window.innerHeight * 0.5;
+      maxX = theCanvas.width - (theCanvas.width * 0.35);
+
+      ctx.drawImage(bankShare, minX, 15, theCanvas.width * 0.3, theCanvas.height);
+      ctx.drawImage(clientShare, maxX, 15, theCanvas.width * 0.3, theCanvas.height);
+    }
   }
 
   // draw the 8 different permutations to generate black/white share
