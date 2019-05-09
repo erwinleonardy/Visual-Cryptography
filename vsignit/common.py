@@ -21,7 +21,7 @@ shareSize = (imageSize[0] * 2, imageSize[1] * 2)
 class Common():
   @staticmethod
   def encryptImage(imageEncoded, savepath):
-    f = Fernet(os.environ['CHEQUE_KEY'])
+    f = Fernet('HdcT0QsyPAA5M-g9Ozk_RBlRUuo8eq8lS8DPix4d5z4=')
 
     os.makedirs(os.path.dirname(savepath), exist_ok=True)
     token = f.encrypt(imageEncoded)
@@ -31,7 +31,7 @@ class Common():
 
   @staticmethod
   def decryptImage(token):
-    f = Fernet(os.environ['CHEQUE_KEY'])
+    f = Fernet('HdcT0QsyPAA5M-g9Ozk_RBlRUuo8eq8lS8DPix4d5z4=')
 
     imageEncoded = f.decrypt(token)
     imageData = base64.b64decode(imageEncoded)
