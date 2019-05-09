@@ -3,6 +3,7 @@
 # Descrption: This file contains all of the necessary functions to operate the client page
 
 import os, time, datetime, base64, hashlib
+from io import BytesIO
 
 from vsignit.common import Common, signCords
 from vsignit.models import Transaction
@@ -34,11 +35,16 @@ class Client:
     client_cheque.paste(client_share, signCords) 
 
     # save the file temporarily
-    Common.save_image(client_cheque, filepath)
+    buffered = BytesIO()
+    client_cheque.save(buffered, format=client_cheque.format)
+    encoded_string = base64.b64encode(buffered.getvalue())
+    cheque_string = base64.b64encode(buffered.getvalue())
+    Common.encryptImage(cheque_string, filepath)
 
-    # export the image to base64 format
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    with open(filepath, "rb") as image_file:
-        encoded_string = base64.b64encode(image_file.read())
+    # Common.save_image(client_cheque, filepath)
+    # # export the image to base64 format
+    # os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    # with open(filepath, "rb") as image_file:
+    #     encoded_string = base64.b64encode(image_file.read())
 
     return (encoded_string.decode("utf-8") + "," + client_username)

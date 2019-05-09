@@ -3,6 +3,7 @@
 # Descrption: This file contains all of the necessary functions to reconstruct the shares
 
 import PIL.ImageOps, base64, os
+from io import BytesIO
 from PIL import Image
 
 from vsignit.common import Common, signCords, B, W #signX, signY, signWidth, doubSignSize, reconDist
@@ -18,7 +19,9 @@ class ShareReconstructor():
   def get_client_cheque(transaction):
     transaction_no = transaction.getTranscationNo()
     chequePath = transaction.getFilePath()
-    return transaction_no, Common.openImage(chequePath)
+    token = Common.openEncrypted(chequePath)
+    cheque = Common.decryptImage(token)
+    return transaction_no, cheque
 
   # Function gets the bank share from the database
   @staticmethod
@@ -80,11 +83,11 @@ class ShareReconstructor():
 
   def reconstructShares(self, bankShare, clientShare, transaction_no):
     bankShare.paste(clientShare, mask = bankShare)
-    Common.save_image(bankShare, "./vsignit/output/tmp/recon_" + transaction_no + ".png")
+    # Common.save_image(bankShare, "./vsignit/output/tmp/recon_" + transaction_no + ".png")
 
     secret = self.cleanSecret(bankShare)
-    Common.save_image(secret, "./vsignit/output/tmp/clean1_" + transaction_no + ".png")
-    Common.save_image (secret, "./vsignit/output/tmp/clean2_" + transaction_no + ".png")
+    # Common.save_image(secret, "./vsignit/output/tmp/clean1_" + transaction_no + ".png")
+    # Common.save_image (secret, "./vsignit/output/tmp/clean2_" + transaction_no + ".png")
     return secret, bankShare
 
   def resetCheque(self, cheque, size, crop):
@@ -101,29 +104,38 @@ class ShareReconstructor():
       return ""
 
     try:
-      secret, clean1 = self.reconstructShares(bankShare, clientShare, transaction_no)
+      clean1, secret = self.reconstructShares(bankShare, clientShare, transaction_no)
     except Exception:
       return ""
 
     self.resetCheque(cheque, clientShare.size, cropRegion)
-    cheque.paste(secret, signCords, secret)
-    Common.save_image(cheque, "./vsignit/output/tmp/recon_cheque_" + transaction_no + ".png")
+    cheque.paste(clean1, signCords, clean1)
 
-    # send back all of the images back in BASE64 format
-    # bankUsername = transaction.getBankUsername()
-    # clientUsername = transaction.getClientUsername()
+    chequeBuffer = BytesIO()
+    cheque.save(chequeBuffer, format=cheque.format)
+    cheque_string = base64.b64encode(chequeBuffer.getvalue())
 
-    with open("./vsignit/output/tmp/recon_cheque_" + transaction_no + ".png", "rb") as data:
-      cheque = base64.b64encode(data.read())
-    # data += ",".encode('utf-8')
+    secretBuffer = BytesIO()
+    secret.save(secretBuffer, format=secret.format)
+    secret_string = base64.b64encode(secretBuffer.getvalue())
 
-    with open("./vsignit/output/tmp/clean1_" + transaction_no + ".png", "rb") as data:
-      clean1 = base64.b64encode(data.read())
+    cleanBuffer = BytesIO()
+    clean1.save(cleanBuffer, format=secret.format)
+    clean1_string = base64.b64encode(cleanBuffer.getvalue())
 
-    with open("./vsignit/output/tmp/recon_" + transaction_no + ".png", "rb") as data:
-      secret = base64.b64encode(data.read())
+    # Common.save_image(cheque, "./vsignit/output/tmp/recon_cheque_" + transaction_no + ".png")
 
-    # delete the temp files from the database
-    ShareReconstructor.delete_transactionImages(transaction_no)
+    # with open("./vsignit/output/tmp/recon_cheque_" + transaction_no + ".png", "rb") as data:
+    #   cheque = base64.b64encode(data.read())
+    # # data += ",".encode('utf-8')
+
+    # with open("./vsignit/output/tmp/clean1_" + transaction_no + ".png", "rb") as data:
+    #   clean1 = base64.b64encode(data.read())
+
+    # with open("./vsignit/output/tmp/recon_" + transaction_no + ".png", "rb") as data:
+    #   secret = base64.b64encode(data.read())
+
+    # # delete the temp files from the database
+    # ShareReconstructor.delete_transactionImages(transaction_no)
     
-    return cheque.decode("utf-8"), clean1.decode("utf-8"), secret.decode("utf-8")
+    return cheque_string.decode("utf-8"), clean1_string.decode("utf-8"), secret_string.decode("utf-8")

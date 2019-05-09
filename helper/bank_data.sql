@@ -48,7 +48,8 @@ INSERT INTO `bank_data` (`bank_user_id`, `client_user_id`, `bank_share_path`) VA
 (1, 4, './vsignit/output/bank/timapple_DBS_bank_share.png'),
 (1, 7, './vsignit/output/bank/donaldtrump_DBS_bank_share.png'),
 (1, 8, './vsignit/output/bank/matthewyeo_DBS_bank_share.png'),
-(1, 9, './vsignit/output/bank/mohammedali_DBS_bank_share.png');
+(1, 9, './vsignit/output/bank/mohammedali_DBS_bank_share.png'),
+(1, 10, './vsignit/output/bank/kimjongun_DBS_bank_share.png');
 
 --
 -- Indexes for dumped tables

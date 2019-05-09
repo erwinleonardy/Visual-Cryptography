@@ -52,7 +52,8 @@ INSERT INTO `user_table` (`user_id`, `user_type`, `email`, `username`, `password
 (5, 'admin', 'gafusoyici@stattech.info', 'HSBC', 'pbkdf2:sha256:150000$Dj5kYxxr$fb25ef376b2d2ff36269e9dcd8eaed15f80dedf884345f146abea7421c306480'),
 (7, 'user', 'gafusoyici@stattech.info', 'donaldtrump', 'pbkdf2:sha256:150000$uloLEq3t$5fc7cc6cfbc624f8e1602e1e3e18488c254d42328c1b615eedc265cdbd510010'),
 (8, 'user', 'gafusoyici@stattech.info', 'matthewyeo', 'pbkdf2:sha256:150000$V9YwLwB4$158c7d584b6b13cb807ae1bf0a92eae9de5f2d88ee5b2548027a696a9b5b88b1'),
-(9, 'user', 'gafusoyici@stattech.info', 'mohammedali', 'pbkdf2:sha256:150000$31Af1YXM$dd8d06b2b29988b7f5fc8bb004c1610f4f9346c641da0ebda5ad443a64eeb2fe');
+(9, 'user', 'gafusoyici@stattech.info', 'mohammedali', 'pbkdf2:sha256:150000$31Af1YXM$dd8d06b2b29988b7f5fc8bb004c1610f4f9346c641da0ebda5ad443a64eeb2fe'),
+(10, 'user', 'gafusoyici@stattech.info', 'kimjongun', 'pbkdf2:sha256:150000$G2P54b7J$92b3850bc46014d1d84ecf38599b07b3ac2d1f4136e6f145d7a6ca213dae4182');
 
 --
 -- Indexes for dumped tables

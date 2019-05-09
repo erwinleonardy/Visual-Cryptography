@@ -48,7 +48,8 @@ INSERT INTO `client_data` (`client_user_id`, `bank_user_id`, `client_share_path`
 (4, 1, './vsignit/output/client/timapple_DBS_client_share.png'),
 (7, 1, './vsignit/output/client/donaldtrump_DBS_client_share.png'),
 (8, 1, './vsignit/output/client/matthewyeo_DBS_client_share.png'),
-(9, 1, './vsignit/output/client/mohammedali_DBS_client_share.png');
+(9, 1, './vsignit/output/client/mohammedali_DBS_client_share.png'),
+(10, 1, './vsignit/output/client/kimjongun_DBS_client_share.png');
 
 --
 -- Indexes for dumped tables

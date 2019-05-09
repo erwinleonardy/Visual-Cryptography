@@ -3,8 +3,10 @@
 # Descrption: This file contains all of the supporting functions that are shared across the 
 #             other python files
 
-import PIL.ImageOps, os, time, datetime
+import PIL.ImageOps, os, time, datetime, base64
+from cryptography.fernet import Fernet, InvalidToken
 from sqlalchemy import desc
+from io import BytesIO
 from PIL import Image
 
 from vsignit.models import User, Client_Data, Transaction
@@ -17,6 +19,30 @@ imageSize = (200, 200)
 shareSize = (imageSize[0] * 2, imageSize[1] * 2)
 
 class Common():
+  @staticmethod
+  def encryptImage(imageEncoded, savepath):
+    f = Fernet(os.environ['CHEQUE_KEY'])
+
+    os.makedirs(os.path.dirname(savepath), exist_ok=True)
+    token = f.encrypt(imageEncoded)
+    outfile = open(savepath, 'wb')
+    outfile.write(token)
+    outfile.close()
+
+  @staticmethod
+  def decryptImage(token):
+    f = Fernet(os.environ['CHEQUE_KEY'])
+
+    imageEncoded = f.decrypt(token)
+    imageData = base64.b64decode(imageEncoded)
+    image = Image.open(BytesIO(imageData))
+    return image
+
+  @staticmethod
+  def openEncrypted(filename):
+    with open(filename, 'rb') as imageFile:
+      return imageFile.read()
+
   # Function resizes to the desired dimension (200 x 200)
   @staticmethod
   def resize(image):
