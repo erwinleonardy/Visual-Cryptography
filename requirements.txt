@@ -9,13 +9,13 @@ Flask==1.0.2
 Flask-Login==0.4.1
 Flask-Mail==0.9.1
 Flask-SQLAlchemy==2.3.2
-gunicorn==19.9.0
 idna==2.8
 itsdangerous==1.1.0
 Jinja2==2.10.1
 MarkupSafe==1.1.1
 mysqlclient==1.4.2.post1
 Pillow==6.0.0
+pyaes==1.6.1
 pycparser==2.19
 requests==2.21.0
 six==1.12.0

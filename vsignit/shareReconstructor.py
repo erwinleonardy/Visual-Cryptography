@@ -36,10 +36,12 @@ class ShareReconstructor():
   @staticmethod
   def delete_cheque(transaction):
     chequeFilepath = transaction.getFilePath()
+    bgpath = chequeFilepath[:-4] + '_bg.png'
     # throws an error if file couldn't be found
     if not os.path.isfile(chequeFilepath):
       raise ValueError
     os.remove(chequeFilepath)
+    os.remove(bgpath)
   
   # Function removes and temp. reconstructed images from the database
   @staticmethod
@@ -90,9 +92,12 @@ class ShareReconstructor():
     # Common.save_image (secret, "./vsignit/output/tmp/clean2_" + transaction_no + ".png")
     return secret, bankShare
 
-  def resetCheque(self, cheque, size, crop):
-    white = Image.new('1', size, W)
-    cheque.paste(white, crop)
+  def resetCheque(self, cheque, size, crop, transaction_no):
+    # white = Image.new('1', size, W)
+    bg_path = './vsignit/output/cheque/cheque_' + transaction_no + '_bg.png'
+    bg_token = Common.openEncrypted(bg_path)
+    bg = Common.decryptImage(bg_token)
+    cheque.paste(bg, crop)
 
   def reconstructCheque(self, bankShare, cheque, transaction_no):
     cropRegion = (signCords[0], signCords[1], signCords[0] + bankShare.width, signCords[1] + bankShare.height)
@@ -108,7 +113,7 @@ class ShareReconstructor():
     except Exception:
       return ""
 
-    self.resetCheque(cheque, clientShare.size, cropRegion)
+    self.resetCheque(cheque, clientShare.size, cropRegion, transaction_no)
     cheque.paste(clean1, signCords, clean1)
 
     chequeBuffer = BytesIO()
@@ -122,20 +127,5 @@ class ShareReconstructor():
     cleanBuffer = BytesIO()
     clean1.save(cleanBuffer, format=secret.format)
     clean1_string = base64.b64encode(cleanBuffer.getvalue())
-
-    # Common.save_image(cheque, "./vsignit/output/tmp/recon_cheque_" + transaction_no + ".png")
-
-    # with open("./vsignit/output/tmp/recon_cheque_" + transaction_no + ".png", "rb") as data:
-    #   cheque = base64.b64encode(data.read())
-    # # data += ",".encode('utf-8')
-
-    # with open("./vsignit/output/tmp/clean1_" + transaction_no + ".png", "rb") as data:
-    #   clean1 = base64.b64encode(data.read())
-
-    # with open("./vsignit/output/tmp/recon_" + transaction_no + ".png", "rb") as data:
-    #   secret = base64.b64encode(data.read())
-
-    # # delete the temp files from the database
-    # ShareReconstructor.delete_transactionImages(transaction_no)
     
     return cheque_string.decode("utf-8"), clean1_string.decode("utf-8"), secret_string.decode("utf-8")

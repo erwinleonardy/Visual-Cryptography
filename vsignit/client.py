@@ -21,9 +21,9 @@ class Client:
 
     hashed_ts = hashlib.sha1()
     hashed_ts.update(conct.encode('utf-8'))
-    filepath = "./vsignit/output/cheque/cheque_" + hashed_ts.hexdigest() + ".png"
+    filepath = './vsignit/output/cheque/cheque_' + hashed_ts.hexdigest()
 
-    newTransaction = Transaction(hashed_ts.hexdigest(), bank_userid, client_userid, st, filepath) 
+    newTransaction = Transaction(hashed_ts.hexdigest(), bank_userid, client_userid, st, filepath + '.png') 
     db.session.add(newTransaction)
     db.session.commit()
 
@@ -32,14 +32,24 @@ class Client:
   # Function pastes the source pic on top of the destination pic
   @staticmethod
   def signcheque(client_share, client_cheque, filepath, client_username):
+    # extract background and store as an encrypted image for colored background
+    background_buffer = BytesIO()
+    crop_area = (signCords[0], signCords[1], signCords[0] + \
+                client_share.width, signCords[1] + client_share.height)
+    cheque_bg = client_cheque.crop(crop_area)
+    cheque_bg.save(background_buffer, format=client_cheque.format)
+    encoded_bg = base64.b64encode(background_buffer.getvalue())
+    Common.encryptImage(encoded_bg, filepath + '_bg.png')
+
+    # sign cheque
     client_cheque.paste(client_share, signCords) 
 
-    # save the file temporarily
+    # encrypt and save the file until transaction is complete
     buffered = BytesIO()
     client_cheque.save(buffered, format=client_cheque.format)
     encoded_string = base64.b64encode(buffered.getvalue())
     cheque_string = base64.b64encode(buffered.getvalue())
-    Common.encryptImage(cheque_string, filepath)
+    Common.encryptImage(cheque_string, filepath + '.png')
 
     # Common.save_image(client_cheque, filepath)
     # # export the image to base64 format
