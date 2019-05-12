@@ -113,35 +113,15 @@ def bank_generate():
 
       except Exception as e:
         return str(e)
-  #shareshare
+
   elif request.method == 'POST':      
     # convert the base64 image to an image
-    base64_data = re.sub('^data:image/.+;base64,', '', request.form['file'])
-    byte_data = base64.b64decode(base64_data)
-
+    sigEncoded = re.sub('^data:image/.+;base64,', '', request.form['file'])
     username = request.form['clientUsername']
-    filepath = "./vsignit/output/tmp/" + username + "_imageToSave.png"
 
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    with open(filepath, "wb") as fh:
-      fh.write(byte_data)
+    shareStatus = Driver.create_shares(sigEncoded, username)
+    return shareStatus
 
-    # generate two shares and send one of the shares to the server
-    image = Common.openSecret(filepath)
-
-    # checks if the image dimension is valid
-    if Common.validate_resize_image(image) != None:
-      # checks if the username exists
-      if Common.user_exists(username) == None:
-        bank_share = "No User"
-      else:
-        bank_share = Driver.create_shares(image, username)
-
-      os.remove("./vsignit/output/tmp/" + username + "_imageToSave.png")
-      return bank_share
-
-    else:
-      return ""
 
 @app.route('/bank-reconstruct', methods=['GET', 'POST'])
 def bank_reconstruct():
@@ -204,7 +184,6 @@ def bank_reconstruct_verify():
           if transactionNo == None:
             raise ValueError
             
-          #shareshare
           else:
             # reconstruct the share and sends the base64 to the client
             recon_cheque, clean1, recon = Driver.reconstruct_shares (transaction)
@@ -248,41 +227,14 @@ def client():
         return render_template('client.html', result=result, usernames=usernames, clientName=result.getUsername())
     except Exception as e:
         return str(e)
-  #shareshare
+        
   elif request.method == 'POST':
-    # retrieve the client's share from the database
-    clientUsername = User.query.filter_by(id=current_user.get_id()).first().getUsername()
-    bankUsername = request.form['bankName']
-
+    bankID = User.query.filter_by(username=request.form['bankName']).first().getID()
     clientID = current_user.get_id()
-    bankID = User.query.filter_by(username=bankUsername).first().getID()
 
+    chequeEncoded = re.sub('^data:image/.+;base64,', '', request.form['cheque'])
     clientSharePath = Client_Data.query.filter_by(client_userid=clientID, bank_userid=bankID).first().getClientSharePath()
 
-    # convert the base64 image to an image
-    base64_data1 = re.sub('^data:image/.+;base64,', '', request.form['cheque'])
-    byte_data1 = base64.b64decode(base64_data1)
-    filepath = "./vsignit/output/tmp/" + clientUsername + "_clientCheque.png"
-
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    with open(filepath, "wb") as fh:
-      fh.write(byte_data1)
-
-    # get the clientCheque and clientShare that we are going to overlay
-    clientCheque = Common.openImage(filepath)
-    clientShare = Common.openImage(clientSharePath)
-
-    # if client share doesn't exist, return error message
-    if clientShare == None:
-      os.remove(filepath)
-      return ""
-
     # paste the client share on top of the blank share given by the client
-    resultStr = Driver.client_signcheque (clientShare, clientCheque, clientID, bankID)
-
-    # remove the temporary clientcheque file
-    os.remove(filepath)
-
-    return resultStr
-
-# print(request.form['file1'], file=sys.stderr)
+    signStatus = Driver.client_signcheque (clientID, bankID, chequeEncoded, clientSharePath)
+    return signStatus

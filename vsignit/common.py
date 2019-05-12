@@ -70,13 +70,16 @@ class Common():
 
   # Open a normal image from filepath
   @staticmethod
-  def openSecret(filename):
-    try:
-      img = Image.open(filename)
-      img = Common.convertSecretToBlack(img)
-      return img
-    except IOError:
-      return None
+  def openSecret(secretEncoded):
+    img = Image.open(BytesIO(secretEncoded))
+    img = Common.convertSecretToBlack(img)
+    return img
+    # try:
+    #   img = Image.open(filename)
+    #   img = Common.convertSecretToBlack(img)
+    #   return img
+    # except IOError:
+    #   return None
 
   # open shares safely
   @staticmethod
@@ -86,6 +89,11 @@ class Common():
       return img
     except IOError:
       return None
+
+  @staticmethod
+  def openEncoded(encodedImage):
+    img = Image.open(BytesIO(encodedImage))
+    return img
 
   # sets the subpixels within shares
   @staticmethod

@@ -30,15 +30,26 @@ class Driver():
 
   # Share Splitter Driver Function
   @staticmethod
-  def create_shares(image, username):
+  def create_shares(sigEncoded, username):
+    # checks if the username exists
+    if Common.user_exists(username) == None:
+      return "No User"
+
+    sigData = base64.b64decode(sigEncoded)
+    sigImage = Common.openSecret(sigData)
+
+    # checks if the image dimension is valid
+    if Common.validate_resize_image(sigImage) == None:
+      return ""
+
     # split into two shares
     splitter = ShareSplitter()
-    outfile1, outfile2 = splitter.createShares(image)
+    outfile1, outfile2 = splitter.createShares(sigImage)
 
     # send the shares to the database
-    encoded_str = ShareSplitter.store_shares(outfile1, outfile2, username)
+    shareStatus = ShareSplitter.store_shares(outfile1, outfile2, username)
 
-    return encoded_str
+    return shareStatus
 
   # Share Reconstruction Driver Function
   @staticmethod
@@ -89,22 +100,29 @@ class Driver():
 
   # Client Page Driver Function
   @staticmethod
-  def client_signcheque(client_share, client_cheque, client_userid, bank_userid):
+  def client_signcheque(clientID, bankID, chequeEncoded, clientSharePath):
+    clientShare = Common.openImage(clientSharePath)
+    if clientShare == None:
+      return ""
+
+    chequeData = base64.b64decode(chequeEncoded)
+    clientCheque = Common.openEncoded(chequeData)
+    
     # get the client's username based on the id
-    clientUsername = Common.userid_to_username(client_userid)
+    clientUsername = Common.userid_to_username(clientID)
 
     # adds this current transcation to the databsase
-    transactionNo, timestamp, filepath = Client.store_transaction (bank_userid, client_userid)
+    transactionNo, timestamp, filepath = Client.store_transaction (bankID, clientID)
 
     # sends an email notification to both bank and client
-    Common.signcheque_email (transactionNo, timestamp, bank_userid, client_userid)
+    Common.signcheque_email (transactionNo, timestamp, bankID, clientID)
 
     # resizes cheque to the intended size
     # no matter whatever size is given
-    imageFormat = client_cheque.format
-    client_cheque = Common.resize(client_cheque, (2480, 1748))
+    imageFormat = clientCheque.format
+    clientCheque = Common.resize(clientCheque, (2480, 1748))
     
     # overlays the client share on top of the cheque
-    result = Client.signcheque (client_share, client_cheque, filepath, clientUsername, imageFormat)
+    result = Client.signcheque (clientShare, clientCheque, filepath, clientUsername, imageFormat)
 
     return result
