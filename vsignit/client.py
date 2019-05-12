@@ -31,13 +31,13 @@ class Client:
 
   # Function pastes the source pic on top of the destination pic
   @staticmethod
-  def signcheque(client_share, client_cheque, filepath, client_username):
+  def signcheque(client_share, client_cheque, filepath, client_username, imageFormat):
     # extract background and store as an encrypted image for colored background
     background_buffer = BytesIO()
     crop_area = (signCords[0], signCords[1], signCords[0] + \
                 client_share.width, signCords[1] + client_share.height)
     cheque_bg = client_cheque.crop(crop_area)
-    cheque_bg.save(background_buffer, format=client_cheque.format)
+    cheque_bg.save(background_buffer, format=imageFormat)
     encoded_bg = base64.b64encode(background_buffer.getvalue())
     Common.encryptImage(encoded_bg, filepath + '_bg.png')
 
@@ -46,7 +46,7 @@ class Client:
 
     # encrypt and save the file until transaction is complete
     buffered = BytesIO()
-    client_cheque.save(buffered, format=client_cheque.format)
+    client_cheque.save(buffered, format=imageFormat)
     encoded_string = base64.b64encode(buffered.getvalue())
     cheque_string = base64.b64encode(buffered.getvalue())
     Common.encryptImage(cheque_string, filepath + '.png')

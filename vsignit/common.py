@@ -44,9 +44,10 @@ class Common():
       return imageFile.read()
 
   # Function resizes to the desired dimension (200 x 200)
+  # if second argument is not provided
   @staticmethod
-  def resize(image):
-    return image.resize(imageSize)
+  def resize(image, resultSize=imageSize):
+    return image.resize(resultSize)
 
   # converts a normal image to pure black.white pixels
   # RGB converted to B/W based on which color they are closer to

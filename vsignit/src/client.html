@@ -231,7 +231,8 @@
               { 
                 document.getElementById("loader").style.display = "none";
                 $('#response-msg').addClass('alert-danger');
-                $("#response-msg").text("Please ensure that you have uploaded the correct client share!");
+                $('#cheque-upload').addClass('is-invalid');
+                $("#response-msg").text("Oops! Your client share seems to be missing! Please contact your bank to regenerate the share!");
                 $('#response-msg').toggle();
               }
             },

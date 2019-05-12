@@ -272,6 +272,11 @@ def client():
     clientCheque = Common.openImage(filepath)
     clientShare = Common.openImage(clientSharePath)
 
+    # if client share doesn't exist, return error message
+    if clientShare == None:
+      os.remove(filepath)
+      return ""
+
     # paste the client share on top of the blank share given by the client
     resultStr = Driver.client_signcheque (clientShare, clientCheque, clientID, bankID)
 

@@ -102,7 +102,12 @@ class Driver():
     # sends an email notification to both bank and client
     Common.signcheque_email (transactionNo, timestamp, bank_userid, client_userid)
 
+    # resizes cheque to the intended size
+    # no matter whatever size is given
+    imageFormat = client_cheque.format
+    client_cheque = Common.resize(client_cheque, (2480, 1748))
+
     # overlays the client share on top of the cheque
-    result = Client.signcheque (client_share, client_cheque, filepath, clientUsername)
+    result = Client.signcheque (client_share, client_cheque, filepath, clientUsername, imageFormat)
 
     return result
