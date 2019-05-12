@@ -123,14 +123,7 @@
         </div>
       </div>
     </form>
-    
   </div>
-
-  <div class="row">
-    <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
-      <div id="loader"></div>
-    </div>
-  </div> 
 
   <script>
     // prevents user from hitting the back button
@@ -140,6 +133,7 @@
     window.location.hash="Again-no-back-button";
     window.onhashchange=function(){window.location.hash="no-back-button";}
 
+    document.getElementById("loader").style.display = "block";
     $("#add_pictures").hide();
     $("#add_desc").hide();
 
@@ -163,26 +157,28 @@
       }
     });
 
+    // extracts encoded pics
+    recon_cheque = "data:image/png;base64,{{ recon_cheque }}";
+    clean1 = "data:image/png;base64,{{ clean1 }}";
+    recon = "data:image/png;base64,{{ recon }}";
+
+    // loads the pictures
+    var image = document.getElementById("recon_preview");
+    image.src = recon;
+    image.alt = "Recon #{{ transaction.getTranscationNo() }}";
+
+    image = document.getElementById("clean1_preview");
+    image.src = clean1;
+    image.alt = "Clean 1 #{{ transaction.getTranscationNo() }}";
+    
+    image = document.getElementById("cheque_preview");
+    image.src = recon_cheque;
+    image.alt = "Transcation #{{ transaction.getTranscationNo() }}";
+
     // loads the script when window is fully loaded
     window.onload = function()
     {
-      // extracts encoded pics
-      recon_cheque = "data:image/png;base64,{{ recon_cheque }}";
-      clean1 = "data:image/png;base64,{{ clean1 }}";
-      recon = "data:image/png;base64,{{ recon }}";
-
-      // loads the pictures
-      var image = document.getElementById("recon_preview");
-      image.src = recon;
-      image.alt = "Recon #{{ transaction.getTranscationNo() }}";
-
-      image = document.getElementById("clean1_preview");
-      image.src = clean1;
-      image.alt = "Clean 1 #{{ transaction.getTranscationNo() }}";
-      
-      image = document.getElementById("cheque_preview");
-      image.src = recon_cheque;
-      image.alt = "Transcation #{{ transaction.getTranscationNo() }}";
+      document.getElementById("loader").style.display = "none";
 
       // adds back button listener (only work in safari)
       var OneClick = document.getElementById("back");
@@ -287,6 +283,13 @@
       });
     }
   </script>
+
+  <style>
+    #loader {
+      left: 100% !important;
+      margin: -300px 0 0 -75px !important;
+    }
+  </style>
 
 {% else %}
   {% include "forbidden.html" %}
