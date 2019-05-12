@@ -109,7 +109,7 @@
         </div>
 
         <!-- Loader -->
-        <div class="row">
+        <div class="row" style="display:block !important;">
             <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
               <div id="loader"></div>
             </div>
@@ -126,17 +126,16 @@
   </div>
 
   <script>
-    // hide the additional pictures
-    document.getElementById("loader").style.display = "block";
-
     // prevents user from hitting the back button
     // (only works in safari)
     // chrome doesn't need this feature anyway!
     window.location.hash="no-back-button";
     window.location.hash="Again-no-back-button";
     window.onhashchange=function(){window.location.hash="no-back-button";}
-
-    $(document).ready(function() {
+    
+    // executes it when DOM is ready
+    $(document).ready(function() 
+    {
       // extracts encoded pics
       recon_cheque = "data:image/png;base64,{{ recon_cheque }}";
       clean1 = "data:image/png;base64,{{ clean1 }}";
@@ -154,26 +153,6 @@
       image = document.getElementById("cheque_preview");
       image.src = recon_cheque;
       image.alt = "Transcation #{{ transaction.getTranscationNo() }}";
-
-      // reads the transaction number from the hidden input value
-      $("form input[type=submit]").click(function() {
-        $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
-        $(this).attr("clicked", "true");
-      });
-
-      // goes back to the previous page when the link is clicked
-      var OnOneClick = function(e) { 
-        e.preventDefault(); 
-        window.location.href = "/bank-reconstruct"
-        return false; 
-      };
-
-      // closes modal box when it is clicked
-      $(document).click(function(event) {
-        if (!$(event.target).closest("#cheque_preview,.popUpClass,.close").length && $(".popUpClass,.close").is(":visible")) {
-          $('#myModal').hide();
-        }
-      });
     });
 
     // loads the script when window is fully loaded
@@ -222,6 +201,26 @@
         $("#add_desc").fadeToggle(700, "linear");
       });
     }
+
+    // reads the transaction number from the hidden input value
+    $("form input[type=submit]").click(function() {
+      $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
+      $(this).attr("clicked", "true");
+    });
+
+    // goes back to the previous page when the link is clicked
+    var OnOneClick = function(e) { 
+      e.preventDefault(); 
+      window.location.href = "/bank-reconstruct"
+      return false; 
+    };
+
+    // closes modal box when it is clicked
+    $(document).click(function(event) {
+      if (!$(event.target).closest("#cheque_preview,.popUpClass,.close").length && $(".popUpClass,.close").is(":visible")) {
+        $('#myModal').hide();
+      }
+    });
 
     // reads the transaction number from the hidden input value
     $("button").click(function() {
