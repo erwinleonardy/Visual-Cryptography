@@ -3,14 +3,14 @@
 # Descrption: This file contains all of the supporting functions that are shared across the 
 #             other python files
 
-import PIL.ImageOps, os, time, datetime, base64
-from cryptography.fernet import Fernet, InvalidToken
+import os, time, datetime, base64
+from cryptography.fernet import Fernet
 from sqlalchemy import desc
 from io import BytesIO
 from PIL import Image
 
-from vsignit.models import User, Client_Data, Transaction
-from vsignit.emailerService import EmailerService
+from vsignit.models import User, Client_Data, Transaction, Bank_Data
+from vsignit import db
 
 B = 0
 W = 255
@@ -19,35 +19,80 @@ imageSize = (200, 200)
 shareSize = (imageSize[0] * 2, imageSize[1] * 2)
 
 class Common():
+  # this function checks if the client's username given by the bank exists
+  # return: None if doesn't exist
   @staticmethod
-  def encryptImage(imageEncoded, savepath):
-    f = Fernet('HdcT0QsyPAA5M-g9Ozk_RBlRUuo8eq8lS8DPix4d5z4=')
+  def user_exists(username):
+    return None if User.query.filter_by(username=username).first() == None else "OK"
 
-    os.makedirs(os.path.dirname(savepath), exist_ok=True)
-    token = f.encrypt(imageEncoded)
-    outfile = open(savepath, 'wb')
-    outfile.write(token)
-    outfile.close()
-
+  # this function checks if the client's email given by the client exists
+  # return: None if doesn't exist
   @staticmethod
-  def decryptImage(token):
-    f = Fernet('HdcT0QsyPAA5M-g9Ozk_RBlRUuo8eq8lS8DPix4d5z4=')
+  def email_exists(email):
+    return None if User.query.filter_by(email=email).first() == None else "OK"
 
-    imageEncoded = f.decrypt(token)
-    imageData = base64.b64decode(imageEncoded)
-    image = Image.open(BytesIO(imageData))
-    return image
-
+  # convert ID -> Username 
   @staticmethod
-  def openEncrypted(filename):
-    with open(filename, 'rb') as imageFile:
-      return imageFile.read()
+  def userid_to_username(userid):
+    return User.query.filter_by(id=userid).first().getUsername() 
 
-  # Function resizes to the desired dimension (200 x 200)
-  # if second argument is not provided
+  # get email of the particular user
   @staticmethod
-  def resize(image, resultSize=imageSize):
-    return image.resize(resultSize)
+  def userid_to_useremail(userid):
+    return User.query.filter_by(id=userid).first().getEmail() 
+
+  # get the banks this particular client subscribed
+  @staticmethod
+  def get_bank_usernames(client_userid):
+    bank_subcribed = Client_Data.query.filter_by(client_userid=client_userid).all()
+    usernames = []
+    for bank in bank_subcribed:
+      usernames.append(Common.userid_to_username(bank.getBankUserId()))
+
+    return usernames
+
+  # get all of the transactions of the bankID given
+  @staticmethod
+  def get_bank_transactions(bank_userid):
+    pending_cheques = Transaction.query.filter_by(bank_userid=bank_userid).order_by(desc(Transaction.timestamp)).all()
+    return pending_cheques
+
+  # Function gets the bank share from the database
+  @staticmethod
+  def get_bank_share(transaction):
+    bankID = transaction.getBankId()
+    clientID = transaction.getClientId()
+    bankSharePath = Bank_Data.query.filter_by(bank_userid=bankID, client_userid=clientID).first().getBankSharePath()
+    return Common.openImage(bankSharePath)
+
+  # Function gets the client cheque from the database
+  @staticmethod
+  def get_client_cheque(transaction):
+    transaction_no = transaction.getTranscationNo()
+    chequePath = transaction.getFilePath()
+    # throws an error if file couldn't be found
+    if not os.path.isfile(chequePath):
+      raise ValueError
+    token = Common.openEncrypted(chequePath)
+    cheque = Common.decryptImage(token)
+    return transaction_no, cheque
+
+  # Function removes the transaction record from the database
+  @staticmethod
+  def delete_transaction(transaction):
+    db.session.delete(transaction)
+    db.session.commit()
+
+  # Function removes the cheque image which bears the transaction number given
+  @staticmethod
+  def delete_cheque(transaction):
+    chequeFilepath = transaction.getFilePath()
+    bgpath = chequeFilepath[:-4] + '_bg.png'
+    # throws an error if file couldn't be found
+    if not os.path.isfile(chequeFilepath):
+      raise ValueError
+    os.remove(chequeFilepath)
+    os.remove(bgpath)
 
   # converts a normal image to pure black.white pixels
   # RGB converted to B/W based on which color they are closer to
@@ -68,42 +113,25 @@ class Common():
 
     return image
 
-  # Open a normal image from filepath
+  # open shares safely
+  @staticmethod
+  def openImage(filename):
+    return Image.open(filename)
+
+  @staticmethod
+  def openEncoded(encodedImage):
+    return Image.open(BytesIO(encodedImage))
+
+  @staticmethod
+  def openEncrypted(filename):
+    with open(filename, 'rb') as imageFile:
+      return imageFile.read()
+
   @staticmethod
   def openSecret(secretEncoded):
     img = Image.open(BytesIO(secretEncoded))
     img = Common.convertSecretToBlack(img)
     return img
-    # try:
-    #   img = Image.open(filename)
-    #   img = Common.convertSecretToBlack(img)
-    #   return img
-    # except IOError:
-    #   return None
-
-  # open shares safely
-  @staticmethod
-  def openImage(filename):
-    try:
-      img = Image.open(filename)
-      return img
-    except IOError:
-      return None
-
-  @staticmethod
-  def openEncoded(encodedImage):
-    img = Image.open(BytesIO(encodedImage))
-    return img
-
-  # sets the subpixels within shares
-  @staticmethod
-  def placePixels(share, tup, cords):
-    x, y = cords[0], cords[1]
-
-    share.putpixel((x, y), tup[0])
-    share.putpixel((x + 1, y), tup[1])
-    share.putpixel((x, y + 1), tup[2])
-    share.putpixel((x + 1, y + 1), tup[3])
 
   # Function Saves Image
   @staticmethod
@@ -121,7 +149,6 @@ class Common():
     width, height = image.size
     if (width != height):
       return None
-
     else:
       try:
         image.resize(imageSize)
@@ -131,103 +158,35 @@ class Common():
         offset = ((bg_w - img_w) // 2, (bg_h - img_h) // 2)
         background.paste(image, offset)
         return image
-
       except IOError:
         return None
 
-  # function to send email when cheque has been signed by client
+  # Function resizes to the desired dimension (200 x 200)
+  # if second argument is not provided
   @staticmethod
-  def signcheque_email(transaction_no, timestamp, bank_userid, client_userid):
-    clientUsername = Common.userid_to_username(client_userid)
-    bankUsername = Common.userid_to_username(bank_userid)
-    bank_email = Common.userid_to_useremail(bank_userid)
-    client_email = Common.userid_to_useremail(client_userid)
+  def resizeImage(image, resultSize=imageSize):
+    return image.resize(resultSize)
 
-    # send email to bank
-    bankSubject = "({}) New Cheque from {}".format(bankUsername, clientUsername)
-    bankMessage = """
-    You have received a new cheque to be processed from {}.
-
-    Transaction Number: {}
-    Transaction Time: {}""".format(clientUsername, transaction_no, timestamp)
-    EmailerService.send_email(bankUsername, bank_email, bankSubject, bankMessage)
-
-    # send email to client
-    clientSubject = "({}) Your cheque has been sent to {}".format(clientUsername, bankUsername)
-    clientMessage = """
-    Your cheque is currently being processed by {}.
-
-    Transaction Number: {}
-    Transaction Time: {}
-    
-    Your bank will contact you should they have any issue.""".format(bankUsername, transaction_no, timestamp)
-    EmailerService.send_email(clientUsername, client_email, clientSubject, clientMessage)
-  
-  # function to send email after bank determines what to do 
-  # with cheque transaction
   @staticmethod
-  def transaction_email(transaction_no, client_userid, bank_userid, bank_response):
-    clientUsername = Common.userid_to_username(client_userid)
-    bankUsername = Common.userid_to_username(bank_userid)
-    bank_email = Common.userid_to_useremail(bank_userid)
-    client_email = Common.userid_to_useremail(client_userid)
+  def encryptImage(imageEncoded, savepath):
+    f = Fernet('HdcT0QsyPAA5M-g9Ozk_RBlRUuo8eq8lS8DPix4d5z4=')
+    os.makedirs(os.path.dirname(savepath), exist_ok=True)
+    token = f.encrypt(imageEncoded)
+    outfile = open(savepath, 'wb')
+    outfile.write(token)
+    outfile.close()
 
-    # send email to bank
-    bankSubject = "({}) Outcome of Cheque {}".format(bankUsername, transaction_no)
-    bankMessage = """
-    You have have just decided to {} a cheque from {}.
-
-    Transaction Number: {}""".format(bank_response, clientUsername, transaction_no)
-    EmailerService.send_email(bankUsername, bank_email, bankSubject, bankMessage)
-
-    # send email to client
-    clientSubject = "({}) Outcome of Cheque {}".format(clientUsername, transaction_no)
-    clientMessage = """
-    {} have just decided to {} your cheque.
-
-    Transaction Number: {}
-    
-    Please do call your bank hotline if you have further enquiries.""".format(bankUsername, bank_response, transaction_no)
-    EmailerService.send_email(clientUsername, client_email, clientSubject, clientMessage)
-
-  # this function checks if the client's
-  # username given by the bank exists
-  # return: None if doesn't exist
   @staticmethod
-  def user_exists(username):
-    return None if User.query.filter_by(username=username).first() == None else "OK"
+  def decryptImage(token):
+    f = Fernet('HdcT0QsyPAA5M-g9Ozk_RBlRUuo8eq8lS8DPix4d5z4=')
+    imageEncoded = f.decrypt(token)
+    imageData = base64.b64decode(imageEncoded)
+    image = Image.open(BytesIO(imageData))
+    return image
 
-  # this function checks if the client's
-  # email given by the client exists
-  # return: None if doesn't exist
   @staticmethod
-  def email_exists(email):
-    return None if User.query.filter_by(email=email).first() == None else "OK"
-
-  # get the banks this particular client subscribed
-  @staticmethod
-  def get_bank_usernames(client_userid):
-    bank_subcribed = Client_Data.query.filter_by(client_userid=client_userid).all()
-
-    usernames = []
-
-    for bank in bank_subcribed:
-      usernames.append(Common.userid_to_username(bank.getBankUserId()))
-
-    return usernames
-
-  # get all of the transactions of the bankID given
-  @staticmethod
-  def get_bank_transactions(bank_userid):
-    pending_cheques = Transaction.query.filter_by(bank_userid=bank_userid).order_by(desc(Transaction.timestamp)).all()
-    return pending_cheques
-
-  # convert ID -> Username 
-  @staticmethod
-  def userid_to_username(userid):
-    return User.query.filter_by(id=userid).first().getUsername() 
-
-  # get email of the particular user
-  @staticmethod
-  def userid_to_useremail(userid):
-    return User.query.filter_by(id=userid).first().getEmail() 
+  def encodeImage(image, format):
+    buffer = BytesIO()
+    image.save(buffer, format=format)
+    string = base64.b64encode(buffer.getvalue())
+    return string

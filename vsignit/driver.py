@@ -2,70 +2,85 @@
 # Author: Erwin Leonardy
 # Descrption: This file contains all of the necessary functions to run the web application.
 
-from __future__ import print_function
-import PIL.ImageOps, re, time, base64, sys, os
+import re, time, base64, sys
 from flask import url_for
 from PIL import Image
 
 from vsignit.shareReconstructor import ShareReconstructor
+from vsignit.emailerService import EmailerService
 from vsignit.shareSplitter import ShareSplitter
+from vsignit.common import Common
 from vsignit.register import Register
-from vsignit.common import Common, imageSize
 from vsignit.client import Client
 from vsignit.login import Login
 
 class Driver():
+  # Function to register the user to the system
+  @staticmethod
+  def register(username, email, password, verification):
+    user = Register(username, email, password, verification)
+    return user.register()
+
   # Function to Login to the system
   @staticmethod
   def login(username, password):
-    if Login.login(username, password):
+    user = Login(username, password)
+    if user.login():
       return url_for('index')
     else:
       return ""
 
-  # Function to register the user to the system
-  @staticmethod
-  def register(username, email, password, verification):
-    return Register.register(username, email, password, verification)
-
   # Share Splitter Driver Function
   @staticmethod
   def create_shares(sigEncoded, username):
-    # checks if the username exists
     if Common.user_exists(username) == None:
       return "No User"
 
     sigData = base64.b64decode(sigEncoded)
     sigImage = Common.openSecret(sigData)
 
-    # checks if the image dimension is valid
     if Common.validate_resize_image(sigImage) == None:
+      return "" 
+
+    splitter = ShareSplitter(sigImage, username)
+    shareStatus = splitter.createShares() #split into two shares
+    return shareStatus
+
+  # Client Page Driver Function
+  @staticmethod
+  def client_signcheque(clientID, bankID, chequeEncoded, clientSharePath):
+    clientShare = Common.openImage(clientSharePath)
+    if clientShare == None:
       return ""
 
-    # split into two shares
-    splitter = ShareSplitter()
-    outfile1, outfile2 = splitter.createShares(sigImage)
+    chequeData = base64.b64decode(chequeEncoded)
+    clientCheque = Common.openEncoded(chequeData)
+    client = Client(bankID, clientID, clientCheque, clientShare)
 
-    # send the shares to the database
-    shareStatus = ShareSplitter.store_shares(outfile1, outfile2, username)
+    # adds this current transcation to the databsase
+    transactionNo, timestamp = client.store_transaction()
 
-    return shareStatus
+    # sends an email notification to both bank and client
+    EmailerService.signcheque_email(transactionNo, timestamp, bankID, clientID)
+    
+    # overlays the client share on top of the cheque
+    result = client.signcheque()
+    return result
 
   # Share Reconstruction Driver Function
   @staticmethod
   def reconstruct_shares(transaction):
-    
     # retrieves the client cheque
-    transactionNo, clientCheque = ShareReconstructor.get_client_cheque(transaction)
+    transactionNo, clientCheque = Common.get_client_cheque(transaction)
     
     # retrieves the bankShare
-    bankShare = ShareReconstructor.get_bank_share(transaction)
+    bankShare = Common.get_bank_share(transaction)
     
     # reconstruct the shares based on the client cheque and bank share given
-    reconstructor = ShareReconstructor()
-    recon_cheque, clean1, recon = reconstructor.reconstructCheque(bankShare, clientCheque, transactionNo)
+    reconstructor = ShareReconstructor(clientCheque, bankShare, transactionNo)
+    reconCheque, cleanSig, reconSig = reconstructor.reconstructCheque()
  
-    return recon_cheque, clean1, recon
+    return reconCheque, cleanSig, reconSig
 
   # Function triggered during verification process
   # Success : Send successful email and delete transaction
@@ -80,49 +95,14 @@ class Driver():
     # 'accept' -> Sends successful email to the client and bank
     # 'reject' -> sends fail email to the client and bank
     if bank_response == 'accept':
-      Common.transaction_email(transaction_no, client_userid, bank_userid, bank_response)
-
+      EmailerService.transaction_email(transaction_no, client_userid, bank_userid, bank_response)
     else:
-      Common.transaction_email(transaction_no, client_userid,bank_userid, bank_response)
+      EmailerService.transaction_email(transaction_no, client_userid,bank_userid, bank_response)
 
   # Function to delete the transaction from the DB
   @staticmethod
   def transaction_deletion(transaction):
-    # delete existing image
-    ShareReconstructor.delete_cheque (transaction)
-
-    # send rejection email
-    Common.transaction_email(transaction.getTranscationNo(), transaction.getClientId(), transaction.getBankId(), 'reject')
-
-    # delete the share from the DB and remove the image
-    ShareReconstructor.delete_transaction(transaction)
-    ShareReconstructor.delete_transactionImages(transaction.getTranscationNo())
-
-  # Client Page Driver Function
-  @staticmethod
-  def client_signcheque(clientID, bankID, chequeEncoded, clientSharePath):
-    clientShare = Common.openImage(clientSharePath)
-    if clientShare == None:
-      return ""
-
-    chequeData = base64.b64decode(chequeEncoded)
-    clientCheque = Common.openEncoded(chequeData)
-    
-    # get the client's username based on the id
-    clientUsername = Common.userid_to_username(clientID)
-
-    # adds this current transcation to the databsase
-    transactionNo, timestamp, filepath = Client.store_transaction (bankID, clientID)
-
-    # sends an email notification to both bank and client
-    Common.signcheque_email (transactionNo, timestamp, bankID, clientID)
-
-    # resizes cheque to the intended size
-    # no matter whatever size is given
-    imageFormat = clientCheque.format
-    clientCheque = Common.resize(clientCheque, (2480, 1748))
-    
-    # overlays the client share on top of the cheque
-    result = Client.signcheque (clientShare, clientCheque, filepath, clientUsername, imageFormat)
-
-    return result
+    # rejection email
+    EmailerService.transaction_email(transaction.getTranscationNo(), transaction.getClientId(), transaction.getBankId(), 'reject')
+    Common.delete_cheque(transaction) # delete image
+    Common.delete_transaction(transaction) # delete the share from the DB and remove the image

@@ -3,18 +3,15 @@
 # Descrption: This file would be called automatically once the package 'vsignit' is called.
 #             It serves to initiliase the flask application and also the database
 
-from flask import Flask
-from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
 from flask_mail import Mail
-
-# basic configuration
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+from flask import Flask
 
 app = Flask(__name__, template_folder='./src')
 app.config.from_pyfile('flask.cfg')
 
-# initialise the SQLAlchemy database and Mail
+# initialise the database, mail, login_manager
 db = SQLAlchemy(app)
 mail = Mail(app)
 

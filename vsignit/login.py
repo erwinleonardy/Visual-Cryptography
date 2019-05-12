@@ -8,12 +8,15 @@ from flask_login import login_user
 from vsignit.models import User
 
 class Login():
+  def __init__(self, username, password):
+    self.username = username
+    self.password = password
+
   # Function Checks if the username and password provided can be found in the databse
-  @staticmethod
-  def login(username, password):
+  def login(self):
     login = False
-    user = User.query.filter_by(username=username).first()
-    if user is not None and check_password_hash(user.password, password):
+    user = User.query.filter_by(username= self.username).first()
+    if user is not None and check_password_hash(user.password,  self.password):
       login_user(user)
       login = True
     

@@ -2,19 +2,19 @@
 # Author: Erwin Leonardy
 # Descrption: This file contains all of the necessary functions to split the shares
 
-import PIL.ImageOps, random, base64, os, secrets
-from sqlalchemy.exc import IntegrityError
-from flask_login import current_user
+import random, os, secrets
 from PIL import Image, ImageDraw, ImageFont
+from flask_login import current_user
 
-from vsignit.models import User, UserType, Client_Data, Bank_Data
-from vsignit.emailerService import EmailerService
+from vsignit.models import User, Client_Data, Bank_Data
 from vsignit.common import Common, imageSize, B, W
+from vsignit.emailerService import EmailerService
 from vsignit import db
 
 class ShareSplitter():
-  def __init__(self):
-    pass
+  def __init__(self, sigImage, username):
+    self.sigImage = sigImage
+    self.username = username
 
   # If both source1, source2 pixels are black
   def b1b2(self, hiddenColor):
@@ -103,6 +103,15 @@ class ShareSplitter():
 
     return (share1Pixel, share2Pixel)
 
+  # sets the subpixels within shares
+  def placePixels(self, share, tup, cords):
+    x, y = cords[0], cords[1]
+
+    share.putpixel((x, y), tup[0])
+    share.putpixel((x + 1, y), tup[1])
+    share.putpixel((x, y + 1), tup[2])
+    share.putpixel((x + 1, y + 1), tup[3])
+
   # based on the pixel colors from hidden, source1, source2,
   # set the subpixels of the two new shares
   def setSharePixels(self, hidden, source1, source2, share1, share2, cords):
@@ -124,8 +133,8 @@ class ShareSplitter():
       subPixels = self.w1w2(hiddenPxl)
 
     subCords = (cords[0] * 2, cords[1] * 2)
-    Common.placePixels(share1, subPixels[0], subCords)
-    Common.placePixels(share2, subPixels[1], subCords)
+    self.placePixels(share1, subPixels[0], subCords)
+    self.placePixels(share2, subPixels[1], subCords)
 
   # create source images
   def createSource(self, size):
@@ -143,37 +152,37 @@ class ShareSplitter():
     return img
 
   # creates two new shares based on three images provided
-  def createShares(self, hidden):
+  def createShares(self):
     # resize image to fit on cheque after reconstruction
-    if (hidden.size != imageSize):
-      hidden = Common.resize(hidden)
+    if (self.sigImage.size != imageSize):
+      self.sigImage = Common.resizeImage(self.sigImage)
       
     # create source images to base shares off
-    source1 = self.createSource(hidden.size)
-    source2 = self.createSource(hidden.size)
+    source1 = self.createSource(self.sigImage.size)
+    source2 = self.createSource(self.sigImage.size)
 
     # create new images for manipulation
     share1 = Image.new('1', (source1.width*2, source1.height*2))
     share2 = Image.new('1', (source1.width*2, source1.height*2))
 
     # x is horizontal, y is vertical; start from (0,0) 
-    for x in range(hidden.width):
-      for y in range(hidden.height):
+    for x in range(self.sigImage.width):
+      for y in range(self.sigImage.height):
         cords = (x, y) # pixel coordinates
-        self.setSharePixels(hidden, source1, source2, share1, share2, cords)
+        self.setSharePixels(self.sigImage, source1, source2, share1, share2, cords)
 
-    return share1, share2
+    signStatus = self.store_shares(share1, share2)
+    return signStatus
 
   # Function sends client/bank shares to respective emails
-  @staticmethod
-  def store_shares(share1, share2, username):
+  def store_shares(self, share1, share2):
     bank_userid = current_user.get_id()
-    client_userid = User.query.filter_by(username=username).first().id
+    client_userid = User.query.filter_by(username=self.username).first().id
     bank_username = User.query.filter_by(id=bank_userid).first().username
 
     # export image shares
-    bank_share_path = "./vsignit/output/bank/" + username + "_" + bank_username + "_bank_share.png"
-    client_share_path = "./vsignit/output/client/" + username + "_" + bank_username + "_client_share.png"
+    bank_share_path = "./vsignit/output/bank/" + self.username + "_" + bank_username + "_bank_share.png"
+    client_share_path = "./vsignit/output/client/" + self.username + "_" + bank_username + "_client_share.png"
     Common.save_image(share1, bank_share_path)
     Common.save_image(share2, client_share_path)
 
@@ -186,7 +195,7 @@ class ShareSplitter():
       existingBank.bank_share_path = bank_share_path
       existingClient.client_share_path = client_share_path 
       db.session.commit()     
-      return "You have just overwritten \'" + username + "\' client and bank shares!"
+      return "You have just overwritten \'" + self.username + "\' client and bank shares!"
 
     # else, creates a new record
     else:     

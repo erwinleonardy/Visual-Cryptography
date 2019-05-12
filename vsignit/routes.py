@@ -2,26 +2,19 @@
 # Author: Erwin Leonardy
 # Descrption: This file serves as the file that handles the routing of our flask program.
 
-import base64, re, os, time, requests
-from flask import render_template, request, url_for, redirect, session, jsonify
+import base64, re, os, time
+from flask import render_template, request, url_for, redirect
 from flask_login import current_user, logout_user
 from PIL import Image
-from datetime import timedelta
 
-from vsignit import app
+from vsignit.models import UserType, User, Client_Data, Transaction
 from vsignit.driver import Driver
 from vsignit.common import Common
-from vsignit.models import UserType, User, Client_Data, Transaction
+from vsignit import app
+
 
 @app.route('/', methods=['GET'])
 def index():
-  # if not current_user.is_authenticated:
-  #   username = ""
-  #   authenticated = "False"
-  #   user_type = ""
-    
-  # else:    
-  
   if not current_user.is_authenticated:
     return redirect(url_for('login'))
   else:
@@ -46,7 +39,6 @@ def login():
         return str(e)
     else:
       return redirect(url_for('index'))
-
   elif request.method == 'POST':  
     username = request.form['username']
     password = request.form['password']
@@ -78,12 +70,10 @@ def learning():
     username = ""
     authenticated = "False"
     user_type = ""
-
   else:
     result = User.query.filter_by(id=current_user.get_id()).first()
     username = result.getUsername()
     authenticated = "True"
-
     if result.user_type == UserType.admin:
       user_type = "Bank"
     else:
@@ -107,21 +97,17 @@ def bank_generate():
         if not current_user.is_authenticated or result == None:
           logout_user()
           return redirect(url_for('login'))
-
         else:
           return render_template('bank-generation.html', result=result)
-
       except Exception as e:
         return str(e)
+  elif request.method == 'POST': 
 
-  elif request.method == 'POST':      
     # convert the base64 image to an image
     sigEncoded = re.sub('^data:image/.+;base64,', '', request.form['file'])
     username = request.form['clientUsername']
-
     shareStatus = Driver.create_shares(sigEncoded, username)
     return shareStatus
-
 
 @app.route('/bank-reconstruct', methods=['GET', 'POST'])
 def bank_reconstruct():
@@ -134,7 +120,6 @@ def bank_reconstruct():
       if not current_user.is_authenticated or result == None:
         logout_user()
         return redirect(url_for('login'))
-      
       else:
         # extracts the pending cheques of that particular bank
         transactions = Common.get_bank_transactions(current_user.get_id())
@@ -151,7 +136,6 @@ def bank_reconstruct():
     # reconsruct the share and return base64 encoding to the admin
     if request.form['type'] == 'Verify':
       return "/bank-reconstruct/verify?transID=" + transactionNo
-
     # if admin chooses to delete a transaction
     elif request.form['type'] == 'Delete':
       # if cheque can't be deleted
@@ -173,7 +157,6 @@ def bank_reconstruct_verify():
       if not current_user.is_authenticated or result == None:
         logout_user()
         return redirect(url_for('login'))
-    
       else:
         # extracts the transaction
         transactionNo = request.args.get('transID')
@@ -183,12 +166,10 @@ def bank_reconstruct_verify():
           # if user enters without entering transactionID
           if transactionNo == None:
             raise ValueError
-            
           else:
             # reconstruct the share and sends the base64 to the client
             recon_cheque, clean1, recon = Driver.reconstruct_shares (transaction)
             return render_template('verify.html', result=result, transaction=transaction, recon_cheque=recon_cheque, clean1=clean1, recon=recon)
-        
         # if there is something wrong
         except ValueError:
           return render_template('verify.html', result=None)
@@ -219,7 +200,6 @@ def client():
       if not current_user.is_authenticated or result == None:
           logout_user()
           return redirect(url_for('login'))
-
       else:
         # extracts the bank the client subscribed to
         usernames = Common.get_bank_usernames(current_user.get_id())
