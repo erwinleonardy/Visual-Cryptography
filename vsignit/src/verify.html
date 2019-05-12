@@ -140,6 +140,9 @@
     window.location.hash="Again-no-back-button";
     window.onhashchange=function(){window.location.hash="no-back-button";}
 
+    $("#add_pictures").hide();
+    $("#add_desc").hide();
+
     // reads the transaction number from the hidden input value
     $("form input[type=submit]").click(function() {
       $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
@@ -163,9 +166,6 @@
     // loads the script when window is fully loaded
     window.onload = function()
     {
-      $("#add_pictures").hide();
-      $("#add_desc").hide();
-
       // extracts encoded pics
       recon_cheque = "data:image/png;base64,{{ recon_cheque }}";
       clean1 = "data:image/png;base64,{{ clean1 }}";
