@@ -19,6 +19,9 @@ class ShareReconstructor():
   def get_client_cheque(transaction):
     transaction_no = transaction.getTranscationNo()
     chequePath = transaction.getFilePath()
+    # throws an error if file couldn't be found
+    if not os.path.isfile(chequePath):
+      raise ValueError
     token = Common.openEncrypted(chequePath)
     cheque = Common.decryptImage(token)
     return transaction_no, cheque

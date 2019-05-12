@@ -51,9 +51,6 @@ class Driver():
     bankShare = ShareReconstructor.get_bank_share(transaction)
     
     # reconstruct the shares based on the client cheque and bank share given
-    if clientCheque == None:
-      return ""
-    
     reconstructor = ShareReconstructor()
     recon_cheque, clean1, recon = reconstructor.reconstructCheque(bankShare, clientCheque, transactionNo)
  
@@ -106,7 +103,7 @@ class Driver():
     # no matter whatever size is given
     imageFormat = client_cheque.format
     client_cheque = Common.resize(client_cheque, (2480, 1748))
-
+    
     # overlays the client share on top of the cheque
     result = Client.signcheque (client_share, client_cheque, filepath, clientUsername, imageFormat)
 
