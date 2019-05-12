@@ -52,7 +52,7 @@
               </tr>
 
               <!-- Reconstructed signature and Cleaned Signature -->
-              <tr align="center" id="add_pictures">
+              <tr align="center" id="add_pictures" style="display: none;">
                 <td style="display:inline-block; text-align: center; margin:5px">
                   <p class="lead">Reconstructed Share</p>
                   <div id="pic1" style="padding-bottom: 10px; width:200px; height:200px; margin:0px auto">
@@ -70,7 +70,7 @@
                 </td>
               </tr>
 
-              <tr align="center" id="add_desc">
+              <tr align="center" id="add_desc" style="display: none;">
                 <td colspan="2" style="display:inline-block; text-align: center; margin:5px; padding-top:5px;">
                   <p class="lead">Final Cheque </p>
                 </td>
@@ -127,8 +127,6 @@
 
   <script>
     // hide the additional pictures
-    $("#add_pictures").hide();
-    $("#add_desc").hide();
     document.getElementById("loader").style.display = "block";
 
     // prevents user from hitting the back button
@@ -138,29 +136,7 @@
     window.location.hash="Again-no-back-button";
     window.onhashchange=function(){window.location.hash="no-back-button";}
 
-    // reads the transaction number from the hidden input value
-    $("form input[type=submit]").click(function() {
-      $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
-      $(this).attr("clicked", "true");
-    });
-
-    // goes back to the previous page when the link is clicked
-    var OnOneClick = function(e) { 
-      e.preventDefault(); 
-      window.location.href = "/bank-reconstruct"
-      return false; 
-    };
-
-    // closes modal box when it is clicked
-    $(document).click(function(event) {
-      if (!$(event.target).closest("#cheque_preview,.popUpClass,.close").length && $(".popUpClass,.close").is(":visible")) {
-        $('#myModal').hide();
-      }
-    });
-
-    // loads the script when window is fully loaded
-    window.onload = function()
-    {
+    $(document).ready(function() {
       // extracts encoded pics
       recon_cheque = "data:image/png;base64,{{ recon_cheque }}";
       clean1 = "data:image/png;base64,{{ clean1 }}";
@@ -178,7 +154,31 @@
       image = document.getElementById("cheque_preview");
       image.src = recon_cheque;
       image.alt = "Transcation #{{ transaction.getTranscationNo() }}";
-    
+
+      // reads the transaction number from the hidden input value
+      $("form input[type=submit]").click(function() {
+        $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
+        $(this).attr("clicked", "true");
+      });
+
+      // goes back to the previous page when the link is clicked
+      var OnOneClick = function(e) { 
+        e.preventDefault(); 
+        window.location.href = "/bank-reconstruct"
+        return false; 
+      };
+
+      // closes modal box when it is clicked
+      $(document).click(function(event) {
+        if (!$(event.target).closest("#cheque_preview,.popUpClass,.close").length && $(".popUpClass,.close").is(":visible")) {
+          $('#myModal').hide();
+        }
+      });
+    });
+
+    // loads the script when window is fully loaded
+    window.onload = function()
+    {
       document.getElementById("loader").style.display = "none";
 
       // adds back button listener (only work in safari)
@@ -258,9 +258,9 @@
       e.preventDefault(); // avoid to execute the actual submit of the form.
     });
 
+    // process transaction if user decides to accept/reject the transaction
     function processTransaction (transactionNo, response)
     {
-      console.log("Processing!!!");
       var fd = new FormData();
       fd.append('response', response)
       fd.append('transactionNo', transactionNo)
@@ -277,8 +277,7 @@
           window.location.href = response
         },
 
-        error: function(jqXHR, textStatus, errorThrown) 
-        {
+        error: function(jqXHR, textStatus, errorThrown) {
           alert(errorThrown)
         }
       });
