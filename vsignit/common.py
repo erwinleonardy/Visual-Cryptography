@@ -225,19 +225,15 @@ class Common():
 
   @staticmethod
   def downloadFromGoogle(sourceFilePath, destFilePath):
-    is_prod = os.environ.get('IS_HEROKU', None)
-    if not is_prod:
-      with app.app_context():
-        blob = Blob(sourceFilePath, bucket)
-        os.makedirs(os.path.dirname(destFilePath), exist_ok=True) # creates directory if it doesn't exist
-        blob.download_to_filename(destFilePath)
+    with app.app_context():
+      blob = Blob(sourceFilePath, bucket)
+      os.makedirs(os.path.dirname(destFilePath), exist_ok=True) # creates directory if it doesn't exist
+      blob.download_to_filename(destFilePath)
 
   @staticmethod
   def deleteFromGoogle(sourceFilePath):
-    is_prod = os.environ.get('IS_HEROKU', None)
-    if not is_prod:
-      with app.app_context():
-        blob = Blob(sourceFilePath, bucket)
-        blob.delete()
+    with app.app_context():
+      blob = Blob(sourceFilePath, bucket)
+      blob.delete()
 
 

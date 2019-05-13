@@ -198,24 +198,6 @@ class ShareSplitter():
     Common.uploadToGoogle(bank_share_path, bank_share_db_path)
     Common.uploadToGoogle(client_share_path, client_share_db_path)
 
-    # download from cloud
-    # Common.downloadFromGoogle(bank_share_db_path, bank_share_path)
-    # Common.downloadFromGoogle(client_share_db_path, client_share_path)
-
-    # deletes from cloud
-    # Common.deleteFromGoogle("bank/" + self.username + "_" + bank_username + "_bank_share.png")
-    # Common.deleteFromGoogle("client/" + self.username + "_" + bank_username + "_client_share.png")
-
-    # reconstruct bank's share
-    # bank_share_token = Common.openEncrypted(bank_share_path)
-    # bank_share = Common.decryptImage(bank_share_token)
-    # bank_share.show()
-
-    # reconstruct client's share
-    # client_share_token = Common.openEncrypted(client_share_path)
-    # client_share = Common.decryptImage(client_share_token)
-    # client_share.show()
-
     # deletes the share
     os.remove(bank_share_path)
     os.remove(client_share_path)
