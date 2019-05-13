@@ -12,7 +12,6 @@ from vsignit.driver import Driver
 from vsignit.common import Common
 from vsignit import app
 
-
 @app.route('/', methods=['GET'])
 def index():
   if not current_user.is_authenticated:
@@ -213,8 +212,8 @@ def client():
     clientID = current_user.get_id()
 
     chequeEncoded = re.sub('^data:image/.+;base64,', '', request.form['cheque'])
-    clientSharePath = Client_Data.query.filter_by(client_userid=clientID, bank_userid=bankID).first().getClientSharePath()
+    client_share_db_path = Client_Data.query.filter_by(client_userid=clientID, bank_userid=bankID).first().getClientSharePath()
 
     # paste the client share on top of the blank share given by the client
-    signStatus = Driver.client_signcheque (clientID, bankID, chequeEncoded, clientSharePath)
+    signStatus = Driver.client_signcheque (clientID, bankID, chequeEncoded, client_share_db_path)
     return signStatus

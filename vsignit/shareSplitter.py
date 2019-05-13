@@ -9,7 +9,9 @@ from flask_login import current_user
 from vsignit.models import User, Client_Data, Bank_Data
 from vsignit.common import Common, imageSize, B, W
 from vsignit.emailerService import EmailerService
-from vsignit import db
+from vsignit import db, bucket
+
+from google.cloud import storage
 
 class ShareSplitter():
   def __init__(self, sigImage, username):
@@ -180,11 +182,43 @@ class ShareSplitter():
     client_userid = User.query.filter_by(username=self.username).first().id
     bank_username = User.query.filter_by(id=bank_userid).first().username
 
-    # export image shares
+    # exports and encrypts image shares
     bank_share_path = "./vsignit/output/bank/" + self.username + "_" + bank_username + "_bank_share.png"
     client_share_path = "./vsignit/output/client/" + self.username + "_" + bank_username + "_client_share.png"
-    Common.save_image(share1, bank_share_path)
-    Common.save_image(share2, client_share_path)
+    bank_share_db_path = "bank/" + self.username + "_" + bank_username + "_bank_share.png"
+    client_share_db_path = "client/" + self.username + "_" + bank_username + "_client_share.png"
+
+    bank_share_string = Common.encodeImage(share1, "PNG")
+    Common.encryptImage(bank_share_string, bank_share_path)
+
+    client_share_string = Common.encodeImage(share2, "PNG")
+    Common.encryptImage(client_share_string, client_share_path)
+
+    # uploads to cloud
+    Common.uploadToGoogle(bank_share_path, bank_share_db_path)
+    Common.uploadToGoogle(client_share_path, client_share_db_path)
+
+    # download from cloud
+    # Common.downloadFromGoogle(bank_share_db_path, bank_share_path)
+    # Common.downloadFromGoogle(client_share_db_path, client_share_path)
+
+    # deletes from cloud
+    # Common.deleteFromGoogle("bank/" + self.username + "_" + bank_username + "_bank_share.png")
+    # Common.deleteFromGoogle("client/" + self.username + "_" + bank_username + "_client_share.png")
+
+    # reconstruct bank's share
+    # bank_share_token = Common.openEncrypted(bank_share_path)
+    # bank_share = Common.decryptImage(bank_share_token)
+    # bank_share.show()
+
+    # reconstruct client's share
+    # client_share_token = Common.openEncrypted(client_share_path)
+    # client_share = Common.decryptImage(client_share_token)
+    # client_share.show()
+
+    # deletes the share
+    os.remove(bank_share_path)
+    os.remove(client_share_path)
 
     # checks if data already exists
     existingBank = Bank_Data.query.get([bank_userid, client_userid])
@@ -192,15 +226,15 @@ class ShareSplitter():
 
     # if yes, overwrites it
     if existingBank != None and existingClient != None:
-      existingBank.bank_share_path = bank_share_path
-      existingClient.client_share_path = client_share_path 
+      existingBank.bank_share_path = bank_share_db_path
+      existingClient.client_share_path = client_share_db_path 
       db.session.commit()     
       return "You have just overwritten \'" + self.username + "\' client and bank shares!"
 
     # else, creates a new record
     else:     
-      newBankData = Bank_Data(bank_userid, client_userid, bank_share_path)
-      newClientData = Client_Data(client_userid, bank_userid, client_share_path)
+      newBankData = Bank_Data(bank_userid, client_userid, bank_share_db_path)
+      newClientData = Client_Data(client_userid, bank_userid, client_share_db_path)
       db.session.add(newBankData)
       db.session.add(newClientData)
       db.session.commit()

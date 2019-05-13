@@ -109,7 +109,7 @@
         </div>
 
         <!-- Loader -->
-        <div class="row" style="display:block !important;">
+        <div class="row">
             <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
               <div id="loader"></div>
             </div>
@@ -136,6 +136,8 @@
     // executes it when DOM is ready
     $(document).ready(function() 
     {
+      document.getElementById("loader").style.display = "block";
+
       // extracts encoded pics
       recon_cheque = "data:image/png;base64,{{ recon_cheque }}";
       clean1 = "data:image/png;base64,{{ clean1 }}";

@@ -48,14 +48,20 @@ class Driver():
 
   # Client Page Driver Function
   @staticmethod
-  def client_signcheque(clientID, bankID, chequeEncoded, clientSharePath):
-    clientShare = Common.openImage(clientSharePath)
-    if clientShare == None:
+  def client_signcheque(clientID, bankID, chequeEncoded, client_share_db_path):
+    # downloads the share from the cloud
+    client_share_path = "./vsignit/output/" + client_share_db_path
+    Common.downloadFromGoogle(client_share_db_path, client_share_path)
+
+    # decodes the share
+    client_share_token = Common.openEncrypted(client_share_path)
+    client_share = Common.decryptImage(client_share_token)
+    if client_share == None:
       return ""
 
     chequeData = base64.b64decode(chequeEncoded)
     clientCheque = Common.openEncoded(chequeData)
-    client = Client(bankID, clientID, clientCheque, clientShare)
+    client = Client(bankID, clientID, clientCheque, client_share)
 
     # adds this current transcation to the databsase
     transactionNo, timestamp = client.store_transaction()

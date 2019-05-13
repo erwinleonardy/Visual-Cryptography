@@ -50,8 +50,13 @@ class ShareReconstructor():
     return clean, secret
 
   def resetCheque(self):
-    bg_path = './vsignit/output/cheque/cheque_' + self.transactionNo + '_bg.png'
-    bg_token = Common.openEncrypted(bg_path)
+    # downloads cheque bg from Google
+    cheque_bg_db_path = 'cheque/cheque_' + self.transactionNo + '_bg.png'
+    cheque_bg_path = './vsignit/output/' + cheque_bg_db_path
+    Common.downloadFromGoogle(cheque_bg_db_path, cheque_bg_path)
+
+    # reconstruct bg
+    bg_token = Common.openEncrypted(cheque_bg_path)
     bg = Common.decryptImage(bg_token)
     self.cheque.paste(bg, self.cropRegion)
 

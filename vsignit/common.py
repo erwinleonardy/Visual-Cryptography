@@ -10,7 +10,8 @@ from io import BytesIO
 from PIL import Image
 
 from vsignit.models import User, Client_Data, Transaction, Bank_Data
-from vsignit import db
+from vsignit import app, db, bucket
+from google.cloud.storage.blob import Blob
 
 B = 0
 W = 255
@@ -57,24 +58,46 @@ class Common():
     pending_cheques = Transaction.query.filter_by(bank_userid=bank_userid).order_by(desc(Transaction.timestamp)).all()
     return pending_cheques
 
-  # Function gets the bank share from the database
+  # Function gets the bank share from the database and decrypts it
   @staticmethod
   def get_bank_share(transaction):
+    # gets the path
     bankID = transaction.getBankId()
     clientID = transaction.getClientId()
-    bankSharePath = Bank_Data.query.filter_by(bank_userid=bankID, client_userid=clientID).first().getBankSharePath()
-    return Common.openImage(bankSharePath)
+    bank_share_db_path = Bank_Data.query.filter_by(bank_userid=bankID, client_userid=clientID).first().getBankSharePath()
+
+    # downloads from google
+    bank_share_path = "./vsignit/output/" + bank_share_db_path
+    Common.downloadFromGoogle(bank_share_db_path, bank_share_path)
+
+    # decrypts the bank share
+    bank_share_token = Common.openEncrypted(bank_share_path)
+    bank_share = Common.decryptImage(bank_share_token)
+
+    # stores it temporarily until it is sent
+    os.remove(bank_share_path)
+
+    return bank_share
 
   # Function gets the client cheque from the database
   @staticmethod
   def get_client_cheque(transaction):
     transaction_no = transaction.getTranscationNo()
-    chequePath = transaction.getFilePath()
+
+    # downloads cheque from Google
+    cheque_db_path = transaction.getFilePath()
+    cheque_path = './vsignit/output/' + cheque_db_path
+    Common.downloadFromGoogle(cheque_db_path, cheque_path)
+    
     # throws an error if file couldn't be found
-    if not os.path.isfile(chequePath):
+    if not os.path.isfile(cheque_path):
       raise ValueError
-    token = Common.openEncrypted(chequePath)
+
+    # decrypts the encrypted cheque
+    token = Common.openEncrypted(cheque_path)
     cheque = Common.decryptImage(token)
+    os.remove(cheque_path)
+
     return transaction_no, cheque
 
   # Function removes the transaction record from the database
@@ -88,11 +111,10 @@ class Common():
   def delete_cheque(transaction):
     chequeFilepath = transaction.getFilePath()
     bgpath = chequeFilepath[:-4] + '_bg.png'
-    # throws an error if file couldn't be found
-    if not os.path.isfile(chequeFilepath):
-      raise ValueError
-    os.remove(chequeFilepath)
-    os.remove(bgpath)
+    
+    # deletes the cheque and bg from Google
+    isDeleted1 = Common.deleteFromGoogle(chequeFilepath)
+    isDeleted2 = Common.deleteFromGoogle(bgpath)
 
   # converts a normal image to pure black.white pixels
   # RGB converted to B/W based on which color they are closer to
@@ -139,7 +161,7 @@ class Common():
     ts = time.time()
     st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
     print("({}) {} has been successfully exported!".format(st, filepath))
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    os.makedirs(os.path.dirname(filepath), exist_ok=True) #creates directory if it doesn't exist
     image.save(filepath, optimize=True, format="PNG")
 
   # function checks image dimension is a square;
@@ -190,3 +212,32 @@ class Common():
     image.save(buffer, format=format)
     string = base64.b64encode(buffer.getvalue())
     return string
+
+  # The methods below are asynchronous
+  # DELETE is_pord AFTER DEPLOYMENT
+  @staticmethod
+  def uploadToGoogle(sourceFilePath, destFilePath):
+    is_prod = os.environ.get('IS_HEROKU', None)
+    if not is_prod:
+      with app.app_context():
+        blob = bucket.blob(destFilePath)
+        blob.upload_from_filename(sourceFilePath)
+
+  @staticmethod
+  def downloadFromGoogle(sourceFilePath, destFilePath):
+    is_prod = os.environ.get('IS_HEROKU', None)
+    if not is_prod:
+      with app.app_context():
+        blob = Blob(sourceFilePath, bucket)
+        os.makedirs(os.path.dirname(destFilePath), exist_ok=True) # creates directory if it doesn't exist
+        blob.download_to_filename(destFilePath)
+
+  @staticmethod
+  def deleteFromGoogle(sourceFilePath):
+    is_prod = os.environ.get('IS_HEROKU', None)
+    if not is_prod:
+      with app.app_context():
+        blob = Blob(sourceFilePath, bucket)
+        blob.delete()
+
+

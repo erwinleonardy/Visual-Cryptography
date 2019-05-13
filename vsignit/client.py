@@ -2,7 +2,7 @@
 # Author: Erwin Leonardy
 # Descrption: This file contains all of the necessary functions to operate the client page
 
-import time, datetime, hashlib
+import time, datetime, hashlib, os
 
 from vsignit.common import Common, signCords
 from vsignit.models import Transaction
@@ -23,7 +23,7 @@ class Client:
     namestamp = self.timestamp + " " + self.username
     hashed_ts.update(namestamp.encode('utf-8'))
     self.transactionNo = hashed_ts.hexdigest()
-    self.filepath = './vsignit/output/cheque/cheque_' + self.transactionNo
+    self.filepath = 'cheque/cheque_' + self.transactionNo
 
   # Function pastes the source pic on top of the destination pic
   def signcheque(self):
@@ -35,15 +35,38 @@ class Client:
     crop_area = (signCords[0], signCords[1], signCords[0] + \
                 self.share.width, signCords[1] + self.share.height)
     cheque_bg = self.cheque.crop(crop_area)
-    bg_string = Common.encodeImage(cheque_bg, imageFormat)
-    Common.encryptImage(bg_string, self.filepath + '_bg.png')
 
     # sign cheque
     self.cheque.paste(self.share, signCords) 
 
-    # encrypt and save the file until transaction is complete
+    # encrypt and save the cheques until transaction is completed
+    cheque_db_path = self.filepath + '.png'
+    cheque_bg_db_path = self.filepath + '_bg.png'
+
+    cheque_path = './vsignit/output/' + self.filepath + '.png'
+    cheque_bg_path = './vsignit/output/' + cheque_bg_db_path + '.png'
+
     cheque_string = Common.encodeImage(self.cheque, imageFormat)
-    Common.encryptImage(cheque_string, self.filepath + '.png')
+    Common.encryptImage(cheque_string, cheque_path)
+
+    bg_string = Common.encodeImage(cheque_bg, imageFormat)
+    Common.encryptImage(bg_string, cheque_bg_path)
+
+    # upload it to Google
+    Common.uploadToGoogle(cheque_path, cheque_db_path)
+    Common.uploadToGoogle(cheque_bg_path, cheque_bg_db_path)
+
+    # delete local copies
+    os.remove(cheque_path)
+    os.remove(cheque_bg_path)
+
+    # downloads cheque from Google
+    # Common.downloadFromGoogle(cheque_db_path, cheque_path)
+
+    # reconstruct cheque
+    # cheque_token = Common.openEncrypted(cheque_path)
+    # cheque = Common.decryptImage(cheque_token)
+    # cheque.show()
 
     return (cheque_string.decode("utf-8") + "," + self.username)
 
