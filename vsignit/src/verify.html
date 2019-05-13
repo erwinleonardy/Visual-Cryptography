@@ -2,6 +2,10 @@
   <title>Verification</title>
 </head>
 
+<script>
+  document.getElementById("loader").style.display = "block";
+</script>
+
 {% include "header.html" %}
 
 {% if result == None %}
@@ -136,8 +140,6 @@
     // executes it when DOM is ready
     $(document).ready(function() 
     {
-      document.getElementById("loader").style.display = "block";
-
       // extracts encoded pics
       recon_cheque = "data:image/png;base64,{{ recon_cheque }}";
       clean1 = "data:image/png;base64,{{ clean1 }}";
@@ -160,8 +162,6 @@
     // loads the script when window is fully loaded
     window.onload = function()
     {
-      document.getElementById("loader").style.display = "none";
-
       // adds back button listener (only work in safari)
       var OneClick = document.getElementById("back");
       OneClick.addEventListener('click', OnOneClick, false);
@@ -202,6 +202,8 @@
         $("#add_pictures").fadeToggle(700, "linear");
         $("#add_desc").fadeToggle(700, "linear");
       });
+
+      document.getElementById("loader").style.display = "none";
     }
 
     // reads the transaction number from the hidden input value
