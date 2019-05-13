@@ -109,12 +109,16 @@ class Common():
   # Function removes the cheque image which bears the transaction number given
   @staticmethod
   def delete_cheque(transaction):
-    chequeFilepath = transaction.getFilePath()
-    bgpath = chequeFilepath[:-4] + '_bg.png'
-    
+    cheque_path = transaction.getFilePath()
+    cheque_bg_path = cheque_path[:-4] + '_bg.png'
+
+    # delete local copies
+    os.remove('./vsignit/output/' + cheque_path)
+    os.remove('./vsignit/output/' + cheque_bg_path)
+
     # deletes the cheque and bg from Google
-    isDeleted1 = Common.deleteFromGoogle(chequeFilepath)
-    isDeleted2 = Common.deleteFromGoogle(bgpath)
+    isDeleted1 = Common.deleteFromGoogle(cheque_path)
+    isDeleted2 = Common.deleteFromGoogle(cheque_bg_path)
 
   # converts a normal image to pure black.white pixels
   # RGB converted to B/W based on which color they are closer to

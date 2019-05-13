@@ -56,18 +56,6 @@ class Client:
     Common.uploadToGoogle(cheque_path, cheque_db_path)
     Common.uploadToGoogle(cheque_bg_path, cheque_bg_db_path)
 
-    # delete local copies
-    os.remove(cheque_path)
-    os.remove(cheque_bg_path)
-
-    # downloads cheque from Google
-    # Common.downloadFromGoogle(cheque_db_path, cheque_path)
-
-    # reconstruct cheque
-    # cheque_token = Common.openEncrypted(cheque_path)
-    # cheque = Common.decryptImage(cheque_token)
-    # cheque.show()
-
     return (cheque_string.decode("utf-8") + "," + self.username)
 
   # Function adds the transaction to the database 
