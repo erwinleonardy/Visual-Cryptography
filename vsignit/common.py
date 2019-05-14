@@ -15,11 +15,11 @@ from google.cloud.storage.blob import Blob
 
 B = 0
 W = 255
-signCords = (1750, 750)
-imageSize = (200, 200)
+signCords = (1900, 625)
+imageSize = (130, 130)
 shareSize = (imageSize[0] * 2, imageSize[1] * 2)
 
-class Common():
+class Common:
   # this function checks if the client's username given by the bank exists
   # return: None if doesn't exist
   @staticmethod

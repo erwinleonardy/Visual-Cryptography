@@ -57,7 +57,7 @@
         <!-- Image Preview for Cheque -->
         <div class="row">
           <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
-              <a id="downloadLink" target="_blank" value="client_share" download><div id="preview" style="margin-bottom: 10px; max-height: 250px; max-width: 250px"></div></a>
+              <a id="downloadLink" target="_blank" value="client_share" download><div id="preview" style="margin-bottom: 10px; max-height: 250px; max-width: 350px"></div></a>
           </div>
         </div>
 
@@ -204,7 +204,7 @@
                 var newImage = document.createElement('img');
                 newImage.src = png_download;
                 newImage.height = 150;
-                newImage.width = 200;
+                newImage.width = 250;
                 document.getElementById("preview").innerHTML = newImage.outerHTML;
 
                 // creates a downloadable link

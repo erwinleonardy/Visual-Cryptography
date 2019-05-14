@@ -29,7 +29,7 @@ class Client:
   def signcheque(self):
     # resizes cheque to the intended size, no matter whatever size is given
     imageFormat = self.cheque.format
-    self.cheque = Common.resizeImage(self.cheque, (2480, 1748))
+    self.cheque = Common.resizeImage(self.cheque, (2480, 1130))
 
     # extract background and store as an encrypted image for colored background
     crop_area = (signCords[0], signCords[1], signCords[0] + \

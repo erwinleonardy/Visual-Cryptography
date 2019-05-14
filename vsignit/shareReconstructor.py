@@ -6,7 +6,7 @@ from PIL import Image
 
 from vsignit.common import Common, signCords, B, W
 
-class ShareReconstructor():
+class ShareReconstructor:
   def __init__(self, cheque, bankShare, transactionNo):
     self.cropRegion = (signCords[0], signCords[1], signCords[0] + bankShare.width, signCords[1] + bankShare.height)
     self.clientShare = cheque.crop(self.cropRegion)

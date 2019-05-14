@@ -9,12 +9,12 @@ from PIL import Image
 from vsignit.shareReconstructor import ShareReconstructor
 from vsignit.emailerService import EmailerService
 from vsignit.shareSplitter import ShareSplitter
-from vsignit.common import Common
 from vsignit.register import Register
 from vsignit.client import Client
+from vsignit.common import Common
 from vsignit.login import Login
 
-class Driver():
+class Driver:
   # Function to register the user to the system
   @staticmethod
   def register(username, email, password, verification):
