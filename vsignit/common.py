@@ -221,11 +221,9 @@ class Common():
   # DELETE is_pord AFTER DEPLOYMENT
   @staticmethod
   def uploadToGoogle(sourceFilePath, destFilePath):
-    is_prod = os.environ.get('IS_HEROKU', None)
-    if not is_prod:
-      with app.app_context():
-        blob = bucket.blob(destFilePath)
-        blob.upload_from_filename(sourceFilePath)
+    with app.app_context():
+      blob = bucket.blob(destFilePath)
+      blob.upload_from_filename(sourceFilePath)
 
   @staticmethod
   def downloadFromGoogle(sourceFilePath, destFilePath):
