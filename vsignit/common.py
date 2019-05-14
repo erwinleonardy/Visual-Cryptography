@@ -112,10 +112,6 @@ class Common():
     cheque_path = transaction.getFilePath()
     cheque_bg_path = cheque_path[:-4] + '_bg.png'
 
-    # delete local copies
-    os.remove('./vsignit/output/' + cheque_path)
-    os.remove('./vsignit/output/' + cheque_bg_path)
-
     # deletes the cheque and bg from Google
     isDeleted1 = Common.deleteFromGoogle(cheque_path)
     isDeleted2 = Common.deleteFromGoogle(cheque_bg_path)
@@ -218,7 +214,6 @@ class Common():
     return string
 
   # The methods below are asynchronous
-  # DELETE is_pord AFTER DEPLOYMENT
   @staticmethod
   def uploadToGoogle(sourceFilePath, destFilePath):
     with app.app_context():
