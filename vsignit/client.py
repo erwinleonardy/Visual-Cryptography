@@ -57,8 +57,8 @@ class Client:
     Common.uploadToGoogle(cheque_bg_path, cheque_bg_db_path)
 
     # delete local copies
-    os.remove('./vsignit/output/' + cheque_path)
-    os.remove('./vsignit/output/' + cheque_bg_path)
+    os.remove(cheque_path)
+    os.remove(cheque_bg_path)
 
     return (cheque_string.decode("utf-8") + "," + self.username)
 
