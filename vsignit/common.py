@@ -191,7 +191,7 @@ class Common:
 
   @staticmethod
   def encryptImage(imageEncoded, savepath):
-    f = Fernet('HdcT0QsyPAA5M-g9Ozk_RBlRUuo8eq8lS8DPix4d5z4=')
+    f = Fernet(os.environ.get('FERNET_KEY'))
     os.makedirs(os.path.dirname(savepath), exist_ok=True)
     token = f.encrypt(imageEncoded)
     outfile = open(savepath, 'wb')
@@ -200,7 +200,7 @@ class Common:
 
   @staticmethod
   def decryptImage(token):
-    f = Fernet('HdcT0QsyPAA5M-g9Ozk_RBlRUuo8eq8lS8DPix4d5z4=')
+    f = Fernet(os.environ.get('FERNET_KEY'))
     imageEncoded = f.decrypt(token)
     imageData = base64.b64decode(imageEncoded)
     image = Image.open(BytesIO(imageData))

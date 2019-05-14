@@ -24,8 +24,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # connect to Google Firebase and get the default 'bucket'
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './vsignit/vsignit-app-firebase-adminsdk-eo7f1-ad2b3acabb.json'
-cred = credentials.Certificate("./vsignit/vsignit-app-firebase-adminsdk-eo7f1-ad2b3acabb.json")
+cred = credentials.Certificate(os.environ['GOOGLE_APPLICATION_CREDENTIALS'])
 default_firestore = firebase_admin.initialize_app(cred, {
     'storageBucket':'gs://vsignit-app.appspot.com'
 })
