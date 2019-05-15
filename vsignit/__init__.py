@@ -26,10 +26,10 @@ login_manager.init_app(app)
 # connect to Google Firebase and get the default 'bucket'
 cred = credentials.Certificate(os.environ.get('GOOGLE_APPLICATION_CREDENTIALS'))
 default_firestore = firebase_admin.initialize_app(cred, {
-    'storageBucket':'gs://vsignit-app.appspot.com'
+    'storageBucket':os.environ.get('STORAGE_BUCKET')
 })
 client = storage.Client()
-bucket = client.get_bucket('vsignit-app.appspot.com')
+bucket = client.get_bucket(os.environ.get('DEFAULT_BUCKET'))
 
 # routes is only imported here because it needs access
 # to the 'app' object
