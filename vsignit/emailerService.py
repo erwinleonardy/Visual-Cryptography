@@ -15,6 +15,7 @@ class EmailerService:
   def async_email(msg):
     with app.app_context():
       print("Sent!")
+      print("\n\n\n\n\n")
       mail.send(msg)
 
   # function to format emails
@@ -40,8 +41,9 @@ class EmailerService:
 
     msg = Message(subject=subject, body=inspect.cleandoc(msg_body), recipients=[receiver_email])
     print("Recipient email: ")
+    print(subject)
     print(receiver_email)
-    print("\n\n\n\n\n")
+    print(body)
     thread = Thread(target=EmailerService.async_email, args=[msg])
     thread.start()
 
