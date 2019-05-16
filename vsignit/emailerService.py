@@ -39,7 +39,9 @@ class EmailerService:
     """
 
     msg = Message(subject=subject, body=inspect.cleandoc(msg_body), recipients=[receiver_email])
-    print("Message Length: {}".format(len(msg)))
+    print("Recipient email: ")
+    print(receiver_email)
+    print("\n\n\n\n\n")
     thread = Thread(target=EmailerService.async_email, args=[msg])
     thread.start()
 
