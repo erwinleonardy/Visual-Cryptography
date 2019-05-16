@@ -20,7 +20,7 @@ class EmailerService:
   @staticmethod
   def send_email(username, receiver_email, subject, body):
     msg_body =  """\
-      Hi, {}!\n""".format(username)
+        Hi, {}!\n""".format(username)
     msg_body += body
     msg_body += """
     
@@ -52,21 +52,21 @@ class EmailerService:
     # send email to bank
     bankSubject = "({}) New Cheque from {}".format(bankUsername, clientUsername)
     bankMessage = """
-    You have received a new cheque to be processed from {}.
+      You have received a new cheque to be processed from {}.
 
-    Transaction Number: {}
-    Transaction Time: {}""".format(clientUsername, transaction_no, timestamp)
+      Transaction Number: {}
+      Transaction Time: {}""".format(clientUsername, transaction_no, timestamp)
     EmailerService.send_email(bankUsername, bank_email, bankSubject, bankMessage)
 
     # send email to client
     clientSubject = "({}) Your cheque has been sent to {}".format(clientUsername, bankUsername)
     clientMessage = """
-    Your cheque is currently being processed by {}.
+      Your cheque is currently being processed by {}.
 
-    Transaction Number: {}
-    Transaction Time: {}
+      Transaction Number: {}
+      Transaction Time: {}
     
-    Your bank will contact you should they have any issue.""".format(bankUsername, transaction_no, timestamp)
+      Your bank will contact you should they have any issue.""".format(bankUsername, transaction_no, timestamp)
     EmailerService.send_email(clientUsername, client_email, clientSubject, clientMessage)
   
   # function to send email after bank determines what to do 
@@ -81,17 +81,17 @@ class EmailerService:
     # send email to bank
     bankSubject = "({}) Outcome of Cheque {}".format(bankUsername, transaction_no)
     bankMessage = """
-    You have have just decided to {} a cheque from {}.
+      You have have just decided to {} a cheque from {}.
 
-    Transaction Number: {}""".format(bank_response, clientUsername, transaction_no)
+      Transaction Number: {}""".format(bank_response, clientUsername, transaction_no)
     EmailerService.send_email(bankUsername, bank_email, bankSubject, bankMessage)
 
     # send email to client
     clientSubject = "({}) Outcome of Cheque {}".format(clientUsername, transaction_no)
     clientMessage = """
-    {} have just decided to {} your cheque.
+      {} have just decided to {} your cheque.
 
-    Transaction Number: {}
-    
-    Please do call your bank hotline if you have further enquiries.""".format(bankUsername, bank_response, transaction_no)
+      Transaction Number: {}
+      
+      Please do call your bank hotline if you have further enquiries.""".format(bankUsername, bank_response, transaction_no)
     EmailerService.send_email(clientUsername, client_email, clientSubject, clientMessage)

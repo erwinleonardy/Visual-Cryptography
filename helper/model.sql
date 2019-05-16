@@ -21,14 +21,8 @@ SET time_zone = "+08:00";
 --
 -- Database: `vsignit`
 --
-CREATE DATABASE IF NOT EXISTS `vsignit`
 
 -- --------------------------------------------------------
-
---
--- Drop existing table
---
-DROP TABLE IF EXISTS `vsignit`.`bank_data`;
 
 --
 -- Table structure for table `bank_data`
@@ -55,11 +49,6 @@ COMMIT;
 -- --------------------------------------------------------
 
 --
--- Drop existing table
---
-DROP TABLE IF EXISTS `vsignit`.`client_data`;
-
---
 -- Table structure for table `client_data`
 --
 CREATE TABLE IF NOT EXISTS `client_data` (
@@ -81,11 +70,6 @@ ALTER TABLE `client_data`
 COMMIT;
 
 -- --------------------------------------------------------
-
---
--- Drop existing table
---
-DROP TABLE IF EXISTS `vsignit`.`transaction`;
 
 --
 -- Table structure for table `transaction`
@@ -110,11 +94,6 @@ ALTER TABLE `transaction`
 COMMIT;
 
 -- --------------------------------------------------------
-
---
--- Drop existing table
---
-DROP TABLE IF EXISTS `vsignit`.`user_table`;
 
 --
 -- Table structure for table `user_table`
