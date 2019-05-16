@@ -97,8 +97,6 @@ class Driver:
     client_userid = transaction.getClientId()
     bank_userid = transaction.getBankId()
     
-    print("bank_response: " + bank_response)
-
     # checks users response
     # 'accept' -> Sends successful email to the client and bank
     # 'reject' -> sends fail email to the client and bank

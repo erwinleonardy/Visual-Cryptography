@@ -180,8 +180,6 @@ def bank_reconstruct_verify():
     transactionNo = request.form['transactionNo']
     transaction = Transaction.query.filter_by(transactionNo=transactionNo).first()
 
-    print("response: " + request.form['response'])
-
     # verify the given cheque
     Driver.transaction_verification(transaction, request.form['response'])
 
