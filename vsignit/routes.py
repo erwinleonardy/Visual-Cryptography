@@ -139,7 +139,7 @@ def bank_reconstruct():
     elif request.form['type'] == 'Delete':
       # if cheque can't be deleted
       try:
-        Driver.transaction_deletion (transaction)
+        Driver.transaction_verification (transaction, 'reject')
       except ValueError:
         return "/bank-reconstruct/verify"
 

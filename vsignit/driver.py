@@ -110,7 +110,5 @@ class Driver:
   # Function to delete the transaction from the DB
   @staticmethod
   def transaction_deletion(transaction):
-    # rejection email
-    EmailerService.transaction_email(transaction.getTranscationNo(), transaction.getClientId(), transaction.getBankId(), 'reject')
     Common.delete_cheque(transaction) # delete image
     Common.delete_transaction(transaction) # delete the share from the DB and remove the image
