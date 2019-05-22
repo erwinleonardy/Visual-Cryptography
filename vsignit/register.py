@@ -44,7 +44,7 @@ class Register():
       return "Your password should have at least one lowercase letter!"
 
     # searching for symbols
-    elif re.search(r"[ !#$%&'()*+,-./[\\\]^_`{|}~"+r'"]', self.password) is None:
+    elif re.search(r"[ !@=%:#$%&'()*+,-./[\\\]^_`{|}~"+r'"]', self.password) is None:
       return "Your password should have at least one symbol!"
 
     # if the user failed to re-enter the same password
