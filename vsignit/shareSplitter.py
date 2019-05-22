@@ -188,11 +188,14 @@ class ShareSplitter():
     bank_share_db_path = "bank/" + self.username + "_" + bank_username + "_bank_share.png"
     client_share_db_path = "client/" + self.username + "_" + bank_username + "_client_share.png"
 
-    bank_share_string = Common.encodeImage(share1, "PNG")
-    Common.encryptImage(bank_share_string, bank_share_path)
+    Common.save_image(share1, bank_share_path)
+    Common.save_image(share2, client_share_path)
 
-    client_share_string = Common.encodeImage(share2, "PNG")
-    Common.encryptImage(client_share_string, client_share_path)
+    # bank_share_string = Common.encodeImage(share1, "PNG")
+    # Common.encryptImage(bank_share_string, bank_share_path)
+
+    # client_share_string = Common.encodeImage(share2, "PNG")
+    # Common.encryptImage(client_share_string, client_share_path)
 
     # uploads to cloud
     Common.uploadToGoogle(bank_share_path, bank_share_db_path)

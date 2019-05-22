@@ -71,8 +71,10 @@ class Common:
     Common.downloadFromGoogle(bank_share_db_path, bank_share_path)
 
     # decrypts the bank share
-    bank_share_token = Common.openEncrypted(bank_share_path)
-    bank_share = Common.decryptImage(bank_share_token)
+    # bank_share_token = Common.openEncrypted(bank_share_path)
+    # bank_share = Common.decryptImage(bank_share_token)
+
+    bank_share = Common.openImage(bank_share_path)
 
     # stores it temporarily until it is sent
     os.remove(bank_share_path)

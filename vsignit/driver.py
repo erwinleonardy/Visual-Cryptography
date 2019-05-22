@@ -54,8 +54,9 @@ class Driver:
     Common.downloadFromGoogle(client_share_db_path, client_share_path)
 
     # decodes the share
-    client_share_token = Common.openEncrypted(client_share_path)
-    client_share = Common.decryptImage(client_share_token)
+    # client_share_token = Common.openEncrypted(client_share_path)
+    # client_share = Common.decryptImage(client_share_token)
+    client_share = Common.openImage(client_share_path)
     if client_share == None:
       return ""
 
