@@ -195,8 +195,8 @@
             // if there is an error
             else
             {
-                // when both of the passwords don't match
-                if (response == "Both of the password doesn't match!")
+                // shows password error message
+                if (response.includes("password"))
                 {
                   $('#username').removeClass('is-invalid');
                   $('#password').removeClass('is-valid');
