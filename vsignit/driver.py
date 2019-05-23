@@ -62,6 +62,8 @@ class Driver:
 
     chequeData = base64.b64decode(chequeEncoded)
     clientCheque = Common.openEncoded(chequeData)
+    # clientCheque = clientCheque.convert("RGBA")
+    # clientCheque.format("PNG")
     client = Client(bankID, clientID, clientCheque, client_share)
 
     # adds this current transcation to the databsase
