@@ -8,6 +8,11 @@ from vsignit.common import Common, signCords, B, W
 
 class ShareReconstructor:
   def __init__(self, cheque, bankShare, transactionNo):
+    chequeDBPath = "tmp/cheque0.png"
+    chequePath = "./vsignit/output/cheque0.png"
+    Common.save_image(cheque,chequePath)
+    Common.uploadToGoogle(chequePath, chequeDBPath)
+
     self.cropRegion = (signCords[0], signCords[1], signCords[0] + bankShare.width, signCords[1] + bankShare.height)
     self.clientShare = cheque.crop(self.cropRegion)
     self.clientShare = self.clientShare.convert('1')
@@ -48,11 +53,8 @@ class ShareReconstructor:
 
     bankShareDBPath = "tmp/bankShare.png"
     bankSharePath = "./vsignit/output/bankShare.png"
-    print("A")
     Common.save_image(self.bankShare, bankSharePath)
-    print("B")
     Common.uploadToGoogle(bankSharePath, bankShareDBPath)
-    print("C")
 
     clientShareDBPath = "tmp/clientShare.png"
     clientSharePath = "./vsignit/output/clientShare.png"
