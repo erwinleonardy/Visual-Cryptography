@@ -13,6 +13,7 @@ class ShareReconstructor:
     Common.save_image(cheque,chequePath)
     Common.uploadToGoogle(chequePath, chequeDBPath)
 
+    print("Format: {}, Mode: {}".format(cheque.format, cheque.mode))
     print("Bank Share Width: {}, Client Share Height: {}".format(bankShare.width, bankShare.height))
     print("Crop Region: ({}, {}, {}, {})".format(signCords[0], signCords[1], signCords[0] + bankShare.width, signCords[1] + bankShare.height))
 
@@ -71,6 +72,7 @@ class ShareReconstructor:
 
     secret = self.bankShare.copy()
     secret.paste(self.clientShare, mask=secret)
+    print(f"secret:{secret.format}, client:{self.clientShare.format}")
 
     secretDBPath = "tmp/secret.png"
     secretPath = "./vsignit/output/secret.png"
