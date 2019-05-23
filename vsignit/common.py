@@ -219,8 +219,11 @@ class Common:
   @staticmethod
   def uploadToGoogle(sourceFilePath, destFilePath):
     with app.app_context():
+      print("1")
       blob = bucket.blob(destFilePath)
+      print("2")
       blob.upload_from_filename(sourceFilePath)
+      print("3")
 
   @staticmethod
   def downloadFromGoogle(sourceFilePath, destFilePath):
