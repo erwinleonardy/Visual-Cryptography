@@ -144,7 +144,7 @@ class ShareSplitter():
     color = random.choice(choice)
 
     img = Image.new('1', size, color)
-    font = ImageFont.truetype("vsignit/font/BebasNeue-Regular.ttf", 78)
+    font = ImageFont.truetype("vsignit/font/BebasNeue-Regular.ttf", 83)
     word = secrets.token_urlsafe(3)
     wordSize = font.getsize(word)
     cords = ((img.width - wordSize[0])//2,(img.height - wordSize[1])//2)
