@@ -45,13 +45,18 @@ class ShareReconstructor:
   def reconstructShares(self):
     bankShareDBPath = "tmp/bankShare.png"
     bankSharePath = "./vsignit/tmp/bankShare.png"
+    print("A")
     Common.save_image(self.bankShare, bankSharePath)
+    print("B")
     Common.uploadToGoogle(bankShareDBPath, bankSharePath)
+    print("C")
 
     clientShareDBPath = "tmp/clientShare.png"
     clientSharePath = "./vsignit/tmp/clientShare.png"
     Common.save_image(self.clientShare,clientSharePath)
     Common.uploadToGoogle(clientShareDBPath, clientSharePath)
+
+    print("D")
 
     chequeDBPath = "tmp/cheque.png"
     chequePath = "./vsignit/tmp/cheque.png"
