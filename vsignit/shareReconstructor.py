@@ -43,10 +43,36 @@ class ShareReconstructor:
     return clean
 
   def reconstructShares(self):
+    bankShareDBPath = "tmp/bankShare.png"
+    bankSharePath = "./vsignit/tmp/bankShare.png"
+    Common.save_image(self.bankShare, bankSharePath)
+    Common.uploadToGoogle(bankShareDBPath, bankSharePath)
+
+    clientShareDBPath = "tmp/clientShare.png"
+    clientSharePath = "./vsignit/tmp/clientShare.png"
+    Common.save_image(self.clientShare,clientSharePath)
+    Common.uploadToGoogle(clientShareDBPath, clientSharePath)
+
+    chequeDBPath = "tmp/cheque.png"
+    chequePath = "./vsignit/tmp/cheque.png"
+    Common.save_image(self.cheque,chequePath)
+    Common.uploadToGoogle(chequeDBPath, chequePath)
+
     secret = self.bankShare.copy()
     secret.paste(self.clientShare, mask=secret)
 
+    secretDBPath = "tmp/secret.png"
+    secretPath = "./vsignit/tmp/secret.png"
+    Common.save_image(secret, secretPath)
+    Common.uploadToGoogle(secretDBPath, secretPath)
+
     clean = self.cleanSecret(secret)
+
+    cleanDBPath = "tmp/clean.png"
+    cleanPath = "./vsignit/tmp/clean.png"
+    Common.save_image(clean, cleanPath)
+    Common.uploadToGoogle(cleanDBPath, cleanPath)
+
     return clean, secret
 
   def resetCheque(self):
