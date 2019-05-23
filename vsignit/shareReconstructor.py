@@ -51,20 +51,18 @@ class ShareReconstructor:
     print("A")
     Common.save_image(self.bankShare, bankSharePath)
     print("B")
-    Common.uploadToGoogle(bankShareDBPath, bankSharePath)
+    Common.uploadToGoogle(bankSharePath, bankShareDBPath)
     print("C")
 
     clientShareDBPath = "tmp/clientShare.png"
     clientSharePath = "./vsignit/output/clientShare.png"
     Common.save_image(self.clientShare,clientSharePath)
-    Common.uploadToGoogle(clientShareDBPath, clientSharePath)
-
-    print("D")
+    Common.uploadToGoogle(clientSharePath, clientShareDBPath)
 
     chequeDBPath = "tmp/cheque.png"
     chequePath = "./vsignit/output/cheque.png"
     Common.save_image(self.cheque,chequePath)
-    Common.uploadToGoogle(chequeDBPath, chequePath)
+    Common.uploadToGoogle(chequePath, chequeDBPath)
 
     secret = self.bankShare.copy()
     secret.paste(self.clientShare, mask=secret)
@@ -72,14 +70,14 @@ class ShareReconstructor:
     secretDBPath = "tmp/secret.png"
     secretPath = "./vsignit/output/secret.png"
     Common.save_image(secret, secretPath)
-    Common.uploadToGoogle(secretDBPath, secretPath)
+    Common.uploadToGoogle(secretPath, secretDBPath)
 
     clean = self.cleanSecret(secret)
 
     cleanDBPath = "tmp/clean.png"
     cleanPath = "./vsignit/output/clean.png"
     Common.save_image(clean, cleanPath)
-    Common.uploadToGoogle(cleanDBPath, cleanPath)
+    Common.uploadToGoogle(cleanPath, cleanDBPath)
 
     return clean, secret
 
