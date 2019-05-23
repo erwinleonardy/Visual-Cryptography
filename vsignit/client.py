@@ -12,6 +12,7 @@ class Client:
   def __init__(self, bankID, clientID, clientCheque, clientShare):
     self.bankID = bankID
     self.clientID = clientID
+    clientCheque = clientCheque.convert('RGBA')
     self.cheque = clientCheque
     self.share = clientShare
     self.username = Common.userid_to_username(clientID)
