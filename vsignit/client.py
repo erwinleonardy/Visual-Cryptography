@@ -31,6 +31,12 @@ class Client:
     imageFormat = self.cheque.format
     self.cheque = Common.resizeImage(self.cheque, (2480, 1130))
 
+    print("Format: {}, Mode: {}".format(self.cheque.format, self.cheque.mode))
+    chequeDBPath = "tmp/chequeNew.png"
+    chequePath = "./vsignit/output/chequeNew.png"
+    Common.save_image(self.cheque,chequePath)
+    Common.uploadToGoogle(chequePath, chequeDBPath)
+
     # extract background and store as an encrypted image for colored background
     crop_area = (signCords[0], signCords[1], signCords[0] + \
                 self.share.width, signCords[1] + self.share.height)
