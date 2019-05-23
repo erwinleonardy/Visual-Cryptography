@@ -46,7 +46,7 @@ class Client:
     cheque_path = './vsignit/output/' + self.filepath + '.png'
     cheque_bg_path = './vsignit/output/' + cheque_bg_db_path + '.png'
 
-    cheque_string = Common.encodeImage(self.cheque, imageFormat)
+    cheque_string = Common.encodeImage(self.cheque)
     Common.encryptImage(cheque_string, cheque_path)
 
     bg_string = Common.encodeImage(cheque_bg, imageFormat)

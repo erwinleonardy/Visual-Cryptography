@@ -209,7 +209,7 @@ class Common:
     return image
 
   @staticmethod
-  def encodeImage(image, format):
+  def encodeImage(image, format="PNG"):
     buffer = BytesIO()
     image.save(buffer, format=format)
     string = base64.b64encode(buffer.getvalue())
