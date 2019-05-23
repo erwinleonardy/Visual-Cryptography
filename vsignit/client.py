@@ -34,9 +34,9 @@ class Client:
     # convert all images to PNG
     cheque_path = './vsignit/output/' + self.filepath + '.png'
 
-    self.cheque = self.cheque.convert("RGBA")
-    self.cheque.save(cheque_path, format="PNG")
+    self.cheque.save(cheque_path)
     self.cheque = Common.openImage(cheque_path)
+    self.cheque = self.cheque.convert("RGBA")
     print("Format: {}, Mode: {}".format(self.cheque.format, self.cheque.mode))
 
     # print("Format: {}, Mode: {}".format(self.cheque.format, self.cheque.mode))
