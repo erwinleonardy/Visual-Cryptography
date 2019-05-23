@@ -19,8 +19,9 @@ class ShareReconstructor:
 
     self.cropRegion = (signCords[0], signCords[1], signCords[0] + bankShare.width, signCords[1] + bankShare.height)
     self.clientShare = cheque.crop(self.cropRegion)
-    # self.clientShare = self.clientShare.convert('1')
 
+    # self.clientShare = self.clientShare.convert('1')
+    print("Client Share Format: {}, Mode: {}".format(clientShare.format, clientShare.mode))
     self.bankShare = bankShare
     self.transactionNo = transactionNo
     self.cheque = cheque
