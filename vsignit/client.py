@@ -12,7 +12,6 @@ class Client:
   def __init__(self, bankID, clientID, clientCheque, clientShare):
     self.bankID = bankID
     self.clientID = clientID
-    clientCheque = clientCheque.convert('RGBA')
     self.cheque = clientCheque
     self.share = clientShare
     self.username = Common.userid_to_username(clientID)
@@ -47,7 +46,7 @@ class Client:
     cheque_path = './vsignit/output/' + self.filepath + '.png'
     cheque_bg_path = './vsignit/output/' + cheque_bg_db_path + '.png'
 
-    self.cheque = self.cheque.convert("RGBA")
+    # self.cheque = self.cheque.convert("RGBA")
     cheque_string = Common.encodeImage(self.cheque, imageFormat)
     Common.encryptImage(cheque_string, cheque_path)
 

@@ -60,10 +60,16 @@ class Driver:
     if client_share == None:
       return ""
 
+    # decrypt the cheque
     chequeData = base64.b64decode(chequeEncoded)
     clientCheque = Common.openEncoded(chequeData)
-    # clientCheque = clientCheque.convert("RGBA")
-    # clientCheque.format("PNG")
+
+    # convert all images to PNG
+    Common.save_image(clientCheque, client_share_path)
+    clientCheque = Common.openImage(client_share_path)
+    clientCheque = clientCheque.convert("RGBA")
+
+    # create new client instance
     client = Client(bankID, clientID, clientCheque, client_share)
 
     # adds this current transcation to the databsase
