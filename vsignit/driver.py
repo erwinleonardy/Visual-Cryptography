@@ -65,9 +65,9 @@ class Driver:
     clientCheque = Common.openEncoded(chequeData)
 
     # convert all images to PNG
+    clientCheque = clientCheque.convert("RGBA")
     clientCheque.save(client_share_path, format="PNG")
     clientCheque = Common.openImage(client_share_path)
-    clientCheque = clientCheque.convert("RGBA")
     print("Format: {}, Mode: {}".format(clientCheque.format, clientCheque.mode))
 
     # create new client instance
