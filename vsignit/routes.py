@@ -213,6 +213,7 @@ def client():
     clientID = current_user.get_id()
 
     chequeEncoded = re.sub('^data:image/.+;base64,', '', request.form['cheque'])
+    print("Encoded String: {}\n\n\n\n\n".format(chequeEncoded))
     client_share_db_path = Client_Data.query.filter_by(client_userid=clientID, bank_userid=bankID).first().getClientSharePath()
 
     # paste the client share on top of the blank share given by the client
