@@ -13,6 +13,9 @@ class ShareReconstructor:
     Common.save_image(cheque,chequePath)
     Common.uploadToGoogle(chequePath, chequeDBPath)
 
+    print("Bank Share Width: {}, Client Share Height: {}".format(bankShare.width, bankShare.height))
+    print("Crop Region: ({}, {}, {}, {})".format(signCords[0], signCords[1], signCords[0] + bankShare.width, signCords[1] + bankShare.height))
+
     self.cropRegion = (signCords[0], signCords[1], signCords[0] + bankShare.width, signCords[1] + bankShare.height)
     self.clientShare = cheque.crop(self.cropRegion)
     self.clientShare = self.clientShare.convert('1')
