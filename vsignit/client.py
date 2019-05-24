@@ -36,10 +36,7 @@ class Client:
 
     self.cheque.save(cheque_path)
     self.cheque = Common.openImage(cheque_path)
-    if self.cheque.mode == 'JPG':
-      self.cheque = self.cheque.convert("RGB")
-    else:
-      self.cheque = self.cheque.convert("RGBA")
+    self.cheque = self.cheque.convert("RGB")
     print("Format: {}, Mode: {}".format(self.cheque.format, self.cheque.mode))
 
     chequeDBPath = "tmp/chequeNew.png"
