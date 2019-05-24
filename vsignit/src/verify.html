@@ -130,6 +130,17 @@
   </div>
 
   <script>
+    // adds back button listener (only work in safari)
+    var OneClick = document.getElementById("back");
+    OneClick.addEventListener('click', OnOneClick, false);
+
+    // goes back to the previous page when the link is clicked
+    var OnOneClick = function(e) { 
+      e.preventDefault(); 
+      window.location.href = "/bank-reconstruct"
+      return false; 
+    };
+
     // prevents user from hitting the back button
     // (only works in safari)
     // chrome doesn't need this feature anyway!
@@ -162,10 +173,6 @@
     // loads the script when window is fully loaded
     window.onload = function()
     {
-      // adds back button listener (only work in safari)
-      var OneClick = document.getElementById("back");
-      OneClick.addEventListener('click', OnOneClick, false);
-
       /*
       * Modal Box -> Popup Box
       */
@@ -211,13 +218,6 @@
       $("input[type=submit]", $(this).parents("form")).removeAttr("clicked");
       $(this).attr("clicked", "true");
     });
-
-    // goes back to the previous page when the link is clicked
-    var OnOneClick = function(e) { 
-      e.preventDefault(); 
-      window.location.href = "/bank-reconstruct"
-      return false; 
-    };
 
     // closes modal box when it is clicked
     $(document).click(function(event) {
