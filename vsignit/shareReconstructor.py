@@ -13,15 +13,10 @@ class ShareReconstructor:
     Common.save_image(cheque,chequePath)
     Common.uploadToGoogle(chequePath, chequeDBPath)
 
-    print("Format: {}, Mode: {}".format(cheque.format, cheque.mode))
-    print("Bank Share Width: {}, Client Share Height: {}".format(bankShare.width, bankShare.height))
-    print("Crop Region: ({}, {}, {}, {})".format(signCords[0], signCords[1], signCords[0] + bankShare.width, signCords[1] + bankShare.height))
-
     self.cropRegion = (signCords[0], signCords[1], signCords[0] + bankShare.width, signCords[1] + bankShare.height)
     self.clientShare = cheque.crop(self.cropRegion)
 
     self.clientShare = self.clientShare.convert('1')
-    print("Client Share Format: {}, Mode: {}".format(self.clientShare.format, self.clientShare.mode))
     self.bankShare = bankShare
     self.transactionNo = transactionNo
     self.cheque = cheque
@@ -53,40 +48,9 @@ class ShareReconstructor:
     return clean
 
   def reconstructShares(self):
-    cheque_bg_db_path = 'cheque/cheque_' + self.transactionNo + '_bg.png'
-    cheque_bg_path = './vsignit/output/' + cheque_bg_db_path
-
-    bankShareDBPath = "tmp/bankShare.png"
-    bankSharePath = "./vsignit/output/bankShare.png"
-    Common.save_image(self.bankShare, bankSharePath)
-    Common.uploadToGoogle(bankSharePath, bankShareDBPath)
-
-    clientShareDBPath = "tmp/clientShare.png"
-    clientSharePath = "./vsignit/output/clientShare.png"
-    Common.save_image(self.clientShare,clientSharePath)
-    Common.uploadToGoogle(clientSharePath, clientShareDBPath)
-
-    chequeDBPath = "tmp/cheque.png"
-    chequePath = "./vsignit/output/cheque.png"
-    Common.save_image(self.cheque,chequePath)
-    Common.uploadToGoogle(chequePath, chequeDBPath)
-
     secret = self.bankShare.copy()
     secret.paste(self.clientShare, mask=secret)
-    print(f"secret:{secret.format}, client:{self.clientShare.format}")
-
-    secretDBPath = "tmp/secret.png"
-    secretPath = "./vsignit/output/secret.png"
-    Common.save_image(secret, secretPath)
-    Common.uploadToGoogle(secretPath, secretDBPath)
-
     clean = self.cleanSecret(secret)
-
-    cleanDBPath = "tmp/clean.png"
-    cleanPath = "./vsignit/output/clean.png"
-    Common.save_image(clean, cleanPath)
-    Common.uploadToGoogle(cleanPath, cleanDBPath)
-
     return clean, secret
 
   def resetCheque(self):

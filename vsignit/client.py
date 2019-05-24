@@ -33,16 +33,9 @@ class Client:
 
     # convert all images to PNG
     cheque_path = './vsignit/output/' + self.filepath + '.png'
-
     self.cheque.save(cheque_path)
     self.cheque = Common.openImage(cheque_path)
     self.cheque = self.cheque.convert("RGB")
-    print("Format: {}, Mode: {}".format(self.cheque.format, self.cheque.mode))
-
-    chequeDBPath = "tmp/chequeNew.png"
-    chequePath = "./vsignit/output/chequeNew.png"
-    Common.save_image(self.cheque,chequePath)
-    Common.uploadToGoogle(chequePath, chequeDBPath)
 
     # extract background and store as an encrypted image for colored background
     crop_area = (signCords[0], signCords[1], signCords[0] + \
